@@ -1,0 +1,24 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Coming+Soon&family=Gloria+Hallelujah&family=Reenie+Beanie&family=Yomogi&display=swap');
+
+:root {
+	--font-size-header: 4rem;
+	--font-size-base: 1rem;
+}
+
+h1 {
+	font-size: var(--font-size-header);
+  font-family: "Reenie Beanie", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+p, a {
+	font-size: var(--font-size-base);
+  font-family: "Coming Soon", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+a {
+  font-style: italic;
+	text-decoration: none;
+}
