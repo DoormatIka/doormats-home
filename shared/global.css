@@ -1,0 +1,54 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Coming+Soon&family=Gloria+Hallelujah&family=Reenie+Beanie&family=Yomogi&display=swap');
+
+:root {
+	--font-size-header: 2.5rem;
+	--font-size-base: 1rem;
+
+	--color-base: #F3E8EE;
+	--color-text: #051914;
+	--color-primary: #bacdb0;
+	--color-primary-content: #2E2C2F;
+	--color-secondary: #136F63;
+	--color-secondary-content: #F3E8EE;
+	/* --color-accent: #CF4D6F; */
+	--color-accent: #6A329F;
+}
+
+html {
+	background-color: var(--color-base);
+}
+h1 {
+	font-size: var(--font-size-header);
+  font-family: "Reenie Beanie", cursive;
+  font-weight: 400;
+  font-style: normal;
+	margin: 0px;
+	color: var(--color-text);
+}
+p, a {
+	font-size: var(--font-size-base);
+  font-family: "Coming Soon", cursive;
+  font-weight: 400;
+  font-style: normal;
+	margin: 0px;
+	color: var(--color-text);
+}
+a {
+  font-style: italic;
+	text-decoration: none;
+	margin: 0px;
+	font-weight: bold;
+}
+a:link {
+	color: var(--color-accent);
+}
+a:visited {
+	color: var(--color-accent);
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	height: 100vh;
+}
