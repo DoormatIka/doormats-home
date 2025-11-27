@@ -1,0 +1,38 @@
+
+header {
+	padding: 0px;
+	width: 100%;
+	text-align: center;
+}
+
+
+.home-content {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	height: 100%;
+}
+
+.main-content {
+	gap: 0px;
+	/* border: 1px solid black; */
+	padding: 0.5rem;
+}
+
+.max-item {
+	flex: 1;
+}
+
+.side-nav {
+	height: 100%;
+	padding: 0rem 0.5rem;
+	width: min-content;
+}
+
+.side-nav * {
+	display: block;
+	width: 100%;
+	text-align: justify;
+}
+
+
