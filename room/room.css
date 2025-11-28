@@ -37,10 +37,21 @@ header > h1:hover {
 	width: min-content;
 }
 
-.side-nav * {
+.side-nav > .highlight {
 	display: block;
 	width: 100%;
 	text-align: justify;
 }
 
+.highlight a {
+	display: block;
+	width: 100%;
+	text-align: justify;
+	background-color: transparent;
+	transition: background-color 0.5s ease-in;
+}
 
+.highlight a:hover {
+	background-color: var(--highlight-color);
+	transition: background-color 0.2s ease-out;
+}
