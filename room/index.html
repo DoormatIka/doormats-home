@@ -13,6 +13,7 @@
 
 	<link rel="stylesheet" href="/shared/global.css">
 	<link rel="stylesheet" href="/room/room.css">
+	<meta name="viewport" content="width=device-width, initial-scale=0.6">
 
 	<script src="/shared/global.js"></script>
 </head>
@@ -30,16 +31,17 @@
 					<br>
 					<p>if this design looks bad, please use a <a href="https://caniuse.com/flexbox" target="_blank" rel="noopener noreferrer">more modern browser</a> (2015+)</p>
 				</main>
-				<div class="divider-vertical"></div>
 				<nav class="side-nav">
 					<header>
 						<h1>doormat's</h1>
 					</header>
-					<div class="highlight">
-						<a href="/room/">home</a>
-					</div>
-					<div class="highlight">
-						<a href="/about/">about</a>
+					<div style="display: flex; flex-direction: row">
+						<div class="divider-vertical">a</div>
+						<div class="side-nav-content " style="border: 1px solid black;">
+							<a href="/room/">room</a>
+							<a href="/about/">about</a>
+						</div>
+
 					</div>
 				</nav>
 			</div>
