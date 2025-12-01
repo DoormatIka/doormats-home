@@ -5,6 +5,7 @@
 	--font-size-header: 2rem;
 	--font-size-second-header: 2rem;
 	--font-size-base: 1rem;
+	--font-size-title: 1.6rem;
 
 	--color-base: rgb(243 232 238);
 	--color-text: rgb(5 5 5);
@@ -20,12 +21,21 @@
 
 html {
 	background-color: var(--color-base);
+	height: 100%;
 }
 h1 {
 	font-size: var(--font-size-header);
   font-family: "Gloria Hallelujah", cursive;
   font-weight: 400;
   font-style: normal;
+	margin: 0px;
+	color: var(--color-text);
+}
+.title {
+	font-size: var(--font-size-title);
+	font-family: "Gloria Hallelujah", cursive;
+	font-weight: 400;
+	font-style: normal;
 	margin: 0px;
 	color: var(--color-text);
 }
@@ -94,10 +104,31 @@ body {
 }
 .divider-vertical {
 	border-right: 1px solid var(--color-text);
+	align-self: stretch;
 	opacity: 0.2;
-	margin: 1.5rem 0px;
 }
 .divider-horizontal {
 	border-bottom: 1px solid var(--color-text);
 	opacity: 0.2;
+}
+.max-h {
+	height: 100%;
+}
+.max-w {
+	width: 100%;
+}
+br {
+	width: 10px;
+	height: 10px;
+}
+.spacer {
+	width: 10px;
+	height: 10px;
+}
+.flex-row {
+	display: flex;
+	flex-direction: row;
+}
+.flex-1 {
+	flex: 1;
 }

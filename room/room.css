@@ -34,12 +34,17 @@ header > h1:hover {
 .side-nav {
 	height: 100%;
 	padding: 0rem 0.5rem;
+	display: flex;
+	flex-direction: column;
 	width: min-content;
+}
+
+.side-nav-content {
+	margin-left: 0.5rem;
 }
 
 .side-nav-content > * {
 	display: block;
 	width: 100%;
-	text-align: justify;
 	text-align: right;
 }
