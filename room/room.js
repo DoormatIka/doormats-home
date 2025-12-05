@@ -72,9 +72,10 @@ function loadFile(path) {
 
 const router = new HashRouter();
 router.add("index", (shell, params) => {
-	
+	loadFile("/room/room.html")
+		.then(s => shell.innerHTML = s)
+		.catch(err => shell.innerHTML = "<p>An error occurred.</p>")
 	console.log("is in index", shell, params);
-	return "hiii";
 });
 router.add("about", (params) => { console.log("in the route!", params) });
 router.activateHashRouter();
