@@ -1,5 +1,4 @@
 
-const room = "/room.html"
 // derived from https://github.com/frentsel/eRouter/blob/master/eRouter.js
 // thank you!
 class HashRouter {
@@ -72,60 +71,23 @@ function loadFile(path) {
 
 const router = new HashRouter();
 router.add("index", (shell, params) => {
+	shell.innerHTML = "<p>Loading.</p>"
 	loadFile("/room/room.html")
 		.then(s => shell.innerHTML = s)
 		.catch(err => shell.innerHTML = "<p>An error occurred.</p>")
 	console.log("is in index", shell, params);
 });
-router.add("about", (params) => { console.log("in the route!", params) });
-router.activateHashRouter();
-// read file from a .html file.
-// use a loading screen when the page is still loading!
-/*
-document.addEventListener("DOMContentLoaded", () => {
-	console.log("loaded router");
-	HashRoute([
-		{ 
-			pathname: "home",
-			element: () => {
-				console.log("loading path / into router")
-				const container = document.createElement("div");
-				const loading = makeLoadingDiv();
-				container.append(loading);
-
-				console.log(`container made: ${container}`)
-
-				fetch(room)
-					.then(resp => {
-						if (!resp.ok) {
-							console.log("errored out: hii")
-						}
-						return resp.text();
-					})
-					.then(res => {
-						container.innerHTML = res;
-					})
-					.catch(err => {
-						container.innerHTML = `<h1>Error: ${err}</h1>`
-						console.log(err);
-					});
-
-				return container;
-			}
-		}
-	])
+router.add("about", (params) => {
+	shell.innerHTML = "<p>Loading.</p>"
+	loadFile("/about/index.html")
+		.then(s => shell.innerHTML = s)
+		.catch(err => shell.innerHTML = "<p>An error occurred.</p>")
+	console.log("is in index", shell, params);
 });
-*/
+router.activateHashRouter();
 
 function makeLoadingDiv() {
 	const d = document.createElement("div");
 	d.innerHTML = `<p>Loading…</p>`;
 	return d;
 }
-
-// routeConfig
-// https://github.com/jscodelover/vanilla-routing/blob/main/src/app/common/routeConfig.ts#L57
-//
-// hash routing example
-// https://github.com/jscodelover/vanilla-routing/tree/main/example/hash-route
-//
