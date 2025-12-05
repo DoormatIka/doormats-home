@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	HashRoute([
 		{ 
 			pathname: "/",
-			element: async () => {
+			element: () => {
 				const container = document.createElement("div");
 				const loading = makeLoadingDiv();
 				container.append(loading);
