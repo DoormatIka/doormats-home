@@ -79,9 +79,11 @@ router.add("index", (shell, params) => {
 });
 router.add("about", (params) => {
 	shell.innerHTML = "<p>Loading.</p>"
+	/*
 	loadFile("/about/index.html")
 		.then(s => shell.innerHTML = s)
 		.catch(err => shell.innerHTML = "<p>An error occurred.</p>")
+	*/
 	console.log("is in index", shell, params);
 });
 router.activateHashRouter();
