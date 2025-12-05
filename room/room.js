@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	console.log("loaded router");
 	HashRoute([
 		{ 
-			pathname: "/",
+			pathname: "home/",
 			element: () => {
 				console.log("loading path / into router")
 				const container = document.createElement("div");
@@ -21,7 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
 					.then(resp => {
 						if (!resp.ok) {
 							console.log("errored out: hii")
-							throw new Error("Response!");
 						}
 						return resp.text();
 					})
@@ -30,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
 					})
 					.catch(err => {
 						container.innerHTML = `<h1>Error: ${err}</h1>`
+						console.log(err);
 					});
 
 				return container;
