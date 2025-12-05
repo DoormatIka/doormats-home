@@ -4,42 +4,80 @@ const room = "/room.html"
 // thank you!
 class HashRouter {
 	constructor() {
-		this.hash = "#/";
-		this.routes = {};
+		this._hash = "#/";
+		this._routes = {};
 	}
 	add(route, fn) {
-		this.routes[route] = fn;
+		this._routes[route] = fn;
 	}
-	onHashChange() {
-		window.addEventListener("hashchange", this.onHashChangeInternal, false);
+	activateHashRouter() {
+		window.addEventListener("hashchange", () => this.onHashChangeInternal(), false);
+		document.addEventListener("DOMContentLoaded", () => {
+			console.log("dom content loaded.")
+			// handles switching from normal route to hash route
+			const isSpa = document.querySelector("[data-router]") !== null
+			if (isSpa) {
+				console.log("is spa page!")
+				if (!window.location.hash) {
+					window.location.hash = "#/"
+				}
+				this.onHashChangeInternal();
+			}
+		})
 	}
 	onHashChangeInternal() {
 		// i need to handle normal paths with hash paths too.
 		// e.g: localhost:8000/normalpath/#/hashroutetoo
+		console.log("hash change event fired.")
+
+
 		let uri = window.location.hash;
 		let params;
 
-		if (uri.indexOf(this.hash) === -1)
-			return window.location.hash = this.hash;
+		if (uri.indexOf(this._hash) === -1)
+			return window.location.hash = this._hash;
 
-		uri = uri.split(hash).pop();
+		let hashRoute = uri.split(this._hash).pop();
 
-		if (!uri.length) return this.routes.index();
+		if (hashRoute.length <= 0) 
+			hashRoute = "index";
+		if (!this._routes[hashRoute]) 
+			hashRoute = "notFound";
 
-		if (uri.indexOf('/') > -1) {
-			params = uri.split('/');
-			uri = params.shift();
+		if (hashRoute.indexOf('/') > -1) {
+			params = hashRoute.split('/');
+			hashRoute = params.shift();
 		}
 
-		if (!this.routes[uri])
-			return this.routes.notFound(uri);
-		this.routes[uri].apply(this, params);
+		const shell = document.querySelector("[data-router]");
+		this._routes[hashRoute].apply(this, [shell, params]);
 	}
 	set(path) {
 		// get previous path.
-		window.location.hash = this.hash + path;
+		window.location.hash = this._hash + path;
 	}
 }
+
+function loadFile(path) {
+	return new Promise((res, rej) => {
+		fetch(path)
+			.then(resp => {
+				if (!resp.ok)
+					console.error(`Cannot load HTML file: "${path}"!`);
+				res(resp.text());
+			})
+			.catch(err => rej(err));
+	})
+}
+
+const router = new HashRouter();
+router.add("index", (shell, params) => {
+	
+	console.log("is in index", shell, params);
+	return "hiii";
+});
+router.add("about", (params) => { console.log("in the route!", params) });
+router.activateHashRouter();
 // read file from a .html file.
 // use a loading screen when the page is still loading!
 /*
