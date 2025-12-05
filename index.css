@@ -1,1 +1,50 @@
 
+header {
+	padding: 0px;
+	width: 100%;
+	text-align: center;
+}
+header > h1 {
+	text-shadow: 2px 1px var(--color-primary);
+	transition: text-shadow 0.5s ease-in;
+}
+header > h1:hover {
+	text-shadow: 4px 3px var(--color-primary);
+	transition: text-shadow 0.2s ease-out;
+}
+
+
+.home-content {
+	display: flex;
+	flex-direction: row;
+	width: 100%;
+	height: 100%;
+}
+
+.main-content {
+	gap: 0px;
+	/* border: 1px solid black; */
+	padding: 0.5rem;
+}
+
+.max-item {
+	flex: 1;
+}
+
+.side-nav {
+	height: 100%;
+	padding: 0rem 0.5rem;
+	display: flex;
+	flex-direction: column;
+	width: min-content;
+}
+
+.side-nav-content {
+	margin-left: 0.5rem;
+}
+
+.side-nav-content > * {
+	display: block;
+	width: 100%;
+	text-align: right;
+}
