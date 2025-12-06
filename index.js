@@ -40,21 +40,13 @@ class HashRouter {
 		})
 	}
 	_onHashChange() {
-		console.log("hash change event fired.")
-
 		let uri = window.location.hash;
 		let params;
 
 		if (uri.indexOf(this._hash) === -1)
 			return window.location.hash = this._hash;
 
-		// normalizing
-		// need to make this support custom hashes
-		// make a for loop that converts multiple slashes into one.
-		// regex is hard to read for me..
-		uri = uri
-			.replace(/^#\//, "#/") // remove extra leading slashes
-			.replace(/\/+$/, ""); // remove extra trailing slashes
+		uri = cleanRoutes(uri);
 
 		let hashRoute = uri.split(this._hash).pop();
 
@@ -80,6 +72,16 @@ class HashRouter {
 		window.location.hash = this._hash + path;
 	}
 }
+
+function cleanRoutes(route) {
+	if (typeof route !== "string")
+		throw new Error("route is not a string.");
+
+	return route.replace(/^#\/*/, "")
+		.replace(/\/+/g, "/");
+}
+
+
 
 function loadFile(path) {
 	return new Promise((res, rej) => {
@@ -112,7 +114,5 @@ router.add("about", (shell, params) => {
 router.activate();
 
 function makeLoadingDiv() {
-	const d = document.createElement("div");
-	d.innerHTML = `<p>Loading…</p>`;
-	return d;
+	return `<p>Loading…</p>`;
 }

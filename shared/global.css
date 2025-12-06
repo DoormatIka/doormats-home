@@ -30,6 +30,7 @@ h1 {
   font-style: normal;
 	margin: 0px;
 	color: var(--color-text);
+	font-display: swap;
 }
 .title {
 	font-size: var(--font-size-title);
@@ -38,6 +39,7 @@ h1 {
 	font-style: normal;
 	margin: 0px;
 	color: var(--color-text);
+	font-display: swap;
 }
 h2 {
 	font-size: var(--font-size-second-header);
@@ -47,6 +49,7 @@ h2 {
 	font-style: normal;
 	margin: 0px;
 	color: var(--color-accent);
+	font-display: swap;
 }
 p, a {
 	font-size: var(--font-size-base);
@@ -55,6 +58,7 @@ p, a {
   font-style: normal;
 	margin: 0px;
 	color: var(--color-text);
+	font-display: swap;
 }
 a {
   font-style: italic;
@@ -90,7 +94,6 @@ body {
 .main-container {
 	padding: 0.5rem;
 	border: 1px solid var(--color-text);
-	filter: brightness(103%);
 	background-color: var(--color-base);
 	box-shadow: 15px -8px var(--color-primary);
 	/* move box-shadow in relation to
