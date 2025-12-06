@@ -73,6 +73,11 @@ class HashRouter {
 	}
 }
 
+// to dos: 
+// - localized CSS per route.
+// - local route CSS takes precedence over global CSS
+// - localized JS per route.
+
 function cleanRoutes(route) {
 	if (typeof route !== "string")
 		throw new Error("route is not a string.");
