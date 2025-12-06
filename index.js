@@ -48,6 +48,14 @@ class HashRouter {
 		if (uri.indexOf(this._hash) === -1)
 			return window.location.hash = this._hash;
 
+		// normalizing
+		// need to make this support custom hashes
+		// make a for loop that converts multiple slashes into one.
+		// regex is hard to read for me..
+		uri = uri
+			.replace(/^#\//, "#/") // remove extra leading slashes
+			.replace(/\/+$/, ""); // remove extra trailing slashes
+
 		let hashRoute = uri.split(this._hash).pop();
 
 		if (hashRoute.length <= 0) 
