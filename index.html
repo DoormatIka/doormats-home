@@ -1,9 +1,6 @@
 
 <!DOCTYPE html>
 
-<script>
-</script>
-
 
 <html>
 
@@ -16,8 +13,8 @@
 	<link rel="stylesheet" href="/index.css">
 	<meta name="viewport" content="width=device-width, initial-scale=0.6">
 
-	<script src="/shared/global.js"></script>
-	<script type="module" src="/index.js"></script>
+	<script type="module" src="/shared/global.js" defer></script>
+	<script type="module" src="/index.js" defer></script>
 </head>
 
 <body class="umbrella-background">
@@ -39,6 +36,7 @@
 						<div class="side-nav-content">
 							<a data-route="spa" href="#/">room</a>
 							<a data-route="spa" href="#/about">about</a>
+							<a data-route="spa" href="#/">nue corner</a>
 						</div>
 
 					</div>
@@ -50,3 +48,17 @@
 
 </html>
 
+
+<style>
+	html {
+		visibility: hidden;
+	}
+</style>
+
+<noscript>
+	<style>
+		html {
+			visibility: visible;
+		}
+	</style>
+<noscript>

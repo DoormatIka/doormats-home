@@ -46,5 +46,5 @@ header > h1:hover {
 .side-nav-content > * {
 	display: block;
 	width: 100%;
-	text-align: right;
+	text-align: left;
 }
