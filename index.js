@@ -1,6 +1,20 @@
 
 // derived from https://github.com/frentsel/eRouter/blob/master/eRouter.js
 // thank you!
+/**
+	* The router that handles hash-based routes.
+	* ```js
+	* const router = new HashRouter();
+	* router.add("/route", (shellHTML, params) => {
+		shellHTML.innerHTML = "<h1>Hello!</h1>"
+	* ])
+	* ```
+	* `shell` - the developer can inject HTML in.
+	* `params` - extra parameters from the route
+	* Note: Any hash gets intercepted by this router, please use with caution.
+	*
+	* Special routes: `index` for the root route. `notFound` for an unknown route.
+	*/
 class HashRouter {
 	constructor() {
 		this._hash = "#/";
@@ -8,9 +22,10 @@ class HashRouter {
 	}
 	add(route, fn) {
 		this._routes[route] = fn;
+		return this;
 	}
-	activateHashRouter() {
-		window.addEventListener("hashchange", () => this.onHashChangeInternal(), false);
+	activate() {
+		window.addEventListener("hashchange", () => this._onHashChange(), false);
 		document.addEventListener("DOMContentLoaded", () => {
 			console.log("dom content loaded.")
 			// handles switching from normal route to hash route
@@ -20,15 +35,12 @@ class HashRouter {
 				if (!window.location.hash) {
 					window.location.hash = "#/"
 				}
-				this.onHashChangeInternal();
+				this._onHashChange();
 			}
 		})
 	}
-	onHashChangeInternal() {
-		// i need to handle normal paths with hash paths too.
-		// e.g: localhost:8000/normalpath/#/hashroutetoo
+	_onHashChange() {
 		console.log("hash change event fired.")
-
 
 		let uri = window.location.hash;
 		let params;
@@ -49,6 +61,10 @@ class HashRouter {
 		}
 
 		const shell = document.querySelector("[data-router]");
+		if (!shell.classList.contains("shell")) {
+			shell.classList.add("shell");
+		}
+		
 		this._routes[hashRoute].apply(this, [shell, params]);
 	}
 	set(path) {
@@ -61,8 +77,9 @@ function loadFile(path) {
 	return new Promise((res, rej) => {
 		fetch(path)
 			.then(resp => {
-				if (!resp.ok)
-					console.error(`Cannot load HTML file: "${path}"!`);
+				if (!resp.ok) {
+					rej(`Cannot load HTML file: "${path}"!`)
+				}
 				res(resp.text());
 			})
 			.catch(err => rej(err));
@@ -71,22 +88,20 @@ function loadFile(path) {
 
 const router = new HashRouter();
 router.add("index", (shell, params) => {
-	shell.innerHTML = "<p>Loading.</p>"
-	loadFile("/room/room.html")
+	shell.innerHTML = makeLoadingDiv()
+	loadFile("/pages/room/room.html")
 		.then(s => shell.innerHTML = s)
-		.catch(err => shell.innerHTML = "<p>An error occurred.</p>")
+		.catch(err => shell.innerHTML = `<p>An error occurred. ${err}</p>`)
 	console.log("is in index", shell, params);
 });
-router.add("about", (params) => {
-	shell.innerHTML = "<p>Loading.</p>"
-	/*
-	loadFile("/about/index.html")
+router.add("about", (shell, params) => {
+	shell.innerHTML = makeLoadingDiv()
+	loadFile("/pages/about/index.html")
 		.then(s => shell.innerHTML = s)
-		.catch(err => shell.innerHTML = "<p>An error occurred.</p>")
-	*/
+		.catch(err => shell.innerHTML = `<p>An error occurred. ${err}</p>`)
 	console.log("is in index", shell, params);
 });
-router.activateHashRouter();
+router.activate();
 
 function makeLoadingDiv() {
 	const d = document.createElement("div");
