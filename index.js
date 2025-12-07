@@ -47,7 +47,6 @@ class HashRouter {
 			return window.location.hash = this._hash;
 
 		uri = cleanRoutes(uri);
-
 		let hashRoute = uri.split(this._hash).pop();
 
 		if (hashRoute.length <= 0) 
@@ -61,6 +60,9 @@ class HashRouter {
 		}
 
 		const shell = document.querySelector("[data-router]");
+		if (!shell) {
+			console.warn("No [data-router] in HTML object found!")
+		}
 		if (!shell.classList.contains("shell")) {
 			shell.classList.add("shell");
 		}
@@ -74,9 +76,16 @@ class HashRouter {
 }
 
 // to dos: 
-// - localized CSS per route.
 // - local route CSS takes precedence over global CSS
-// - localized JS per route.
+// - race conditions when the user clicks through links fast
+// - eventListeners from previous JS routes persists. 
+// 		add an exported join and clean up function per JS file.
+// 		keep track of previous and current functions in the hash router.
+/*
+export func join() {
+	return clean() {}
+}	
+*/
 
 function cleanRoutes(route) {
 	if (typeof route !== "string")
