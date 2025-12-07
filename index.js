@@ -101,19 +101,50 @@ function loadFile(path) {
 	})
 }
 
+function loadFileIntoHTML(shell, path) {
+	loadFile(path)
+		.then(res => setInnerHTML(shell, res));
+}
+
+// Source - https://stackoverflow.com/a
+// Posted by allenhwkim, modified by community. See post 'Timeline' for change history
+// Retrieved 2025-12-08, License - CC BY-SA 4.0
+/**
+	* Embed HTML into an element, JS runs in this.
+	* Please do not use this in user facing code.
+	*/
+function setInnerHTML(elm, html) {
+  elm.innerHTML = html;
+  
+  Array.from(elm.querySelectorAll("script"))
+    .forEach( oldScriptEl => {
+      const newScriptEl = document.createElement("script");
+      
+      Array.from(oldScriptEl.attributes).forEach( attr => {
+        newScriptEl.setAttribute(attr.name, attr.value) 
+      });
+      
+      const scriptText = document.createTextNode(oldScriptEl.innerHTML);
+      newScriptEl.appendChild(scriptText);
+      
+      oldScriptEl.parentNode.replaceChild(newScriptEl, oldScriptEl);
+  });
+}
+
+
 const router = new HashRouter();
 router.add("index", (shell, params) => {
-	shell.innerHTML = makeLoadingDiv()
+	setInnerHTML(shell, makeLoadingDiv())
 	loadFile("/pages/room/room.html")
-		.then(s => shell.innerHTML = s)
-		.catch(err => shell.innerHTML = `<p>An error occurred. ${err}</p>`)
+		.then(s => setInnerHTML(shell, s))
+		.catch(err => setInnerHTML(shell, `<p>An error occurred. ${err}</p>`))
 	console.log("is in index", shell, params);
 });
 router.add("about", (shell, params) => {
 	shell.innerHTML = makeLoadingDiv()
 	loadFile("/pages/about/index.html")
-		.then(s => shell.innerHTML = s)
-		.catch(err => shell.innerHTML = `<p>An error occurred. ${err}</p>`)
+		.then(s => setInnerHTML(shell, s))
+		.catch(err => setInnerHTML(shell, `<p>An error occurred. ${err}</p>`))
 	console.log("is in index", shell, params);
 });
 router.activate();
