@@ -1,5 +1,9 @@
 
 
 export function onJoin() {
-	alert("from functiob");
+	console.log("from function");
+
+	return () => {
+		console.log("leaving route!")
+	}
 }

@@ -1,6 +1,14 @@
 
 // derived from https://github.com/frentsel/eRouter/blob/master/eRouter.js
 // thank you!
+
+/**
+	* @callback RouteFunction
+	* @param {Element} el
+	* @param {string[]} params
+	* @returns {Promise<any>}
+	*/
+
 /**
 	* The router that handles hash-based routes.
 	* ```js
@@ -17,12 +25,20 @@
 	*/
 class HashRouter {
 	constructor() {
+		/**
+			* The hash to be used in the website.
+			* @type {string}
+			*/
 		this._hash = "#/";
+		/**
+			*
+			* @type {{ [key: string]: RouteFunction }}
+			*/
 		this._routes = {};
 	}
 	/**
 		* @param {string} route - The route of the website.
-		* @param {function(Element, string[]): Promise} fn - Runs this function when it's on route.
+		* @param {RouteFunction} fn - Runs this function when it's on route.
 		*/
 	add(route, fn) {
 		this._routes[route] = fn;
@@ -43,14 +59,14 @@ class HashRouter {
 			}
 		})
 	}
-	_onHashChange() {
+	async _onHashChange() {
 		let uri = window.location.hash;
 		let params;
 
 		if (uri.indexOf(this._hash) === -1)
 			return window.location.hash = this._hash;
 
-		uri = cleanRoutes(uri);
+		uri = cleanRoute(uri);
 		let hashRoute = uri.split(this._hash).pop();
 
 		if (hashRoute.length <= 0) 
@@ -71,8 +87,12 @@ class HashRouter {
 			shell.classList.add("shell");
 		}
 		
-		this._routes[hashRoute].apply(this, [shell, params]);
+		await this._routes[hashRoute].apply(this, [shell, params]);
+		await runJSinElement(shell);
 	}
+	/**
+		* @param {string} path 
+		*/
 	set(path) {
 		// get previous path.
 		window.location.hash = this._hash + path;
@@ -92,7 +112,10 @@ export func join() {
 }	
 */
 
-function cleanRoutes(route) {
+/**
+	* @param {string} route 
+	*/
+function cleanRoute(route) {
 	if (typeof route !== "string")
 		throw new Error("route is not a string.");
 
@@ -123,74 +146,91 @@ function loadFileIntoHTML(shell, path) {
 }
 
 /**
-	* Runs JS in an element.
-	* Please do not use this in user facing code.
-	* 
-	* @param {Element} elm 
+	* Runs <script> elements inside an element by replacing them
+	* so the browser executes them again.
+	*
+	* @param {Element} elm
 	*/
-function runJSinElement(elm) {
-	for (const oldScriptEl of elm.querySelectorAll("script")) {
-		// const newScriptEl = document.createElement("script");
+async function runJSinElement(elm) {
+    const scripts = elm.querySelectorAll("script");
 
-		for (const attr of oldScriptEl.attributes) {
-			if (attr.name === "src") {
-				if (!attr.value.includes(".js"))
-					continue;
-				console.log(attr);
-				
-				import(/* @vite-ignore */ attr.value) 
-					.then(v => v.onJoin())
-					.catch(err => console.log(err));
-			}
+    for (const oldScript of scripts) {
+        const isFileScript = oldScript.src;
 
-			// newScriptEl.setAttribute(attr.name, attr.value);
-		}
-
-		/*
-		const scriptText = document.createTextNode(oldScriptEl.innerHTML);
-		newScriptEl.appendChild(scriptText);
-
-		oldScriptEl.parentNode.replaceChild(newScriptEl, oldScriptEl);
-		*/
-	}
+        if (isFileScript) {
+            await handleExternalScript(oldScript);
+        } else {
+            executeInlineScript(oldScript);
+        }
+    }
 }
 
+/**
+	* Handles external scripts from src.
+	*
+	* @param {HTMLScriptElement} script
+	*/
+async function handleExternalScript(script) {
+    const src = script.getAttribute("src");
+    if (!src) return;
 
-// todo: make runJSinElement run *after* everything is done in this closure.
-// please just use async/await, its supported in all browsers newer than 2017.
+    try {
+        const mod = await import(/* @vite-ignore */ src);
+
+        if (typeof mod?.onJoin === "function") {
+            await mod.onJoin();
+        }
+    } catch (err) {
+        console.error("Error importing", src, err);
+    }
+}
+
+/**
+	* Handles inline scripts.
+	*
+	* @param {HTMLScriptElement} script
+	*/
+function executeInlineScript(script) {
+    const newScript = document.createElement("script");
+
+    for (const { name, value } of script.attributes) {
+        newScript.setAttribute(name, value);
+    }
+
+	console.warn("From the hash router: " +
+		"Please do NOT put event listeners on inline scripts. " +
+		"It will cause a memory leak. " +
+		"Put them on JS files instead with onJoin()."
+	)
+
+    newScript.textContent = script.textContent;
+    script.replaceWith(newScript);
+}
+
 const router = new HashRouter();
-router.add("index", (shell, params) => {
+router.add("index", async (shell, params) => {
 	shell.innerHTML = makeLoadingDiv();
-
-	return new Promise((res, rej) => {
-		loadFile("/pages/room/room.html")
-			.then(s => {
-				shell.innerHTML = s;
-				runJSinElement(shell);
-			})
-			.catch(err => {
-				shell.innerHTML = formatErrors(err);
-			});
-	})
+	try {
+		const html = await loadFile("/pages/room/room.html")
+		shell.innerHTML = html;
+	} catch (err) {
+		shell.innerHTML = formatErrors(err);
+	}
 
 });
-router.add("about", (shell, params) => {
+router.add("about", async (shell, params) => {
 	shell.innerHTML = makeLoadingDiv();
-	loadFile("/pages/about/index.html")
-		.then(s => {
-			shell.innerHTML = s;
-			// runJSinElement(shell);
-		})
-		.catch(err => shell.innerHTML = formatErrors(err));
-
-	console.log(shell);
-
-	
+	try {
+		const html = await loadFile("/pages/about/index.html")
+		shell.innerHTML = html;
+	} catch (err) {
+		shell.innerHTML = formatErrors(err);
+	}
 });
 router.activate();
 
 function makeLoadingDiv() {
-	return `<p>Loading…</p>`;
+	return `<span class>Loading… <p>Please enable JS.<p></span>`;
 }
 function formatErrors(err) {
 	return `<p>An error occurred. ${err}</p>`;
