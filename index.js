@@ -78,6 +78,7 @@ class HashRouter {
 // to dos: 
 // - local route CSS takes precedence over global CSS
 // - race conditions when the user clicks through links fast
+//     - if the id is not 
 // - eventListeners from previous JS routes persists. 
 // 		add an exported join and clean up function per JS file.
 // 		keep track of previous and current functions in the hash router.
@@ -121,23 +122,39 @@ function loadFileIntoHTML(shell, path) {
 /**
 	* Embed HTML into an element, JS runs in this.
 	* Please do not use this in user facing code.
+	* 
+	* @param {Document} elm 
+	* @param {string} html 
 	*/
 function setInnerHTML(elm, html) {
-  elm.innerHTML = html;
-  
-  Array.from(elm.querySelectorAll("script"))
-    .forEach( oldScriptEl => {
-      const newScriptEl = document.createElement("script");
-      
-      Array.from(oldScriptEl.attributes).forEach( attr => {
-        newScriptEl.setAttribute(attr.name, attr.value) 
-      });
-      
-      const scriptText = document.createTextNode(oldScriptEl.innerHTML);
-      newScriptEl.appendChild(scriptText);
-      
-      oldScriptEl.parentNode.replaceChild(newScriptEl, oldScriptEl);
-  });
+	elm.innerHTML = html;
+
+	for (const oldScriptEl of elm.querySelectorAll("script")) {
+		const newScriptEl = document.createElement("script");
+
+		for (const attr of oldScriptEl.attributes) {
+			const printEl = document.createElement("p")
+			printEl.textContent += `${attr.name}: ${attr.value}`
+			elm.appendChild(printEl);
+			
+			if (attr.name === "src") {
+				import(attr.value)
+					.then(v => {
+						v.testfn()
+						// works splendidly.
+						// track whenever the user moves away from the route.
+					})
+					.catch(err => printEl.textContent += ` X ${err}`)
+			}
+
+			newScriptEl.setAttribute(attr.name, attr.value);
+		}
+
+		const scriptText = document.createTextNode(oldScriptEl.innerHTML);
+		newScriptEl.appendChild(scriptText);
+
+		oldScriptEl.parentNode.replaceChild(newScriptEl, oldScriptEl);
+	}
 }
 
 
