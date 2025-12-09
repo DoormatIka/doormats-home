@@ -1,6 +1,5 @@
 
-alert("from file");
 
-export function testfn() {
+export function onJoin() {
 	alert("from functiob");
 }
