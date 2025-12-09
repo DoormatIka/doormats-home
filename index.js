@@ -8,6 +8,10 @@
 	* @param {string[]} params
 	* @returns {Promise<any>}
 	*/
+/**
+	* @callback OnJoinFunction
+	* @returns {Promise<() => Promise<void>>}
+	*/
 
 /**
 	* The router that handles hash-based routes.
@@ -103,7 +107,8 @@ class HashRouter {
 // - local route CSS takes precedence over global CSS
 // - race conditions when the user clicks through links fast
 //     - if the id is not 
-// - eventListeners from previous JS routes persists. 
+//
+// - on TODO1: eventListeners from previous JS routes persists. 
 // 		add an exported join and clean up function per JS file.
 // 		keep track of previous and current functions in the hash router.
 /*
@@ -167,6 +172,7 @@ async function runJSinElement(elm) {
 
 /**
 	* Handles external scripts from src.
+	* Returns a cleanup function. TODO1: CONNECT THIS.
 	*
 	* @param {HTMLScriptElement} script
 	*/
@@ -176,9 +182,11 @@ async function handleExternalScript(script) {
 
     try {
         const mod = await import(/* @vite-ignore */ src);
+		/** @type {OnJoinFunction | null} */
+		const onJoin = mod?.onJoin;
 
-        if (typeof mod?.onJoin === "function") {
-            await mod.onJoin();
+        if (typeof onJoin === "function") {
+            return await onJoin();
         }
     } catch (err) {
         console.error("Error importing", src, err);
@@ -230,7 +238,7 @@ router.add("about", async (shell, params) => {
 router.activate();
 
 function makeLoadingDiv() {
-	return `<span class>Loading… <p>Please enable JS.<p></span>`;
+	return `<span class="coming-soon">Loading… <p style="color: red">Please enable JS.<p></span>`;
 }
 function formatErrors(err) {
 	return `<p>An error occurred. ${err}</p>`;
