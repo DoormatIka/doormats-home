@@ -17,6 +17,9 @@
 
 	--color-accent-light: rgb(182 142 219);
 	--highlight-color: rgba(186 205 176 / 0.2);
+	--gloria-font-path: url("/shared/fonts/GloriaHallelujah-Regular.ttf");
+	--reenie-font-path: url("/shared/fonts/ReenieBeanie-Regular.ttf");
+	--coming-font-path: url("/shared/fonts/ComingSoon-Regular.ttf");
 }
 
 html {
@@ -26,6 +29,7 @@ html {
 h1 {
 	font-size: var(--font-size-header);
   font-family: "Gloria Hallelujah", cursive;
+	src: var(--gloria-font-path) format("truetype");
   font-weight: 400;
   font-style: normal;
 	margin: 0px;
@@ -35,6 +39,7 @@ h1 {
 .title {
 	font-size: var(--font-size-title);
 	font-family: "Gloria Hallelujah", cursive;
+	src: var(--gloria-font-path) format("truetype");
 	font-weight: 400;
 	font-style: normal;
 	margin: 0px;
@@ -44,7 +49,7 @@ h1 {
 h2 {
 	font-size: var(--font-size-second-header);
 	font-family: "Reenie Beanie", cursive;
-	/* yomogi looks bad as a header font. */
+	src: var(--reenie-font-path) format("truetype");
 	font-weight: 400;
 	font-style: normal;
 	margin: 0px;
@@ -54,6 +59,7 @@ h2 {
 p, a {
 	font-size: var(--font-size-base);
   font-family: "Coming Soon", cursive;
+	src: var(--coming-font-path) format("truetype");
   font-weight: 400;
   font-style: normal;
 	margin: 0px;
