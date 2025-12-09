@@ -20,6 +20,10 @@ class HashRouter {
 		this._hash = "#/";
 		this._routes = {};
 	}
+	/**
+		* @param {string} route - The route of the website.
+		* @param {function(Element, string[]): Promise} fn - Runs this function when it's on route.
+		*/
 	add(route, fn) {
 		this._routes[route] = fn;
 		return this;
@@ -96,8 +100,10 @@ function cleanRoutes(route) {
 		.replace(/\/+/g, "/");
 }
 
-
-
+/**
+	* Loads file into text.
+	* @param {string} path 
+	*/
 function loadFile(path) {
 	return new Promise((res, rej) => {
 		fetch(path)
@@ -116,65 +122,76 @@ function loadFileIntoHTML(shell, path) {
 		.then(res => setInnerHTML(shell, res));
 }
 
-// Source - https://stackoverflow.com/a
-// Posted by allenhwkim, modified by community. See post 'Timeline' for change history
-// Retrieved 2025-12-08, License - CC BY-SA 4.0
 /**
-	* Embed HTML into an element, JS runs in this.
+	* Runs JS in an element.
 	* Please do not use this in user facing code.
 	* 
-	* @param {Document} elm 
-	* @param {string} html 
+	* @param {Element} elm 
 	*/
-function setInnerHTML(elm, html) {
-	elm.innerHTML = html;
-
+function runJSinElement(elm) {
 	for (const oldScriptEl of elm.querySelectorAll("script")) {
-		const newScriptEl = document.createElement("script");
+		// const newScriptEl = document.createElement("script");
 
 		for (const attr of oldScriptEl.attributes) {
-			const printEl = document.createElement("p")
-			printEl.textContent += `${attr.name}: ${attr.value}`
-			elm.appendChild(printEl);
-			
 			if (attr.name === "src") {
-				import(attr.value)
-					.then(v => {
-						v.testfn()
-						// works splendidly.
-						// track whenever the user moves away from the route.
-					})
-					.catch(err => printEl.textContent += ` X ${err}`)
+				if (!attr.value.includes(".js"))
+					continue;
+				console.log(attr);
+				
+				import(/* @vite-ignore */ attr.value) 
+					.then(v => v.onJoin())
+					.catch(err => console.log(err));
 			}
 
-			newScriptEl.setAttribute(attr.name, attr.value);
+			// newScriptEl.setAttribute(attr.name, attr.value);
 		}
 
+		/*
 		const scriptText = document.createTextNode(oldScriptEl.innerHTML);
 		newScriptEl.appendChild(scriptText);
 
 		oldScriptEl.parentNode.replaceChild(newScriptEl, oldScriptEl);
+		*/
 	}
 }
 
 
+// todo: make runJSinElement run *after* everything is done in this closure.
+// please just use async/await, its supported in all browsers newer than 2017.
 const router = new HashRouter();
 router.add("index", (shell, params) => {
-	setInnerHTML(shell, makeLoadingDiv())
-	loadFile("/pages/room/room.html")
-		.then(s => setInnerHTML(shell, s))
-		.catch(err => setInnerHTML(shell, `<p>An error occurred. ${err}</p>`))
-	console.log("is in index", shell, params);
+	shell.innerHTML = makeLoadingDiv();
+
+	return new Promise((res, rej) => {
+		loadFile("/pages/room/room.html")
+			.then(s => {
+				shell.innerHTML = s;
+				runJSinElement(shell);
+			})
+			.catch(err => {
+				shell.innerHTML = formatErrors(err);
+			});
+	})
+
 });
 router.add("about", (shell, params) => {
-	shell.innerHTML = makeLoadingDiv()
+	shell.innerHTML = makeLoadingDiv();
 	loadFile("/pages/about/index.html")
-		.then(s => setInnerHTML(shell, s))
-		.catch(err => setInnerHTML(shell, `<p>An error occurred. ${err}</p>`))
-	console.log("is in index", shell, params);
+		.then(s => {
+			shell.innerHTML = s;
+			// runJSinElement(shell);
+		})
+		.catch(err => shell.innerHTML = formatErrors(err));
+
+	console.log(shell);
+
+	
 });
 router.activate();
 
 function makeLoadingDiv() {
 	return `<p>Loading…</p>`;
+}
+function formatErrors(err) {
+	return `<p>An error occurred. ${err}</p>`;
 }
