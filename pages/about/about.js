@@ -1,6 +1,6 @@
 
 
-export function onJoin() {
+export async function onJoin() {
 	console.log("from function");
 
 	return () => {
