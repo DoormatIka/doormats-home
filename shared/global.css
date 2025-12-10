@@ -6,9 +6,9 @@
 	--font-size-second-header: 2rem;
 	--font-size-base: 1rem;
 	--font-size-title: 1.6rem;
-	--font-size-light: 0.5rem;
+	--font-size-light: 0.85rem;
 
-	--color-base: rgb(243 232 238);
+	--color-base: rgb(253 242 230);
 	--color-text: rgb(5 5 5);
 	--color-text-light: rgb(100 100 100);
 	--color-primary: rgb(186 205 176);
@@ -64,7 +64,7 @@ h2 {
 	font-weight: 400;
 	font-style: normal;
 	margin: 0px;
-	color: var(--color-accent);
+	color: var(--color-secondary);
 	font-display: swap;
 
 	text-shadow: 2px 1px var(--color-primary);
@@ -87,7 +87,7 @@ p, a, .coming-soon {
 }
 .small-text {
 	font-weight: 300;
-	font-size: small;
+	font-size: var(--font-size-light);
 }
 a {
   font-style: italic;
@@ -165,3 +165,4 @@ br {
 .flex-1 {
 	flex: 1;
 }
+
