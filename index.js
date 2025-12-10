@@ -39,6 +39,11 @@ class HashRouter {
 			* @type {{ [key: string]: RouteFunction }}
 			*/
 		this._routes = {};
+		/**
+			*
+			* @type {() => Promise<void>}
+			*/
+		this._previousPageCleanup = () => {};
 	}
 	/**
 		* @param {string} route - The route of the website.
@@ -67,6 +72,8 @@ class HashRouter {
 		let uri = window.location.hash;
 		let params;
 
+		await this._previousPageCleanup(); // should work?
+
 		if (uri.indexOf(this._hash) === -1)
 			return window.location.hash = this._hash;
 
@@ -92,13 +99,13 @@ class HashRouter {
 		}
 		
 		await this._routes[hashRoute].apply(this, [shell, params]);
-		await runJSinElement(shell);
+		this._previousPageCleanup = (await runJSinElement(shell)) 
+			?? (() => {});
 	}
 	/**
 		* @param {string} path 
 		*/
 	set(path) {
-		// get previous path.
 		window.location.hash = this._hash + path;
 	}
 }
@@ -163,7 +170,7 @@ async function runJSinElement(elm) {
         const isFileScript = oldScript.src;
 
         if (isFileScript) {
-            await handleExternalScript(oldScript);
+            return await handleExternalScript(oldScript);
         } else {
             executeInlineScript(oldScript);
         }
