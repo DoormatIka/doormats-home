@@ -14,12 +14,17 @@ header {
 
 .main-content {
 	gap: 0px;
-	/* border: 1px solid black; */
-	padding: 0.5rem;
+	margin: 0.5rem 0rem 0.5rem 0.5rem;
 }
 
 .max-item {
 	flex: 1;
+}
+.flex-scrollable {
+	gap: 0px;
+	overflow: auto;
+	min-height: 0;
+	scrollbar-width: thin;
 }
 
 .side-nav {

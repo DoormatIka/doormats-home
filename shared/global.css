@@ -1,4 +1,6 @@
 
+@import url("/shared/cursor.css");
+
 :root {
 	--font-size-header: 2rem;
 	--font-size-second-header: 2rem;
@@ -10,6 +12,7 @@
 	--color-text: rgb(5 5 5);
 	--color-text-light: rgb(100 100 100);
 	--color-primary: rgb(186 205 176);
+	--color-primary-transparent: rgba(186, 205, 176, 0.8);
 	--color-primary-content: rgb(46 44 47);
 	--color-secondary: rgb(19 111 99);
 	--color-secondary-content: rgb(243 232 238);
@@ -40,6 +43,7 @@ h1 {
   font-weight: 400;
   font-style: normal;
 	margin: 0px;
+	padding: 0px;
 	color: var(--color-text);
 
 	text-shadow: 2px 1px var(--color-primary);
@@ -124,11 +128,7 @@ body {
 	padding: 0.5rem;
 	border: 1px solid var(--color-text);
 	background-color: var(--color-base);
-	box-shadow: 15px -8px var(--color-primary);
-	/* move box-shadow in relation to
-	 * the direction of the mouse 
-	 * from the div.
-	*/
+	box-shadow: 15px -8px var(--color-primary-transparent);
 }
 .big-box {
 	width: 30rem;
