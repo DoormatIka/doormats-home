@@ -98,6 +98,10 @@ body {
 	height: 100vh;
 }
 
+.shell {
+	transition: all 0.3 ease-in;
+}
+
 .center {
 	display: flex;
 	justify-content: center;
