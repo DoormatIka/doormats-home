@@ -89,6 +89,9 @@ p, a, .coming-soon {
 	font-weight: 300;
 	font-size: var(--font-size-light);
 }
+.light-color {
+	color: var(--color-text-light);
+}
 a {
   font-style: italic;
 	text-decoration: none;
