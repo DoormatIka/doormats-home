@@ -41,9 +41,9 @@ class HashRouter {
 		this._routes = {};
 		/**
 			*
-			* @type {() => Promise<void>}
+			* @type {Array<() => Promise<void>>}
 			*/
-		this._previousPageCleanup = () => {};
+		this._previousPageCleanupFunction = [];
 	}
 	/**
 		* @param {string} route - The route of the website.
@@ -72,7 +72,7 @@ class HashRouter {
 		let uri = window.location.hash;
 		let params;
 
-		await this._previousPageCleanup(); // should work?
+		await Promise.all(this._previousPageCleanupFunction.map(c => c()));
 
 		if (uri.indexOf(this._hash) === -1)
 			return window.location.hash = this._hash;
@@ -99,8 +99,8 @@ class HashRouter {
 		}
 		
 		await this._routes[hashRoute].apply(this, [shell, params]);
-		this._previousPageCleanup = (await runJSinElement(shell)) 
-			?? (() => {});
+		
+		this._previousPageCleanupFunction = await runJSinElement(shell);
 	}
 	/**
 		* @param {string} path 
@@ -111,18 +111,7 @@ class HashRouter {
 }
 
 // to dos: 
-// - local route CSS takes precedence over global CSS
-// - race conditions when the user clicks through links fast
-//     - if the id is not 
-//
-// - on TODO1: eventListeners from previous JS routes persists. 
-// 		add an exported join and clean up function per JS file.
-// 		keep track of previous and current functions in the hash router.
-/*
-export func join() {
-	return clean() {}
-}	
-*/
+// - local route CSS should take precedence over global CSS
 
 /**
 	* @param {string} route 
@@ -165,16 +154,20 @@ function loadFileIntoHTML(shell, path) {
 	*/
 async function runJSinElement(elm) {
     const scripts = elm.querySelectorAll("script");
+	/** @type {Array<() => Promise<void>>} */
+	const cleanupFunctions = [];
 
     for (const oldScript of scripts) {
         const isFileScript = oldScript.src;
 
         if (isFileScript) {
-            return await handleExternalScript(oldScript);
+            cleanupFunctions.push(await handleExternalScript(oldScript));
         } else {
             executeInlineScript(oldScript);
         }
     }
+
+	return cleanupFunctions;
 }
 
 /**
@@ -185,7 +178,8 @@ async function runJSinElement(elm) {
 	*/
 async function handleExternalScript(script) {
     const src = script.getAttribute("src");
-    if (!src) return;
+    if (!src) 
+		return () => {};
 
     try {
         const mod = await import(/* @vite-ignore */ src);
@@ -198,6 +192,8 @@ async function handleExternalScript(script) {
     } catch (err) {
         console.error("Error importing", src, err);
     }
+
+	return () => {};
 }
 
 /**
@@ -212,11 +208,13 @@ function executeInlineScript(script) {
         newScript.setAttribute(name, value);
     }
 
-	console.warn("From the hash router: " +
-		"Please do NOT put event listeners on inline scripts. " +
-		"It will cause a memory leak. " +
-		"Put them on JS files instead with onJoin()."
-	)
+	if (!new Boolean(script.dataset.nowarn)) {
+		console.warn("From the hash router: " +
+			"Please do NOT put event listeners on inline scripts. " +
+			"It will cause a memory leak. " +
+			"Put them on JS files instead with onJoin()."
+		)
+	}
 
     newScript.textContent = script.textContent;
     script.replaceWith(newScript);

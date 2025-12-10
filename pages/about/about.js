@@ -1,9 +1,11 @@
 
 
 export async function onJoin() {
-	console.log("from function");
+	const time = setTimeout(() => console.log("setTimeout."), 3000);
 
 	return () => {
-		console.log("leaving route!")
+		console.log(`closed ID: ${time}`);
+		clearTimeout(time);
 	}
 }
+
