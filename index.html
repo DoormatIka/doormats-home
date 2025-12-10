@@ -19,12 +19,38 @@
 
 <body class="umbrella-background">
 	<div class="center">
+		<div 
+			class="cursor"
+			data-ease="1/125"
+			style="mix-blend-mode: color-burn; 
+				width: 800px; 
+				height: 800px; 
+				opacity: 0.2;
+				background-color: var(--color-secondary);" 
+		></div>
+		<div
+			class="cursor"
+			data-ease="1/25"
+			style="mix-blend-mode: difference; 
+				width: 600px; 
+				height: 600px; 
+				opacity: 0.5;
+				background-color: var(--color-accent);" 
+		></div>
+		<div
+			class="cursor"
+			data-ease="1/10"
+			style="mix-blend-mode: difference; 
+				width: 200px; 
+				height: 200px; 
+				background-color: var(--color-accent);" 
+		></div>
+
 		<div class="main-container big-box">
 			
 			<div class="max-item home-content">
-				<main data-router="spa" class="max-item main-content">
+				<main data-router="spa" class="max-item main-content flex-scrollable">
 					<p>Please enable JS for this page!</p>
-					<!-- USE HASH ROUTING FOR THIS PAGE -->
 				</main>
 				<nav class="side-nav">
 					<header>

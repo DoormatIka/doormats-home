@@ -1,0 +1,18 @@
+
+
+.cursor {
+	position: fixed;
+	pointer-events: none;
+
+	width: 500px;
+	height: 500px;
+	border-radius: 50%;
+	background-color: var(--color-accent);
+	transform: translate(-50%, -50%);
+	transition: transform 0.1s ease-out;
+	z-index: -1;
+
+	opacity: 60%;
+}
+
+
