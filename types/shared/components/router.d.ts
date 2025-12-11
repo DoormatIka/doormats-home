@@ -1,9 +1,4 @@
 /**
-    * Loads file into text.
-    * @param {string} path
-    */
-export function loadFile(path: string): Promise<any>;
-/**
     * @callback RouteFunction
     * @param {Element} el
     * @param {string[]} params
