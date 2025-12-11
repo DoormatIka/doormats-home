@@ -21,21 +21,21 @@
 	<div class="center">
 		<div 
 			class="cursor"
-			data-ease="1/125"
+			data-ease="1/200"
 			style="mix-blend-mode: hard-light; 
 				width: 800px; 
 				height: 800px; 
 				opacity: 0.2;
-				background-color: var(--color-secondary);" 
+				background-color: var(--color-accent);" 
 		></div>
 		<div
 			class="cursor"
-			data-ease="1/25"
-			style="mix-blend-mode: difference; 
+			data-ease="1/50"
+			style="mix-blend-mode: hard-light; 
 				width: 600px; 
 				height: 600px; 
-				opacity: 0.5;
-				background-color: var(--color-accent);" 
+				opacity: 0.35;
+				background-color: var(--color-accent-shade);" 
 		></div>
 		<div
 			class="cursor"
@@ -47,23 +47,25 @@
 		></div>
 
 		<div class="main-container big-box">
+			<div class="scrollbar-thumb"></div>
 			
 			<div class="max-item home-content">
-				<main data-router="spa" class="max-item main-content flex-scrollable">
+				<main data-router="spa" class="max-item main-content flex-scrollable shell">
 					<p>Please enable JS for this page!</p>
 				</main>
+
 				<nav class="side-nav">
 					<header>
 						<h1 class="title">doormat's</h1>
 					</header>
 					<div class="flex-row flex-1" style="padding-bottom: 1rem;">
 						<div class="spacer"></div>
-						<div class="divider-vertical"></div>
+						<div class="divider-vertical scrollbar"></div>
 						<div class="side-nav-content">
 							<a data-route="spa" href="#/">room</a>
 							<a data-route="spa" href="#/about">about</a>
+							<a data-route="spa" href="#/shrines">shrines</a>
 						</div>
-
 					</div>
 				</nav>
 			</div>

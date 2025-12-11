@@ -1,5 +1,5 @@
 
-@import url("/shared/cursor.css");
+@import url("/shared/functional.css");
 
 :root {
 	--font-size-header: 2rem;
@@ -11,15 +11,19 @@
 	--color-base: rgb(253 242 230);
 	--color-text: rgb(5 5 5);
 	--color-text-light: rgb(100 100 100);
+
 	--color-primary: rgb(186 205 176);
 	--color-primary-transparent: rgba(186, 205, 176, 0.8);
 	--color-primary-content: rgb(46 44 47);
+
 	--color-secondary: rgb(19 111 99);
 	--color-secondary-content: rgb(243 232 238);
-	--color-accent: rgb(106 50 159);
 
-	--color-accent-light: rgb(162 122 199);
-	--highlight-color: rgba(186 205 176 / 0.2);
+	--color-accent: rgb(184 115 51);
+	--color-accent-shade: rgb(154 85 21);
+	--color-accent-light: rgb(214 142 91);
+
+	--highlight-color: rgba(186, 205, 176, 0.2);
 }
 
 @font-face {
@@ -128,10 +132,21 @@ body {
 	flex-direction: column;
 }
 .main-container {
+	position: relative;
 	padding: 0.5rem;
 	border: 1px solid var(--color-text);
 	background-color: var(--color-base);
-	box-shadow: 15px -8px var(--color-primary-transparent);
+}
+.main-container::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: -1;
+	box-shadow: var(--color-text-light) 10px 10px;
+	mix-blend-mode: hard-light;
 }
 .big-box {
 	width: 30rem;

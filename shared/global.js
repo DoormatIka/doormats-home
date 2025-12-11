@@ -21,23 +21,26 @@ document.addEventListener("DOMContentLoaded", () => {
 	document.fonts.ready.then(() => {
 		document.documentElement.style.visibility = "visible";
 
+		/** @type {NodeListOf<HTMLDivElement>} */
 		const divCursors = document.querySelectorAll(".cursor");
 		for (let i = 0; i < divCursors.length; i++) {
 			const cursor = divCursors[i];
 			// shhh... it's fine. eval is fine.
 			const ease = eval(cursor.getAttribute("data-ease"));
+			const width = document.body.clientWidth / 2;
+			const height = document.body.clientHeight / 2;
+
 			if (typeof ease !== "number") {
 				console.error(`[data-ease] is NOT a number: ${ease}`)
 				continue;
 			}
-			console.log(document.body.scrollWidth / 2);
 			cursors.push({ 
 				div: cursor,
 				ease: ease ?? 1/50,
-				cursorX: 0,
-				cursorY: 0,
-				targetX: document.body.clientWidth / 2,
-				targetY: document.body.clientHeight / 2,
+				cursorX: width + (i * 15),
+				cursorY: height + (i * 15),
+				targetX: width,
+				targetY: height,
 			});
 		}
 
@@ -63,5 +66,4 @@ document.addEventListener("mousemove", (e) => {
 		cursor.targetX = e.clientX;
 		cursor.targetY = e.clientY;
 	}
-
 });
