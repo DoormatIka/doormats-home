@@ -15,4 +15,14 @@
 	opacity: 60%;
 }
 
-
+/* Needed for the scrollbar! */
+.scrollbar-thumb {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 20px;
+	height: 20px;
+	z-index: 10;
+	border-radius: 50%;
+	border: 3px solid var(--color-text-light);
+}

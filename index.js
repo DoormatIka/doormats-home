@@ -27,7 +27,7 @@
 	*
 	* Special routes: `index` for the root route. `notFound` for an unknown route.
 	*/
-class HashRouter {
+export class HashRouter {
 	constructor() {
 		/**
 			* The hash to be used in the website.
@@ -128,7 +128,7 @@ function cleanRoute(route) {
 	* Loads file into text.
 	* @param {string} path 
 	*/
-function loadFile(path) {
+export function loadFile(path) {
 	return new Promise((res, rej) => {
 		fetch(path)
 			.then(resp => {
@@ -141,10 +141,6 @@ function loadFile(path) {
 	})
 }
 
-function loadFileIntoHTML(shell, path) {
-	loadFile(path)
-		.then(res => setInnerHTML(shell, res));
-}
 
 /**
 	* Runs <script> elements inside an element by replacing them
@@ -220,6 +216,15 @@ function executeInlineScript(script) {
     script.replaceWith(newScript);
 }
 
+////////// APP CODE HERE ///////////
+
+function makeLoadingDiv() {
+	return `<span class="coming-soon">Loading… <p style="color: red">Please enable JS.<p></span>`;
+}
+function formatErrors(err) {
+	return `<p>An error occurred. ${err}</p>`;
+}
+
 const router = new HashRouter();
 router.add("index", async (shell, params) => {
 	shell.innerHTML = makeLoadingDiv();
@@ -240,11 +245,14 @@ router.add("about", async (shell, params) => {
 		shell.innerHTML = formatErrors(err);
 	}
 });
+router.add("shrines", async (shell, params) => {
+	shell.innerHTML = makeLoadingDiv();
+	try {
+		const html = await loadFile("/pages/shrines/shrines.html")
+		shell.innerHTML = html;
+	} catch (err) {
+		shell.innerHTML = formatErrors(err);
+	}
+});
 router.activate();
 
-function makeLoadingDiv() {
-	return `<span class="coming-soon">Loading… <p style="color: red">Please enable JS.<p></span>`;
-}
-function formatErrors(err) {
-	return `<p>An error occurred. ${err}</p>`;
-}
