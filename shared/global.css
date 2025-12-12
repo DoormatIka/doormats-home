@@ -9,11 +9,12 @@
 	--font-size-light: 0.85rem;
 
 	--color-base: rgb(253 242 230);
+	--color-base-half-transparent: rgba(253, 242, 230, 0.6);
 	--color-text: rgb(5 5 5);
 	--color-text-light: rgb(100 100 100);
 
 	--color-primary: rgb(186 205 176);
-	--color-primary-transparent: rgba(186, 205, 176, 0.8);
+	--color-primary-transparent: rgba(186, 205, 176, 0.6);
 	--color-primary-content: rgb(46 44 47);
 
 	--color-secondary: rgb(19 111 99);
@@ -89,6 +90,10 @@ p, a, .coming-soon {
 	color: var(--color-text);
 	font-display: swap;
 }
+*::selection {
+	background-color: var(--color-primary-transparent);
+}
+
 .small-text {
 	font-weight: 300;
 	font-size: var(--font-size-light);
@@ -135,7 +140,9 @@ body {
 	position: relative;
 	padding: 0.5rem;
 	border: 1px solid var(--color-text);
-	background-color: var(--color-base);
+	background-color: var(--color-base-half-transparent);
+	backdrop-filter: blur(10px);
+	z-index: 0;
 }
 .main-container::before {
 	content: "";
@@ -145,8 +152,8 @@ body {
 	bottom: 0;
 	left: 0;
 	z-index: -1;
+	opacity: 0.3;
 	box-shadow: var(--color-text-light) 10px 10px;
-	mix-blend-mode: hard-light;
 }
 .big-box {
 	width: 30rem;

@@ -134,7 +134,8 @@ async function runJSinElement(elm) {
 	/** @type {Array<() => Promise<void>>} */
 	const cleanupFunctions = [];
 
-    for (const oldScript of scripts) {
+	for (let i = 0; i < scripts.length; i++) {
+		const oldScript = scripts[i];
         const isFileScript = oldScript.src;
 
         if (isFileScript) {
@@ -142,7 +143,7 @@ async function runJSinElement(elm) {
         } else {
             executeInlineScript(oldScript);
         }
-    }
+	}
 
 	return cleanupFunctions;
 }
@@ -183,9 +184,10 @@ async function handleExternalScript(script) {
 function executeInlineScript(script) {
     const newScript = document.createElement("script");
 
-    for (const { name, value } of script.attributes) {
+	for (let i = 0; i < script.attributes.length; i++) {
+		const { name, value } = script.attributes[i];
         newScript.setAttribute(name, value);
-    }
+	}
 
 	if (!new Boolean(script.dataset.nowarn)) {
 		console.warn("From the hash router: " +

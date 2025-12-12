@@ -2,7 +2,6 @@
 // derived from https://github.com/frentsel/eRouter/blob/master/eRouter.js
 // thank you!
 
-
 import { HashRouter } from "/shared/components/router.js";
 
 /**
