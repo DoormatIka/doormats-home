@@ -20,9 +20,10 @@
 	position: absolute;
 	top: 0;
 	left: 0;
-	width: 20px;
-	height: 20px;
+	width: 10px;
+	height: 10px;
 	z-index: 10;
 	border-radius: 50%;
 	border: 3px solid var(--color-text-light);
+	background-color: var(--color-base);
 }
