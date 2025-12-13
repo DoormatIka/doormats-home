@@ -63,6 +63,7 @@ export function initializeScrollbar() {
 		e.stopPropagation();
 	})
 
+	/*
 	line.addEventListener("click", (e) => {
 		if (e.target === thumb || !isDivScrollable(shell)) return;
 
@@ -74,6 +75,7 @@ export function initializeScrollbar() {
 		const scrollRatio = newY / (line.clientHeight - thumb.clientHeight);
 		shell.scrollTop = scrollRatio * (shell.scrollHeight - shell.clientHeight);
 	})
+	*/
 
 	line.addEventListener("wheel", (e) => {
 		e.preventDefault();
