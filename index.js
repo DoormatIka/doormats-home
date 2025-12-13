@@ -3,6 +3,7 @@
 // thank you!
 
 import { HashRouter } from "/shared/components/router.js";
+import { resizeScrollbar, positionScrollbar } from "/shared/components/scrollbar";
 
 /**
 	* Loads file into text.
@@ -26,9 +27,13 @@ export function loadFile(path) {
 function makeLoadingDiv() {
 	return `<span class="coming-soon">Loading… <p style="color: red">Please enable JS.<p></span>`;
 }
+/**
+	* @param {string} err 
+	*/
 function formatErrors(err) {
 	return `<p>An error occurred. ${err}</p>`;
 }
+
 
 const router = new HashRouter();
 router.add("index", async (shell, params) => {
@@ -40,6 +45,8 @@ router.add("index", async (shell, params) => {
 		shell.innerHTML = formatErrors(err);
 	}
 
+	resizeScrollbar();
+	positionScrollbar();
 });
 router.add("about", async (shell, params) => {
 	shell.innerHTML = makeLoadingDiv();
@@ -49,6 +56,9 @@ router.add("about", async (shell, params) => {
 	} catch (err) {
 		shell.innerHTML = formatErrors(err);
 	}
+
+	resizeScrollbar();
+	positionScrollbar();
 });
 router.add("shrines", async (shell, params) => {
 	shell.innerHTML = makeLoadingDiv();
@@ -58,6 +68,9 @@ router.add("shrines", async (shell, params) => {
 	} catch (err) {
 		shell.innerHTML = formatErrors(err);
 	}
+
+	resizeScrollbar();
+	positionScrollbar();
 });
 router.activate();
 

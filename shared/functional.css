@@ -20,10 +20,21 @@
 	position: absolute;
 	top: 0;
 	left: 0;
-	width: 10px;
-	height: 10px;
+	width: 5px;
+	height: 5px;
 	z-index: 10;
-	border-radius: 50%;
-	border: 3px solid var(--color-text-light);
+	border-radius: 10px;
+	user-select: none;
+	touch-action: none;
+	border: 2px solid var(--color-text-light);
 	background-color: var(--color-base);
+	transition: 
+		height 0.1s ease-out,
+		width 0.1s ease-out,
+		transform 0.1s ease-out;
+}
+
+.scrollbar {
+	padding-left: 8px;
+	padding-right: 8px;
 }

@@ -45,7 +45,12 @@
 				height: 200px; 
 				background-color: var(--color-base);" 
 		></div>
-		<div id="scrollbar-thumb" class="scrollbar-thumb"></div>
+		<div 
+			role="button"
+			tabindex="0"
+			id="scrollbar-thumb" 
+			class="scrollbar-thumb"
+		></div>
 
 		<div class="main-container big-box">
 			
@@ -60,7 +65,7 @@
 					</header>
 					<div class="flex-row flex-1" style="padding-bottom: 1rem;">
 						<div class="spacer"></div>
-						<div id="scrollbar" class="divider-vertical"></div>
+						<div id="scrollbar" class="divider-vertical scrollbar"></div>
 						<div class="side-nav-content">
 							<a data-route="spa" href="#/">room</a>
 							<a data-route="spa" href="#/about">about</a>

@@ -27,7 +27,7 @@ header {
 	gap: 0px;
 	overflow: auto;
 	min-height: 0;
-	scrollbar-width: thin;
+	scrollbar-width: none;
 }
 
 .side-nav {
@@ -36,10 +36,6 @@ header {
 	display: flex;
 	flex-direction: column;
 	width: min-content;
-}
-
-.side-nav-content {
-	margin-left: 0.5rem;
 }
 
 .side-nav-content > * {
