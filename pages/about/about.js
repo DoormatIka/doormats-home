@@ -1,10 +1,9 @@
 
 
 export async function onJoin() {
-	const time = setTimeout(() => console.log("setTimeout."), 3000);
+	const time = setTimeout(() => console.log("heyaa!!"), 3000);
 
 	return () => {
-		console.log(`closed ID: ${time}`);
 		clearTimeout(time);
 	}
 }
