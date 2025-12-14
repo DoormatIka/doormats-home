@@ -166,24 +166,22 @@ body {
 .big-box {
 	width: 40rem;
 	height: 35rem;
-	margin: 1rem;
+	transition: width 0.3s cubic-bezier(0.33, 1, 0.68, 1), 
+		height 0.3s cubic-bezier(0.33, 1, 0.68, 1);
 }
 
-@media (min-width: 5rem) and (max-width: 60rem) {
+@media (min-width: 5rem) and (max-width: 50rem) {
 	.big-box {
-		height: 90%;
-		width: 90%;
-		margin: 1rem;
+		height: 95%;
+		width: 95%;
 	}
 }
-@media (min-height: 5rem) and (max-height: 20rem) {
+@media (min-height: 5rem) and (max-height: 15rem) {
 	.big-box {
-		height: 90%;
-		width: 90%;
-		margin: 1rem;
+		height: 95%;
+		width: 95%;
 	}
 }
-
 
 .divider-vertical {
 	border-left: 1px solid var(--color-text);

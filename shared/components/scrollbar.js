@@ -22,6 +22,8 @@ function isDivScrollable(div) {
 	return ratio < 1;
 }
 
+// TODO: window.matchMedia("(max-width: x px)")
+
 export function positionScrollbar() {
 	const thumb = document.getElementById("scrollbar-thumb");
 	const line = document.querySelector("#scrollbar");

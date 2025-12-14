@@ -4,9 +4,10 @@
 // letting the CSS load first.
 
 import { CursorManager } from "/shared/components/cursor";
-import { positionScrollbar, initializeScrollbar } from "/shared/components/scrollbar";
+import { positionScrollbar, initializeScrollbar, resizeScrollbar } from "/shared/components/scrollbar";
 
 const man = new CursorManager();
+
 
 document.addEventListener("DOMContentLoaded", () => {
 	document.fonts.ready.then(() => {
@@ -18,6 +19,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		initializeScrollbar();
 		positionScrollbar();
+
+		positionScrollbarOnBoxTransition();
 	})
 })
 
@@ -25,10 +28,24 @@ window.addEventListener("resize", () => {
 	positionScrollbar();
 });
 
-/*
-	MAKE A CUSTOM SCROLLBAR!!
-	- [/] how to position scroll thumb to the vertical divider no matter what size it is.
-	- how to make that move up and down on the divider.
-	- making it longer and shorter depending on the scroll size.
-*/
+function positionScrollbarOnBoxTransition() {
+	const box = /** @type {HTMLElement} */ (document.querySelector(".big-box"));
+	const bar = document.getElementById("scrollbar-thumb");
+
+	box.addEventListener("transitionrun", (e) => {
+		if (e.target !== box) return;
+		if (!["width", "height"].includes(e.propertyName)) return;
+
+		bar.style.visibility = "hidden";
+	})
+	box.addEventListener("transitionend", (e) => {
+		if (e.target !== box) return;
+		if (!["width", "height"].includes(e.propertyName)) return;
+
+		positionScrollbar();
+		resizeScrollbar();
+
+		bar.style.visibility = "visible";
+	});
+}
 
