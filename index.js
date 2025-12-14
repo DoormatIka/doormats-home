@@ -25,7 +25,7 @@ export function loadFile(path) {
 ////////// APP CODE HERE ///////////
 
 function makeLoadingDiv() {
-	return `<span class="coming-soon">Loading… <p style="color: red">Please enable JS.<p></span>`;
+	return `<span class="coming-soon">Loading…</span>`;
 }
 /**
 	* @param {string} err 

@@ -1,5 +1,6 @@
 
 @import url("/shared/functional.css");
+@import url("/shared/media-queries.css");
 
 :root {
 	--font-size-header: 2rem;
@@ -122,7 +123,6 @@ a:hover {
 body {
 	margin: 0;
 	padding: 0;
-	height: 100vh;
 	height: 100dvh;
 }
 
@@ -149,6 +149,7 @@ body {
 	border: 1px solid var(--color-text);
 	background-color: var(--color-base-half-transparent);
 	backdrop-filter: blur(10px);
+	overflow: hidden;
 	z-index: 0;
 }
 .main-container::before {
@@ -163,9 +164,27 @@ body {
 	box-shadow: var(--color-text-light) 10px 10px;
 }
 .big-box {
-	width: 30rem;
-	height: 25rem;
+	width: 40rem;
+	height: 35rem;
+	margin: 1rem;
 }
+
+@media (min-width: 5rem) and (max-width: 60rem) {
+	.big-box {
+		height: 90%;
+		width: 90%;
+		margin: 1rem;
+	}
+}
+@media (min-height: 5rem) and (max-height: 20rem) {
+	.big-box {
+		height: 90%;
+		width: 90%;
+		margin: 1rem;
+	}
+}
+
+
 .divider-vertical {
 	border-left: 1px solid var(--color-text);
 	align-self: stretch;

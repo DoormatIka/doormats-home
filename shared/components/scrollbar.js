@@ -1,3 +1,17 @@
+/*
+	Hii, this is where the main scrollbar logic is located.
+	All this does is track the scroll position and size of the "shell" div (where the content lives)
+		and scales that into the smaller scroll line.
+	Whenever the scroll position changes on the "shell" div,
+		it also changes the position on the scrollbar.
+	
+	Very simple, all of the stuff below is math to calculate them.
+	I don't animate things manually on this script, please look at functional.css.
+
+	Technical notes: I use style.top to set the position of the scroll bar,
+		and style.transform as an offset from that position.
+		Scrolling changes style.transform.
+*/
 
 /**
 	* @param {Element} div 
@@ -11,35 +25,33 @@ function isDivScrollable(div) {
 export function positionScrollbar() {
 	const thumb = document.getElementById("scrollbar-thumb");
 	const line = document.querySelector("#scrollbar");
-	const shell = document.querySelector(".shell");
 
 	const lineRect = line.getBoundingClientRect();
 	const thumbStyle = window.getComputedStyle(thumb);
-	const widthCenter = (parseFloat(thumbStyle.width) / 2) || 0;
+	const marginWidth = parseFloat(thumbStyle.marginLeft) + parseFloat(thumbStyle.marginRight);
+	const paddingWidth = parseFloat(thumbStyle.paddingLeft) + parseFloat(thumbStyle.paddingRight);
+	const widthCenter = (parseFloat(thumbStyle.width) / 2) + (marginWidth / 2) + (paddingWidth / 2) || 0;
 	const absoluteTop = lineRect.top;
 	const absoluteLeft = lineRect.left - (widthCenter + 2);
 	thumb.style.top = `${absoluteTop}px`;
 	thumb.style.left = `${absoluteLeft}px`;
 	thumb.style.transform = `translateY(0px)`;
-
-	if (!isDivScrollable(shell)) { // if shell has no scroll
-		thumb.style.height = `5px`;
-	}
 }
 
 export function initializeScrollbar() {
 	const thumb = document.getElementById("scrollbar-thumb");
-	const shell = document.querySelector(".shell");
-	const line = /** @type {HTMLElement} */ (document.querySelector("#scrollbar"));
+	const shell = /** @type {HTMLElement} */ (document.getElementsByClassName("shell")[0]);
+	const line = document.getElementById("scrollbar");
 	const lineRect = line.getBoundingClientRect();
 
 	positionScrollbar();
 
-	let dragOffsetY = 0;
-
+	// these scroll functions are not accurate to real scrollbars.
+	// the mouse should click at any point inside the scroll thumb
+	// 		and NOT move the thumb's middle to the cursor.
 	thumb.addEventListener("pointerdown", (e) => {
-		const thumbRect = thumb.getBoundingClientRect();
-		dragOffsetY = e.clientY - thumbRect.top;
+		let middleY = e.clientY - lineRect.top - thumb.clientHeight / 2;
+		scrollThumbTo(shell, thumb, line, middleY);
 		thumb.setPointerCapture(e.pointerId);
 
 		e.stopPropagation();
@@ -48,13 +60,8 @@ export function initializeScrollbar() {
 		if (!thumb.hasPointerCapture(e.pointerId) || !isDivScrollable(shell))
 			return;
 
-		let clampedScrollY = e.clientY - lineRect.top - dragOffsetY;
-
-		clampedScrollY = Math.max(0, Math.min(clampedScrollY, line.clientHeight - thumb.clientHeight));
-		thumb.style.transform = `translateY(${clampedScrollY}px)`;
-
-		const scrollRatio = clampedScrollY / (line.clientHeight - thumb.clientHeight);
-		shell.scrollTop = scrollRatio * (shell.scrollHeight - shell.clientHeight);
+		let middleY = e.clientY - lineRect.top - thumb.clientHeight / 2;
+		scrollThumbTo(shell, thumb, line, middleY);
 
 		e.stopPropagation();
 	})
@@ -62,29 +69,23 @@ export function initializeScrollbar() {
 		thumb.releasePointerCapture(e.pointerId);
 		e.stopPropagation();
 	})
-
-	/*
-	line.addEventListener("click", (e) => {
-		if (e.target === thumb || !isDivScrollable(shell)) return;
-
-		const trackRect = line.getBoundingClientRect();
-		let newY = e.clientY - trackRect.top - thumb.clientHeight / 2;
-		newY = Math.max(0, Math.min(newY, line.clientHeight - thumb.clientHeight));
-
-		thumb.style.transform = `translateY(${newY}px)`;
-		const scrollRatio = newY / (line.clientHeight - thumb.clientHeight);
-		shell.scrollTop = scrollRatio * (shell.scrollHeight - shell.clientHeight);
+	thumb.addEventListener("wheel", (e) => {
+		e.preventDefault();
+		onWheel(shell, thumb, line, e.deltaY);
+		// i could not be bothered to make shell div have smooth scroll on this.
 	})
-	*/
 
+	line.addEventListener("pointerdown", (e) => {
+		if (thumb.hasPointerCapture(e.pointerId) || !isDivScrollable(shell)) return;
+
+		let middleY = e.clientY - lineRect.top - thumb.clientHeight / 2;
+		scrollThumbTo(shell, thumb, line, middleY);
+
+		thumb.setPointerCapture(e.pointerId);
+	})
 	line.addEventListener("wheel", (e) => {
 		e.preventDefault();
-
-		shell.scrollTop += e.deltaY;
-
-		const scrollRatio = shell.scrollTop / (shell.scrollHeight - shell.clientHeight);
-		const newThumbY = scrollRatio * (line.clientHeight - thumb.clientHeight);
-		thumb.style.transform = `translateY(${newThumbY}px)`;
+		onWheel(shell, thumb, line, e.deltaY);
 	});
 
 	shell.addEventListener("scroll", (e) => {
@@ -99,8 +100,34 @@ export function initializeScrollbar() {
 	})
 }
 
-function onPointerScroll() {
-	
+/**
+	* Makes the custom scrollbar scroll to y.
+	* @param {HTMLElement} shell 
+	* @param {HTMLElement} thumb 
+	* @param {HTMLElement} line 
+	* @param {number} y 
+	*/
+function scrollThumbTo(shell, thumb, line, y) {
+	const newY = Math.max(0, Math.min(y, line.clientHeight - thumb.clientHeight));
+
+	thumb.style.transform = `translateY(${newY}px)`;
+	const scrollRatio = newY / (line.clientHeight - thumb.clientHeight);
+	shell.scrollTop = scrollRatio * (shell.scrollHeight - shell.clientHeight);
+}
+
+/**
+	* Is used to abstract wheel inputs.
+	* @param {HTMLElement} shell 
+	* @param {HTMLElement} thumb 
+	* @param {HTMLElement} line 
+	* @param {number} deltaY
+	*/
+function onWheel(shell, thumb, line, deltaY) {
+	shell.scrollTop += deltaY;
+
+	const scrollRatio = shell.scrollTop / (shell.scrollHeight - shell.clientHeight);
+	const newThumbY = scrollRatio * (line.clientHeight - thumb.clientHeight);
+	thumb.style.transform = `translateY(${newThumbY}px)`;
 }
 
 export function resizeScrollbar() {
@@ -113,5 +140,9 @@ export function resizeScrollbar() {
 	const lineHeight = parseFloat(lineStyle.height);
 	const resultingScrollHeight = lineHeight * ratio;
 
-	thumb.style.height = `${resultingScrollHeight}px`
+	if (!isDivScrollable(shell)) { // if shell has no scroll
+		thumb.style.height = `7px`;
+	} else {
+		thumb.style.height = `${resultingScrollHeight}px`
+	}
 }
