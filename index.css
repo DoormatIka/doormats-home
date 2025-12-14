@@ -27,7 +27,7 @@ header {
 	gap: 0px;
 	overflow: auto;
 	min-height: 0;
-	scrollbar-width: thin;
+	scrollbar-width: none;
 }
 
 .side-nav {
@@ -38,15 +38,22 @@ header {
 	width: min-content;
 }
 
-.side-nav-content {
-	margin-left: 0.5rem;
-}
-
 .side-nav-content > * {
 	display: block;
 	width: 100%;
 	text-align: left;
 }
 
-
+@media (min-width: 5rem) and (max-width: 60rem) {
+	.side-nav {
+		padding: 0 0 0 0.5rem;
+	}
+}
+/*
+@media (min-height: 5rem) and (max-height: 20rem) {
+	.side-nav {
+		padding: 0 0 0 0.5rem;
+	}
+}
+*/
 
