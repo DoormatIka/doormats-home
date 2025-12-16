@@ -34,7 +34,7 @@ export function positionScrollbar() {
 	const paddingWidth = parseFloat(thumbStyle.paddingLeft) + parseFloat(thumbStyle.paddingRight);
 	const widthCenter = (parseFloat(thumbStyle.width) / 2) + (marginWidth / 2) + (paddingWidth / 2) || 0;
 	const absoluteTop = lineRect.top;
-	const absoluteLeft = lineRect.left - (widthCenter + 2);
+	const absoluteLeft = lineRect.left - (widthCenter + 1.5);
 	thumb.style.top = `${absoluteTop}px`;
 	thumb.style.left = `${absoluteLeft}px`;
 	thumb.style.transform = `translateY(0px)`;

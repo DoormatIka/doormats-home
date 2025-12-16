@@ -7,15 +7,17 @@ import { CursorManager } from "/shared/components/cursor";
 import { positionScrollbar, initializeScrollbar, resizeScrollbar } from "/shared/components/scrollbar";
 
 const man = new CursorManager();
-
+const isReducedMotionEnabled = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 document.addEventListener("DOMContentLoaded", () => {
 	document.fonts.ready.then(() => {
 		document.documentElement.style.visibility = "visible";
 
 		man.initCursor();
-		requestAnimationFrame(man.animateCursor);
-		man.enableMouseMovement();
+		if (!isReducedMotionEnabled) {
+			requestAnimationFrame(man.animateCursor);
+			man.enableMouseMovement();
+		}
 
 		initializeScrollbar();
 		positionScrollbar();

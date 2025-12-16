@@ -34,43 +34,38 @@ function formatErrors(err) {
 	return `<p>An error occurred. ${err}</p>`;
 }
 
+/**
+	* @param {string} page 
+	* @param {number} [maxDepth=2] 
+	* @param {string} [file="index.html"] 
+	* @returns {import("/shared/components/router.js").RouteFunction}
+	*/
+function pageRoute(page, file = "index.html", maxDepth = 2) {
+	return async (shell, params) => {
+		shell.innerHTML = makeLoadingDiv();
+		try {
+			const cutParams = params.slice(0, maxDepth);
+			const path = ["pages", page, ...cutParams, file].join("/")
+			const html = await loadFile(path);
+			shell.innerHTML = html;
+		} catch (err) {
+			shell.innerHTML = formatErrors(err);
+		}
+
+		resizeScrollbar();
+		positionScrollbar();
+	}
+}
+
 
 const router = new HashRouter();
-router.add("index", async (shell, params) => {
-	shell.innerHTML = makeLoadingDiv();
-	try {
-		const html = await loadFile("/pages/room/room.html")
-		shell.innerHTML = html;
-	} catch (err) {
-		shell.innerHTML = formatErrors(err);
-	}
 
-	resizeScrollbar();
-	positionScrollbar();
-});
-router.add("about", async (shell, params) => {
-	shell.innerHTML = makeLoadingDiv();
-	try {
-		const html = await loadFile("/pages/about/index.html")
-		shell.innerHTML = html;
-	} catch (err) {
-		shell.innerHTML = formatErrors(err);
-	}
+router.add("index", pageRoute("room", "room.html"));
 
-	resizeScrollbar();
-	positionScrollbar();
-});
-router.add("shrines", async (shell, params) => {
-	shell.innerHTML = makeLoadingDiv();
-	try {
-		const html = await loadFile("/pages/shrines/shrines.html")
-		shell.innerHTML = html;
-	} catch (err) {
-		shell.innerHTML = formatErrors(err);
-	}
+router.add("about", pageRoute("about"));
+router.add("shrines", pageRoute("shrines"));
+router.add("todo", pageRoute("todo"));
+router.add("notFound", pageRoute("notFound"));
 
-	resizeScrollbar();
-	positionScrollbar();
-});
 router.activate();
 

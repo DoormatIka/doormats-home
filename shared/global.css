@@ -4,7 +4,8 @@
 
 :root {
 	--font-size-header: 2rem;
-	--font-size-second-header: 2rem;
+	--font-size-h2: 2rem;
+	--font-size-h3: 1.3rem;
 	--font-size-base: 1rem;
 	--font-size-title: 1.6rem;
 	--font-size-light: 0.85rem;
@@ -64,7 +65,7 @@ h1:hover {
 	font-size: var(--font-size-title);
 }
 h2 {
-	font-size: var(--font-size-second-header);
+	font-size: var(--font-size-h2);
 	font-family: "Gloria Hallelujah", cursive;
 	src: var(--gloria-font-path) format("truetype");
 	font-weight: 400;
@@ -79,6 +80,17 @@ h2 {
 h2:hover {
 	text-shadow: 4px 3px var(--color-primary);
 	transition: text-shadow 0.2s ease-out;
+}
+
+h3 {
+	font-size: var(--font-size-h3);
+	font-family: "Gloria Hallelujah", cursive;
+	src: var(--gloria-font-path) format("truetype");
+	font-weight: 400;
+	font-style: normal;
+	margin: 0px;
+	color: var(--color-text);
+	font-display: swap;
 }
 
 p, a, .coming-soon {
@@ -118,6 +130,10 @@ a:visited {
 a:hover {
 	color: var(--color-accent-light);
 	transition: color 0.2s ease-out;
+}
+
+.block {
+	display: block;
 }
 
 body {
@@ -170,18 +186,6 @@ body {
 		height 0.3s cubic-bezier(0.33, 1, 0.68, 1);
 }
 
-@media (min-width: 5rem) and (max-width: 50rem) {
-	.big-box {
-		height: 95%;
-		width: 95%;
-	}
-}
-@media (min-height: 5rem) and (max-height: 15rem) {
-	.big-box {
-		height: 95%;
-		width: 95%;
-	}
-}
 
 .divider-vertical {
 	border-left: 1px solid var(--color-text);
@@ -218,4 +222,5 @@ br {
 .flex-1 {
 	flex: 1;
 }
+
 

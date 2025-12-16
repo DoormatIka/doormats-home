@@ -67,7 +67,7 @@ export class HashRouter {
 	}
 	async _onHashChange() {
 		let uri = window.location.hash;
-		let params;
+		let params = [];
 
 		await Promise.all(this._previousPageCleanupFunction.map(c => c()));
 

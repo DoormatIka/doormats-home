@@ -44,16 +44,3 @@ header {
 	text-align: left;
 }
 
-@media (min-width: 5rem) and (max-width: 60rem) {
-	.side-nav {
-		padding: 0 0 0 0.5rem;
-	}
-}
-/*
-@media (min-height: 5rem) and (max-height: 20rem) {
-	.side-nav {
-		padding: 0 0 0 0.5rem;
-	}
-}
-*/
-
