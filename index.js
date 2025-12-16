@@ -16,6 +16,7 @@ export function loadFile(path) {
 				if (!resp.ok) {
 					rej(`Cannot load HTML file: "${path}"!`)
 				}
+				// this returns true for any path put into it, oh my god.
 				res(resp.text());
 			})
 			.catch(err => rej(err));
@@ -46,7 +47,9 @@ function pageRoute(page, file = "index.html", maxDepth = 2) {
 		try {
 			const cutParams = params.slice(0, maxDepth);
 			const path = ["pages", page, ...cutParams, file].join("/")
+			console.log(path);
 			const html = await loadFile(path);
+			console.log(html);
 			shell.innerHTML = html;
 		} catch (err) {
 			shell.innerHTML = formatErrors(err);
@@ -57,11 +60,9 @@ function pageRoute(page, file = "index.html", maxDepth = 2) {
 	}
 }
 
-
 const router = new HashRouter();
 
 router.add("index", pageRoute("room", "room.html"));
-
 router.add("about", pageRoute("about"));
 router.add("shrines", pageRoute("shrines"));
 router.add("todo", pageRoute("todo"));

@@ -79,13 +79,16 @@ export class HashRouter {
 
 		if (hashRoute.length <= 0) 
 			hashRoute = "index";
-		if (!this._routes[hashRoute]) 
-			hashRoute = "notFound";
 
 		if (hashRoute.indexOf('/') > -1) {
 			params = hashRoute.split('/');
 			hashRoute = params.shift();
 		}
+
+		/*
+		if (!this._routes[hashRoute]) 
+			hashRoute = "notFound";
+		*/
 
 		const shell = document.querySelector("[data-router]");
 		if (!shell) {
