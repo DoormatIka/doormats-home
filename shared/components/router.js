@@ -85,10 +85,8 @@ export class HashRouter {
 			hashRoute = params.shift();
 		}
 
-		/*
 		if (!this._routes[hashRoute]) 
 			hashRoute = "notFound";
-		*/
 
 		const shell = document.querySelector("[data-router]");
 		if (!shell) {

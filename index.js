@@ -6,18 +6,6 @@ import { HashRouter } from "/shared/components/router.js";
 import { resizeScrollbar, positionScrollbar } from "/shared/components/scrollbar";
 
 
-/**
-	* Very hacky fix to detect if a URL is a valid HTML file.
-	*
-	* I will fix this by adding a build step.
-	* It should generate a manifest file from the /pages directory,
-	* 	that contains every possible path with an `.html` file.
-	* @param {string} url 
-	* @returns {Promise<boolean>}
-	*/
-function isHTMLFileValid(url) {
-	return new Promise(res => {});
-}
 
 /**
 	* Loads file into text.
@@ -27,11 +15,16 @@ export function loadFile(path) {
 	return new Promise((res, rej) => {
 		fetch(path)
 			.then(resp => {
-				console.log(resp);
 				if (!resp.ok) {
 					rej(`Cannot load HTML file: "${path}"!`)
 				}
+
 				// this returns true for any path put into it, oh my god.
+				/**
+					* I will fix this by adding a build step.
+					* It should generate a manifest file from the /pages directory,
+					* 	that contains every possible path with an `.html` file.
+					*/
 				res(resp.text());
 			})
 			.catch(err => rej(err));
@@ -62,9 +55,7 @@ function pageRoute(page, file = "index.html", maxDepth = 2) {
 		try {
 			const cutParams = params.slice(0, maxDepth);
 			const path = ["pages", page, ...cutParams, file].join("/")
-			console.log(path);
 			const html = await loadFile(path);
-			console.log(html);
 			shell.innerHTML = html;
 		} catch (err) {
 			shell.innerHTML = formatErrors(err);
