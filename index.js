@@ -5,6 +5,17 @@
 import { HashRouter } from "/shared/components/router.js";
 import { resizeScrollbar, positionScrollbar } from "/shared/components/scrollbar.js";
 
+// Welcome to the website! This file is filled with router code.
+//
+// Some important comments about the code:
+// These workarounds are only to detect routes that do not have a .html reliably.
+// Due to fetch() mirroring the current index.html 
+//         when it can't find the requested file,
+//         I'm forced to make messy workarounds.
+// Of course, I can rework the router to depend on manifest.json,
+//         to move the routing from client-side to the build step.
+// However, I'd like to focus on the design of the website first.
+
 /**
 	* A very ad-hoc patch to detect if a file is in a route or not.
 	*

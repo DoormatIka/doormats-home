@@ -86,7 +86,6 @@ export class HashRouter {
 		if (!this._routes[hashRoute]) 
 			hashRoute = "notFound";
 
-
 		const shell = document.querySelector("[data-router]");
 		if (!shell) {
 			console.warn("No [data-router] in HTML object found!")
