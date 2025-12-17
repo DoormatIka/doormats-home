@@ -13,16 +13,55 @@
 		Scrolling changes style.transform.
 */
 
+/*
+
+	Cache scrollable thing here and update it according to events.
+	Use window.addEventListener("load") to update the scroll, this is when all things load.
+		While eventListener("load") still hasn't fired, use the fast ratio calculation.
+
+	You can't just push it to the "pointerdown" events, it doesn't work like that.
+
+*/
+
 /**
+	* Checks if a div is scrollable, accounting for images, videos, and other deferred dynamic content.
 	* @param {Element} div 
 	* @returns {boolean}
 	*/
 function isDivScrollable(div) {
+	// Helper: wait for an element to finish loading
+	/**
+		 * Returns a promise that resolves when an image or video is loaded (or fails).
+		 * @param {HTMLImageElement|HTMLVideoElement} el - The element to wait for.
+		 * @returns {Promise<void>}
+		 */
+	/*
+	const waitForLoad = el => new Promise(resolve => {
+		if (el instanceof HTMLImageElement) {
+			if (el.complete) {
+				resolve();
+			} else el.addEventListener('load', () => resolve(), { once: true });
+		} else if (el instanceof HTMLVideoElement) {
+			if (el.readyState >= 2) {
+				resolve();
+			} else {
+				el.addEventListener('loadeddata', () => resolve(), { once: true });
+				el.addEventListener('error', () => resolve(), { once: true });
+			}
+		}
+	});
+
+	const media = div.querySelectorAll('img, video');
+	await Promise.all(Array.from(media).map(waitForLoad));
+
+	if (document.fonts && document.fonts.ready) {
+		await document.fonts.ready;
+	}
+	*/
+
 	const ratio = div.clientHeight / div.scrollHeight;
 	return ratio < 1;
 }
-
-// TODO: window.matchMedia("(max-width: x px)")
 
 export function positionScrollbar() {
 	const thumb = document.getElementById("scrollbar-thumb");
@@ -132,7 +171,7 @@ function onWheel(shell, thumb, line, deltaY) {
 	thumb.style.transform = `translateY(${newThumbY}px)`;
 }
 
-export function resizeScrollbar() {
+export function transformScrollbar() {
 	const thumb = document.getElementById("scrollbar-thumb");
 	const shell = document.querySelector(".shell");
 	const line = document.querySelector("#scrollbar");
@@ -144,7 +183,9 @@ export function resizeScrollbar() {
 
 	if (!isDivScrollable(shell)) { // if shell has no scroll
 		thumb.style.height = `7px`;
+		thumb.style.backgroundColor = `var(--color-text-light)`;
 	} else {
-		thumb.style.height = `${resultingScrollHeight}px`
+		thumb.style.height = `${resultingScrollHeight}px`;
+		thumb.style.backgroundColor = `var(--color-base)`;
 	}
 }

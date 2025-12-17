@@ -32,7 +32,8 @@
 	transition: 
 		height 0.3s cubic-bezier(0.22, 1, 0.36, 1),
 		width 0.1s ease-out,
-		transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); /* easeOutBack transition */
+		transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+		background-color 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); /* easeOutBack transition */
 
 }
 

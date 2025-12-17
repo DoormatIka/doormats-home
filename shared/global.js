@@ -3,8 +3,8 @@
 
 // letting the CSS load first.
 
-import { CursorManager } from "/shared/components/cursor";
-import { positionScrollbar, initializeScrollbar, resizeScrollbar } from "/shared/components/scrollbar";
+import { CursorManager } from "/shared/components/cursor.js";
+import { positionScrollbar, initializeScrollbar, transformScrollbar } from "/shared/components/scrollbar.js";
 
 const man = new CursorManager();
 const isReducedMotionEnabled = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		initializeScrollbar();
 		positionScrollbar();
+		transformScrollbar();
 
 		positionScrollbarOnBoxTransition();
 	})
@@ -28,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 window.addEventListener("resize", () => {
 	positionScrollbar();
+	transformScrollbar();
 });
 
 function positionScrollbarOnBoxTransition() {
@@ -45,7 +47,7 @@ function positionScrollbarOnBoxTransition() {
 		if (!["width", "height"].includes(e.propertyName)) return;
 
 		positionScrollbar();
-		resizeScrollbar();
+		transformScrollbar();
 
 		bar.style.visibility = "visible";
 	});

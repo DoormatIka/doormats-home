@@ -93,6 +93,11 @@ h3 {
 	font-display: swap;
 }
 
+img {
+	width: fit-content;
+	object-fit: cover;
+}
+
 p, a, .coming-soon {
 	font-size: var(--font-size-base);
   font-family: "Coming Soon", cursive;
