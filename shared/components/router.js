@@ -53,11 +53,9 @@ export class HashRouter {
 	activate() {
 		window.addEventListener("hashchange", () => this._onHashChange(), false);
 		document.addEventListener("DOMContentLoaded", () => {
-			console.log("dom content loaded.")
 			// handles switching from normal route to hash route
 			const isSpa = document.querySelector("[data-router]") !== null
 			if (isSpa) {
-				console.log("is spa page!")
 				if (!window.location.hash) {
 					window.location.hash = "#/"
 				}
@@ -87,6 +85,7 @@ export class HashRouter {
 
 		if (!this._routes[hashRoute]) 
 			hashRoute = "notFound";
+
 
 		const shell = document.querySelector("[data-router]");
 		if (!shell) {

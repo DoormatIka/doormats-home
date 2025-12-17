@@ -3,31 +3,68 @@
 // thank you!
 
 import { HashRouter } from "/shared/components/router.js";
-import { resizeScrollbar, positionScrollbar } from "/shared/components/scrollbar";
+import { resizeScrollbar, positionScrollbar } from "/shared/components/scrollbar.js";
 
+/**
+	* A very ad-hoc patch to detect if a file is in a route or not.
+	*
+	* Details:
+	* `cli/createManifest.js` gets called by Vite on dev time. A function there
+	* 	writes to `manifest.json` that contains every navigatable route in `/routes`
+	* This function grabs routes from there and compares it to the filepath.
+	*
+	* @param {string} filepath - include the full directory of this please
+	* @returns {Promise<boolean>}
+	*/
+async function isFileInRoutes(filepath) {
+	const v = await fetch("/manifest.json")
+	const text = await v.text();
+	/** @type {string[]} */
+	const parsedPaths = JSON.parse(text);
+	const splitPath = filepath.split("/").filter(Boolean);
 
+	for (const p of parsedPaths) {
+		const spl = p.split("/").filter(Boolean);
+		if (arraysMatch(spl, splitPath))
+			return true;
+	}
+	return false;
+}
+
+/**
+	* @param {string[]} arr1 
+	* @param {string[]} arr2 
+	*/
+function arraysMatch(arr1, arr2) {
+    if (arr1.length !== arr2.length) {
+        return false;
+    }
+    return arr1.every((element, index) => {
+        return element === arr2[index];
+    });
+};
 
 /**
 	* Loads file into text.
 	* @param {string} path 
 	*/
-export function loadFile(path) {
+export function loadHTMLFile(path) {
 	return new Promise((res, rej) => {
 		fetch(path)
 			.then(resp => {
 				if (!resp.ok) {
 					rej(`Cannot load HTML file: "${path}"!`)
 				}
-
-				// this returns true for any path put into it, oh my god.
-				/**
-					* I will fix this by adding a build step.
-					* It should generate a manifest file from the /pages directory,
-					* 	that contains every possible path with an `.html` file.
-					*/
-				res(resp.text());
+				isFileInRoutes(path)
+					.then(isFile => {
+						if (!isFile) {
+							rej(`HTML file does not exist in routes.`)
+						}
+						resp.text().then(v => res(v));
+					})
+					.catch(rej)
 			})
-			.catch(err => rej(err));
+			.catch(rej);
 	})
 }
 
@@ -55,12 +92,28 @@ function pageRoute(page, file = "index.html", maxDepth = 2) {
 		try {
 			const cutParams = params.slice(0, maxDepth);
 			const path = ["pages", page, ...cutParams, file].join("/")
-			const html = await loadFile(path);
+			const html = await loadHTMLFile(path);
 			shell.innerHTML = html;
 		} catch (err) {
 			shell.innerHTML = formatErrors(err);
 		}
+		resizeScrollbar();
+		positionScrollbar();
+	}
+}
 
+/**
+	* @returns {import("/shared/components/router.js").RouteFunction}
+	*/
+function notFound() {
+	return async (shell, _) => {
+		shell.innerHTML = makeLoadingDiv();
+		try {
+			const html = await loadHTMLFile("/pages/notFound/index.html");
+			shell.innerHTML = html;
+		} catch (err) {
+			shell.innerHTML = formatErrors(err);
+		}
 		resizeScrollbar();
 		positionScrollbar();
 	}
@@ -72,7 +125,7 @@ router.add("index", pageRoute("room", "room.html"));
 router.add("about", pageRoute("about"));
 router.add("shrines", pageRoute("shrines"));
 router.add("todo", pageRoute("todo"));
-router.add("notFound", pageRoute("notFound"));
+router.add("notFound", notFound());
 
 router.activate();
 
