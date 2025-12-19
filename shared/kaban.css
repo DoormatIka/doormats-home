@@ -1,0 +1,63 @@
+
+/*
+
+fr units are available free space.
+
+width has a definite size, height doesn't in an overflow-y enabled context.
+
+*/
+.kaban {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-template-rows: repeat(3, 10rem);
+	gap: 0.5rem;
+	width: 100%;
+	padding: 1rem 0rem;
+}
+
+.kaban div {
+	overflow-y: auto;
+	border: 1px black solid;
+	background-color: var(--color-base);
+}
+.kaban div:has(img) {
+	overflow: hidden;
+}
+
+.kaban img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: top;
+}
+.kaban .full-w-grid {
+	grid-column-start: 1;
+	grid-column-end: -1;
+}
+.kaban .full-h-grid {
+	grid-row-start: 1;
+	grid-row-end: -1;
+}
+.kaban .full-w-grid:first-child,
+.kaban .full-w-grid:last-child {
+	 height: 10rem;
+	 object-position: center;
+}
+
+.grid-w-1 { grid-column-end: span 1; }
+.grid-w-2 { grid-column-end: span 2; }
+.grid-w-3 { grid-column-end: span 3; }
+.grid-w-4 { grid-column-end: span 4; }
+
+.grid-h-1 { grid-row-end: span 1; }
+.grid-h-2 { grid-row-end: span 2; }
+.grid-h-3 { grid-row-end: span 3; }
+.grid-h-4 { grid-row-end: span 4; }
+
+.object-center { object-position: center; }
+.object-left   { object-position: left; }
+.object-right  { object-position: right; }
+.object-top    { object-position: top; }
+.object-bottom { object-position: bottom; }
+
+

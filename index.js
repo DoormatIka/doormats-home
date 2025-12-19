@@ -3,7 +3,7 @@
 // thank you!
 
 import { HashRouter } from "/shared/components/router.js";
-import { transformScrollbar, positionScrollbar } from "/shared/components/scrollbar.js";
+import { positionScrollbar } from "/shared/components/scrollbar.js";
 
 // Welcome to the website! This file is filled with router code.
 //
@@ -108,7 +108,6 @@ function pageRoute(page, file = "index.html", maxDepth = 2) {
 		} catch (err) {
 			shell.innerHTML = formatErrors(err);
 		}
-		transformScrollbar();
 		positionScrollbar();
 	}
 }
@@ -125,7 +124,6 @@ function notFound() {
 		} catch (err) {
 			shell.innerHTML = formatErrors(err);
 		}
-		transformScrollbar();
 		positionScrollbar();
 	}
 }

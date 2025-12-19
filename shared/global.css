@@ -94,8 +94,8 @@ h3 {
 }
 
 img {
-	width: fit-content;
-	object-fit: cover;
+	width: 100%;
+	object-fit: contain;
 }
 
 p, a, .coming-soon {
@@ -163,6 +163,7 @@ body {
 	align-items: center;
 	height: 100%;
 	flex-direction: column;
+	gap: 0.5rem;
 }
 .main-container {
 	position: relative;
@@ -185,7 +186,7 @@ body {
 	box-shadow: var(--color-text-light) 10px 10px;
 }
 .big-box {
-	width: 40rem;
+	width: 45rem;
 	height: 35rem;
 	transition: width 0.3s cubic-bezier(0.33, 1, 0.68, 1), 
 		height 0.3s cubic-bezier(0.33, 1, 0.68, 1);
@@ -226,6 +227,9 @@ br {
 }
 .flex-1 {
 	flex: 1;
+}
+.text-justify {
+	text-align: justify;
 }
 
 

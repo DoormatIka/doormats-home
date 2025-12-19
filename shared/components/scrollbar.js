@@ -23,44 +23,46 @@
 
 */
 
+const glob = {
+	isScrollable: false,
+};
+
 /**
-	* Checks if a div is scrollable, accounting for images, videos, and other deferred dynamic content.
-	* @param {Element} div 
-	* @returns {boolean}
-	*/
-function isDivScrollable(div) {
-	// Helper: wait for an element to finish loading
-	/**
-		 * Returns a promise that resolves when an image or video is loaded (or fails).
-		 * @param {HTMLImageElement|HTMLVideoElement} el - The element to wait for.
-		 * @returns {Promise<void>}
-		 */
-	/*
-	const waitForLoad = el => new Promise(resolve => {
-		if (el instanceof HTMLImageElement) {
-			if (el.complete) {
-				resolve();
-			} else el.addEventListener('load', () => resolve(), { once: true });
-		} else if (el instanceof HTMLVideoElement) {
-			if (el.readyState >= 2) {
-				resolve();
-			} else {
-				el.addEventListener('loadeddata', () => resolve(), { once: true });
-				el.addEventListener('error', () => resolve(), { once: true });
+ * Observe height changes of an element.
+ * @param {Element} el
+ * @param {(clientHeight: number, scrollHeight: number) => void} onChange
+ * @returns {() => void} cleanup function
+ */
+function observeHeight(el, onChange) {
+	const emit = () => {
+		const clientHeight = el.getBoundingClientRect().height;
+		const scrollHeight = el.scrollHeight;
+		onChange(clientHeight, scrollHeight);
+	};
+
+	const ro = new ResizeObserver(emit);
+	const mo = new MutationObserver(emit);
+
+	el.querySelectorAll("img")
+		.forEach(img => {
+			if (!img.complete) {
+				img.addEventListener("load", emit, { once: true });
 			}
-		}
-	});
+		});
+	el.querySelectorAll("video")
+		.forEach(vid => {
+			vid.addEventListener("loadstart", emit, { once: true });
+		})
 
-	const media = div.querySelectorAll('img, video');
-	await Promise.all(Array.from(media).map(waitForLoad));
+	ro.observe(el);
+	mo.observe(el, { childList: true, subtree: true, characterData: true });
 
-	if (document.fonts && document.fonts.ready) {
-		await document.fonts.ready;
-	}
-	*/
+	emit();
 
-	const ratio = div.clientHeight / div.scrollHeight;
-	return ratio < 1;
+	return () => {
+		ro.disconnect();
+		mo.disconnect();
+	};
 }
 
 export function positionScrollbar() {
@@ -87,6 +89,14 @@ export function initializeScrollbar() {
 
 	positionScrollbar();
 
+	observeHeight(shell, (clientHeight, scrollHeight) => {
+		transformScrollbar(clientHeight, scrollHeight);
+	});
+	window.addEventListener("resize", () => {
+		positionScrollbar();
+		transformScrollbar(shell.clientHeight, shell.scrollHeight);
+	});
+
 	// these scroll functions are not accurate to real scrollbars.
 	// the mouse should click at any point inside the scroll thumb
 	// 		and NOT move the thumb's middle to the cursor.
@@ -98,8 +108,7 @@ export function initializeScrollbar() {
 		e.stopPropagation();
 	})
 	thumb.addEventListener("pointermove", (e) => {
-		if (!thumb.hasPointerCapture(e.pointerId) || !isDivScrollable(shell))
-			return;
+		if (!thumb.hasPointerCapture(e.pointerId) || !glob.isScrollable) return;
 
 		let middleY = e.clientY - lineRect.top - thumb.clientHeight / 2;
 		scrollThumbTo(shell, thumb, line, middleY);
@@ -117,7 +126,7 @@ export function initializeScrollbar() {
 	})
 
 	line.addEventListener("pointerdown", (e) => {
-		if (thumb.hasPointerCapture(e.pointerId) || !isDivScrollable(shell)) return;
+		if (thumb.hasPointerCapture(e.pointerId) || !glob.isScrollable) return;
 
 		let middleY = e.clientY - lineRect.top - thumb.clientHeight / 2;
 		scrollThumbTo(shell, thumb, line, middleY);
@@ -171,17 +180,22 @@ function onWheel(shell, thumb, line, deltaY) {
 	thumb.style.transform = `translateY(${newThumbY}px)`;
 }
 
-export function transformScrollbar() {
+/**
+	* @param {number} clientHeight 
+	* @param {number} shellHeight 
+	*/
+export function transformScrollbar(clientHeight, shellHeight) {
 	const thumb = document.getElementById("scrollbar-thumb");
-	const shell = document.querySelector(".shell");
 	const line = document.querySelector("#scrollbar");
 
 	const lineStyle = window.getComputedStyle(line);
-	const ratio = shell.clientHeight / shell.scrollHeight;
+	const ratio = clientHeight / shellHeight;
 	const lineHeight = parseFloat(lineStyle.height);
 	const resultingScrollHeight = lineHeight * ratio;
+	console.log(`clientHeight: ${clientHeight}, shellHeight: ${shellHeight}`);
+	glob.isScrollable = ratio < 1;
 
-	if (!isDivScrollable(shell)) { // if shell has no scroll
+	if (!glob.isScrollable) { // if shell has no scroll
 		thumb.style.height = `7px`;
 		thumb.style.backgroundColor = `var(--color-text-light)`;
 	} else {
