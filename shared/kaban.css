@@ -19,6 +19,7 @@ width has a definite size, height doesn't in an overflow-y enabled context.
 	overflow-y: auto;
 	border: 1px black solid;
 	background-color: var(--color-base);
+	box-sizing: border-box;
 }
 .kaban div:has(img) {
 	overflow: hidden;
@@ -28,7 +29,7 @@ width has a definite size, height doesn't in an overflow-y enabled context.
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
-	object-position: top;
+	object-position: center;
 }
 .kaban .full-w-grid {
 	grid-column-start: 1;

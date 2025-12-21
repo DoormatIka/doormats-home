@@ -90,6 +90,7 @@ export function initializeScrollbar() {
 	positionScrollbar();
 
 	observeHeight(shell, (clientHeight, scrollHeight) => {
+		positionScrollbar();
 		transformScrollbar(clientHeight, scrollHeight);
 	});
 	window.addEventListener("resize", () => {
@@ -192,7 +193,6 @@ export function transformScrollbar(clientHeight, shellHeight) {
 	const ratio = clientHeight / shellHeight;
 	const lineHeight = parseFloat(lineStyle.height);
 	const resultingScrollHeight = lineHeight * ratio;
-	console.log(`clientHeight: ${clientHeight}, shellHeight: ${shellHeight}`);
 	glob.isScrollable = ratio < 1;
 
 	if (!glob.isScrollable) { // if shell has no scroll

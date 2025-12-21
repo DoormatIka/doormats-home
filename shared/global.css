@@ -39,6 +39,11 @@
 	src: url("/shared/fonts/ComingSoon-Regular.ttf") format("truetype");
 	font-display: swap;
 }
+@font-face {
+	font-family: "Walter Turncoat";
+	src: url("/shared/fonts/WalterTurncoat-Regular.ttf") format("truetype");
+	font-display: swap;
+}
 
 html {
 	background-color: var(--color-base);
@@ -66,11 +71,12 @@ h1:hover {
 }
 h2 {
 	font-size: var(--font-size-h2);
-	font-family: "Gloria Hallelujah", cursive;
+	font-family: "Walter Turncoat", cursive;
 	src: var(--gloria-font-path) format("truetype");
 	font-weight: 400;
 	font-style: normal;
 	margin: 0px;
+	padding: 0px;
 	color: var(--color-secondary);
 	font-display: swap;
 
@@ -84,10 +90,12 @@ h2:hover {
 
 h3 {
 	font-size: var(--font-size-h3);
-	font-family: "Gloria Hallelujah", cursive;
+	font-family: "Walter Turncoat", cursive;
 	src: var(--gloria-font-path) format("truetype");
 	font-weight: 400;
 	font-style: normal;
+	margin: 0px;
+	padding: 0px;
 	margin: 0px;
 	color: var(--color-text);
 	font-display: swap;
@@ -96,6 +104,7 @@ h3 {
 img {
 	width: 100%;
 	object-fit: contain;
+	background-color: transparent;
 }
 
 p, a, .coming-soon {
@@ -232,4 +241,14 @@ br {
 	text-align: justify;
 }
 
+.spoiler {
+	background-color: var(--color-text-light);
+	color: var(--color-text-light);
+	transition: background-color 0.3s ease-in, color 0.3s ease-in;
+}
+
+.spoiler:hover {
+	background-color: inherit;
+	color: var(--color-text);
+}
 
