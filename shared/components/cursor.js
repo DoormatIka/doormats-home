@@ -55,12 +55,45 @@ export class CursorManager {
 		}
 		requestAnimationFrame(this.animateCursor);
 	}
+	/**
+		* @param {TouchEvent} e 
+		*/
+	_touch(e) {
+		for (const cursor of this._cursors) {
+			cursor.targetX = e.touches[0].clientX;
+			cursor.targetY = e.touches[0].clientY;
+		}
+	}
+	/**
+		* @param {MouseEvent} e 
+		*/
+	_mouse(e) {
+		for (let cursor of this._cursors) {
+			cursor.targetX = e.clientX;
+			cursor.targetY = e.clientY;
+		}
+	}
+	_mouseToCenter() {
+		const middleWidth = document.body.clientWidth / 2;
+		const middleHeight = document.body.clientHeight / 2;
+		for (let cursor of this._cursors) {
+			cursor.targetX = middleWidth;
+			cursor.targetY = middleHeight;
+		}
+	}
 	enableMouseMovement() {
-		document.addEventListener("mousemove", (e) => {
-			for (let cursor of this._cursors) {
-				cursor.targetX = e.clientX;
-				cursor.targetY = e.clientY;
-			}
+		document.addEventListener("mousemove", (e) => this._mouse(e));
+
+		let timeoutID;
+		document.addEventListener("touchstart", (e) => {
+			clearTimeout(timeoutID);
+			this._touch(e);
 		});
+		document.addEventListener("touchmove", (e) => this._touch(e));
+		document.addEventListener("touchend", () => {
+			timeoutID = setTimeout(() => this._mouseToCenter(), 1000);
+		})
 	}
 }
+
+

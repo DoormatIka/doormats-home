@@ -132,7 +132,7 @@ const router = new HashRouter();
 
 router.add("index", pageRoute("room", "room.html"));
 router.add("about", pageRoute("about"));
-router.add("shrines", pageRoute("shrines"));
+router.add("shrine", pageRoute("shrine"));
 router.add("todo", pageRoute("todo"));
 router.add("notFound", notFound());
 

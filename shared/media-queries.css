@@ -6,8 +6,16 @@
 		margin: 1rem 1rem;
 	}
 	.side-nav {
-		padding: 0 0 0 0.5rem;
+		height: 100%;
+		padding: 0rem 0.5rem;
+		display: flex;
+		flex-direction: column;
+		width: min-content;
 	}
+	/*
+	.desktop-view { display: none; }
+	.mobile-view { display: block; }
+	*/
 }
 @media (max-height: 40rem) {
 	.big-box {

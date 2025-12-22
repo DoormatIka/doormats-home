@@ -9,7 +9,6 @@
 	<meta name="description" content="doormat's home">
 
 	<link rel="stylesheet" href="/shared/global.css">
-	<link rel="stylesheet" href="/shared/media-queries.css">
 	<link rel="stylesheet" href="/shared/list.css">
 	<link rel="stylesheet" href="/shared/kaban.css">
 	<link rel="stylesheet" href="/index.css">
@@ -17,6 +16,8 @@
 
 	<script type="module" src="/shared/global.js" defer></script>
 	<script type="module" src="/index.js" defer></script>
+
+	<link rel="stylesheet" href="/shared/media-queries.css">
 </head>
 
 <body class="umbrella-background">
@@ -56,7 +57,7 @@
 
 		<div class="main-container big-box">
 			
-			<div class="max-item home-content">
+			<div class="max-item home-content desktop-view">
 				<main data-router="spa" class="max-item main-content flex-scrollable shell">
 					<noscript>
 						<p>Please enable JS for this page!</p>
@@ -73,14 +74,53 @@
 						<div class="side-nav-content">
 							<a data-route="spa" href="#/">room</a>
 							<a data-route="spa" href="#/about">about</a>
-							<a data-route="spa" href="#/shrines">shrines</a>
+							<a data-route="spa" href="#/shrine">shrine</a>
 							<a data-route="spa" href="#/todo">todo</a>
 						</div>
 					</div>
 				</nav>
 			</div>
 
+			<!-- DEDICATED MOBILE VIEW SOON
+				still many issues with my code.
+				- id="scrollbar" to (id="mobile-scrollbar" and id="desktop-scrollbar")
+						and switch with media queries in JS.
+
+						const scrollbar = matchMedia("(max-width: 50rem)").matches
+							? document.getElementById("scrollbar-mobile")
+							: document.getElementById("scrollbar-desktop");
+
+				- handling having two data-routers: data-router="mobile" and data-router="desktop" maybe?
+						the router really isn't designed for this..
+
+			<div class="max-item home-content mobile-view">
+				<nav>
+					<header>
+						<h1 class="title">doormat's</h1>
+					</header>
+					<div class="flex-row flex-1" style="padding-bottom: 1rem;">
+						<div class="side-nav-content">
+							<a data-route="spa" href="#/">room</a>
+							<a data-route="spa" href="#/about">about</a>
+							<a data-route="spa" href="#/shrines">shrines</a>
+							<a data-route="spa" href="#/todo">todo</a>
+						</div>
+					</div>
+				</nav>
+
+
+				<div style="display: flex;">
+					<div id="scrollbar" class="divider-vertical scrollbar"></div>
+					<main data-router="spa" class="max-item main-content flex-scrollable shell" data-mobile-shell>
+						<noscript>
+							<p>Please enable JS for this page!</p>
+						</noscript>
+					</main>
+				</div>
+			</div>
+
 		</div>
+			-->
 </body>
 
 </html>

@@ -252,3 +252,5 @@ br {
 	color: var(--color-text);
 }
 
+.desktop-view { display: block; }
+.mobile-view  { display: none;  }

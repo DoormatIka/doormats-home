@@ -8,6 +8,8 @@
 	Very simple, all of the stuff below is math to calculate them.
 	I don't animate things manually on this script, please look at functional.css.
 
+	Also, this is *extremely* messy and not flexible. I have no clue how to refactor this.
+
 	Technical notes: I use style.top to set the position of the scroll bar,
 		and style.transform as an offset from that position.
 		Scrolling changes style.transform.
@@ -85,7 +87,6 @@ export function initializeScrollbar() {
 	const thumb = document.getElementById("scrollbar-thumb");
 	const shell = /** @type {HTMLElement} */ (document.getElementsByClassName("shell")[0]);
 	const line = document.getElementById("scrollbar");
-	const lineRect = line.getBoundingClientRect();
 
 	positionScrollbar();
 
@@ -102,7 +103,8 @@ export function initializeScrollbar() {
 	// the mouse should click at any point inside the scroll thumb
 	// 		and NOT move the thumb's middle to the cursor.
 	thumb.addEventListener("pointerdown", (e) => {
-		let middleY = e.clientY - lineRect.top - thumb.clientHeight / 2;
+		const lineTop = line.getBoundingClientRect().top;
+		let middleY = e.clientY - lineTop - thumb.clientHeight / 2;
 		scrollThumbTo(shell, thumb, line, middleY);
 		thumb.setPointerCapture(e.pointerId);
 
@@ -111,7 +113,8 @@ export function initializeScrollbar() {
 	thumb.addEventListener("pointermove", (e) => {
 		if (!thumb.hasPointerCapture(e.pointerId) || !glob.isScrollable) return;
 
-		let middleY = e.clientY - lineRect.top - thumb.clientHeight / 2;
+		const lineTop = line.getBoundingClientRect().top;
+		let middleY = e.clientY - lineTop - thumb.clientHeight / 2;
 		scrollThumbTo(shell, thumb, line, middleY);
 
 		e.stopPropagation();
@@ -124,12 +127,13 @@ export function initializeScrollbar() {
 		e.preventDefault();
 		onWheel(shell, thumb, line, e.deltaY);
 		// i could not be bothered to make shell div have smooth scroll on this.
-	})
+	}, { passive: false })
 
 	line.addEventListener("pointerdown", (e) => {
 		if (thumb.hasPointerCapture(e.pointerId) || !glob.isScrollable) return;
 
-		let middleY = e.clientY - lineRect.top - thumb.clientHeight / 2;
+		const lineTop = line.getBoundingClientRect().top;
+		let middleY = e.clientY - lineTop - thumb.clientHeight / 2;
 		scrollThumbTo(shell, thumb, line, middleY);
 
 		thumb.setPointerCapture(e.pointerId);
@@ -137,7 +141,7 @@ export function initializeScrollbar() {
 	line.addEventListener("wheel", (e) => {
 		e.preventDefault();
 		onWheel(shell, thumb, line, e.deltaY);
-	});
+	}, { passive: false });
 
 	shell.addEventListener("scroll", (e) => {
 		const shell = e.currentTarget;
