@@ -26,10 +26,11 @@
 			class="cursor"
 			data-ease="0.005"
 			style="mix-blend-mode: hard-light; 
-				width: 800px; 
-				height: 800px; 
+				width: calc(100dvw - 3rem);
+				height: calc(100dvw - 3rem); 
 				opacity: 0.2;
-				background-color: var(--color-accent);" 
+				background-color: var(--color-accent);
+				filter: blur(2px);" 
 		></div>
 		<div
 			class="cursor"
@@ -38,7 +39,8 @@
 				width: 600px; 
 				height: 600px; 
 				opacity: 0.35;
-				background-color: var(--color-accent-shade);" 
+				background-color: var(--color-accent-shade);
+				filter: blur(1px);" 
 		></div>
 		<div
 			class="cursor"
@@ -46,11 +48,11 @@
 			style="mix-blend-mode: screen; 
 				width: 200px; 
 				height: 200px; 
-				background-color: var(--color-base);" 
+				background-color: var(--color-base);"
 		></div>
 		<div 
 			role="button"
-			tabindex="0"
+			tabindex="1"
 			id="scrollbar-thumb" 
 			class="scrollbar-thumb"
 		></div>
