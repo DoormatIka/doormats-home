@@ -1,132 +1,100 @@
-<!DOCTYPE html>
-
+<!doctype html>
 
 <html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>yuyuqk's website</title>
+		<meta name="description" content="doormat's home" />
 
-<head>
-	<meta charset="UTF-8">
-	<title>yuyuqk's website</title>
-	<meta name="description" content="doormat's home">
+		<link rel="stylesheet" href="/shared/global.css" />
+		<link rel="stylesheet" href="/shared/list.css" />
+		<link rel="stylesheet" href="/shared/kaban.css" />
+		<link rel="stylesheet" href="/index.css" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-	<link rel="stylesheet" href="/shared/global.css">
-	<link rel="stylesheet" href="/shared/list.css">
-	<link rel="stylesheet" href="/shared/kaban.css">
-	<link rel="stylesheet" href="/index.css">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script type="module" src="/shared/global.js" defer></script>
+		<script type="module" src="/index.js" defer></script>
 
-	<script type="module" src="/shared/global.js" defer></script>
-	<script type="module" src="/index.js" defer></script>
+		<link rel="stylesheet" href="/shared/media-queries.css" />
+	</head>
 
-	<link rel="stylesheet" href="/shared/media-queries.css">
-</head>
+	<body>
+		<div id="umbrella-background"></div>
+		<div class="center">
+			<div
+				class="cursor"
+				data-ease="0.005"
+				style="
+					mix-blend-mode: hard-light;
+					width: calc(100dvw - 3rem);
+					height: calc(100dvw - 3rem);
+					opacity: 0.2;
+					background-color: var(--color-accent);
+					filter: blur(2px);
+				"
+			></div>
+			<div
+				class="cursor"
+				data-ease="0.02"
+				style="
+					mix-blend-mode: hard-light;
+					width: 600px;
+					height: 600px;
+					opacity: 0.35;
+					background-color: var(--color-accent-shade);
+					filter: blur(1px);
+				"
+			></div>
+			<div
+				class="cursor"
+				data-ease="0.1"
+				style="
+					mix-blend-mode: screen;
+					width: 200px;
+					height: 200px;
+					background-color: var(--color-base);
+				"
+			></div>
+			<div
+				role="button"
+				tabindex="1"
+				id="scrollbar-thumb"
+				class="scrollbar-thumb"
+			></div>
 
-<body class="umbrella-background">
-	<div class="center">
-		<div 
-			class="cursor"
-			data-ease="0.005"
-			style="mix-blend-mode: hard-light; 
-				width: calc(100dvw - 3rem);
-				height: calc(100dvw - 3rem); 
-				opacity: 0.2;
-				background-color: var(--color-accent);
-				filter: blur(2px);" 
-		></div>
-		<div
-			class="cursor"
-			data-ease="0.02"
-			style="mix-blend-mode: hard-light; 
-				width: 600px; 
-				height: 600px; 
-				opacity: 0.35;
-				background-color: var(--color-accent-shade);
-				filter: blur(1px);" 
-		></div>
-		<div
-			class="cursor"
-			data-ease="0.1"
-			style="mix-blend-mode: screen; 
-				width: 200px; 
-				height: 200px; 
-				background-color: var(--color-base);"
-		></div>
-		<div 
-			role="button"
-			tabindex="1"
-			id="scrollbar-thumb" 
-			class="scrollbar-thumb"
-		></div>
-
-		<div class="main-container big-box">
-			
-			<div class="max-item home-content desktop-view">
-				<main data-router="spa" class="max-item main-content flex-scrollable shell">
-					<noscript>
-						<p>Please enable JS for this page!</p>
-					</noscript>
-				</main>
-
-				<nav class="side-nav">
-					<header>
-						<h1 class="title">yuyuqk's</h1>
-					</header>
-					<div class="flex-row flex-1" style="padding-bottom: 1rem;">
-						<div class="spacer"></div>
-						<div id="scrollbar" class="divider-vertical scrollbar"></div>
-						<div class="side-nav-content">
-							<a data-route="spa" href="#/">room</a>
-							<a data-route="spa" href="#/about">about</a>
-							<a data-route="spa" href="#/shrine">shrine</a>
-							<a data-route="spa" href="#/todo">todo</a>
-						</div>
-					</div>
-				</nav>
-			</div>
-
-			<!-- DEDICATED MOBILE VIEW SOON
-				still many issues with my code.
-				- id="scrollbar" to (id="mobile-scrollbar" and id="desktop-scrollbar")
-						and switch with media queries in JS.
-
-						const scrollbar = matchMedia("(max-width: 50rem)").matches
-							? document.getElementById("scrollbar-mobile")
-							: document.getElementById("scrollbar-desktop");
-
-				- handling having two data-routers: data-router="mobile" and data-router="desktop" maybe?
-						the router really isn't designed for this..
-
-			<div class="max-item home-content mobile-view">
-				<nav>
-					<header>
-						<h1 class="title">doormat's</h1>
-					</header>
-					<div class="flex-row flex-1" style="padding-bottom: 1rem;">
-						<div class="side-nav-content">
-							<a data-route="spa" href="#/">room</a>
-							<a data-route="spa" href="#/about">about</a>
-							<a data-route="spa" href="#/shrines">shrines</a>
-							<a data-route="spa" href="#/todo">todo</a>
-						</div>
-					</div>
-				</nav>
-
-
-				<div style="display: flex;">
-					<div id="scrollbar" class="divider-vertical scrollbar"></div>
-					<main data-router="spa" class="max-item main-content flex-scrollable shell" data-mobile-shell>
+			<div class="main-container big-box">
+				<div class="max-item home-content desktop-view">
+					<main
+						data-router="spa"
+						class="max-item main-content flex-scrollable shell"
+					>
 						<noscript>
 							<p>Please enable JS for this page!</p>
 						</noscript>
 					</main>
+
+					<nav class="side-nav">
+						<header>
+							<h1 class="title">yuyuqk's</h1>
+						</header>
+						<div class="flex-row flex-1" style="padding-bottom: 1rem">
+							<div class="spacer"></div>
+							<div id="scrollbar" class="divider-vertical scrollbar"></div>
+							<div class="side-nav-content">
+								<a data-route="spa" href="#/">room</a>
+								<a data-route="spa" href="#/about">about</a>
+								<a data-route="spa" href="#/shrine">shrine</a>
+								<a data-route="spa" href="#/todo">todo</a>
+							</div>
+						</div>
+					</nav>
 				</div>
+
+				<!-- DEDICATED MOBILE VIEW SOON -->
 			</div>
-
 		</div>
-			-->
-</body>
-
+	</body>
 </html>
-
 
 <style>
 	html {
@@ -140,4 +108,5 @@
 			visibility: visible;
 		}
 	</style>
-<noscript>
+	<noscript> </noscript
+></noscript>

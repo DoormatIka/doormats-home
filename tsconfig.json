@@ -1,12 +1,7 @@
 {
 	"$schema": "https://json.schemastore.org/tsconfig.json",
 	// Change this to match your project
-	"exclude": [
-		"node_modules/*",
-		".git/*",
-		"vite.config.js",
-		"types/*"
-	],
+	"exclude": ["node_modules/*", ".git/*", "vite.config.js", "types/*"],
 	"compilerOptions": {
 		"baseUrl": ".",
 		"paths": {

@@ -1,14 +1,13 @@
-
 /**
-	* @callback RouteFunction
-	* @param {Element} el
-	* @param {string[]} params
-	* @returns {Promise<any>}
-	*/
+ * @callback RouteFunction
+ * @param {Element} el
+ * @param {string[]} params
+ * @returns {Promise<any>}
+ */
 /**
-	* @callback OnJoinFunction
-	* @returns {Promise<() => Promise<void>>}
-	*/
+ * @callback OnJoinFunction
+ * @returns {Promise<() => Promise<void>>}
+ */
 
 /**
 	* The router that handles hash-based routes.
@@ -27,25 +26,25 @@
 export class HashRouter {
 	constructor() {
 		/**
-			* The hash to be used in the website.
-			* @type {string}
-			*/
+		 * The hash to be used in the website.
+		 * @type {string}
+		 */
 		this._hash = "#/";
 		/**
-			*
-			* @type {{ [key: string]: RouteFunction }}
-			*/
+		 *
+		 * @type {{ [key: string]: RouteFunction }}
+		 */
 		this._routes = {};
 		/**
-			*
-			* @type {Array<() => Promise<void>>}
-			*/
+		 *
+		 * @type {Array<() => Promise<void>>}
+		 */
 		this._previousPageCleanupFunction = [];
 	}
 	/**
-		* @param {string} route - The route of the website.
-		* @param {RouteFunction} fn - Runs this function when it's on route.
-		*/
+	 * @param {string} route - The route of the website.
+	 * @param {RouteFunction} fn - Runs this function when it's on route.
+	 */
 	add(route, fn) {
 		this._routes[route] = fn;
 		return this;
@@ -54,148 +53,142 @@ export class HashRouter {
 		window.addEventListener("hashchange", () => this._onHashChange(), false);
 		document.addEventListener("DOMContentLoaded", () => {
 			// handles switching from normal route to hash route
-			const isSpa = document.querySelector("[data-router]") !== null
+			const isSpa = document.querySelector("[data-router]") !== null;
 			if (isSpa) {
 				if (!window.location.hash) {
-					window.location.hash = "#/"
+					window.location.hash = "#/";
 				}
 				this._onHashChange();
 			}
-		})
+		});
 	}
 	async _onHashChange() {
 		let uri = window.location.hash;
 		let params = [];
 
-		await Promise.all(this._previousPageCleanupFunction.map(c => c()));
+		await Promise.all(this._previousPageCleanupFunction.map((c) => c()));
 
 		if (uri.indexOf(this._hash) === -1)
-			return window.location.hash = this._hash;
+			return (window.location.hash = this._hash);
 
 		uri = cleanRoute(uri);
 		let hashRoute = uri.split(this._hash).pop();
 
-		if (hashRoute.length <= 0) 
-			hashRoute = "index";
+		if (hashRoute.length <= 0) hashRoute = "index";
 
-		if (hashRoute.indexOf('/') > -1) {
-			params = hashRoute.split('/');
+		if (hashRoute.indexOf("/") > -1) {
+			params = hashRoute.split("/");
 			hashRoute = params.shift();
 		}
 
-		if (!this._routes[hashRoute]) 
-			hashRoute = "notFound";
+		if (!this._routes[hashRoute]) hashRoute = "notFound";
 
 		const shell = document.querySelector("[data-router]");
 		if (!shell) {
-			console.warn("No [data-router] in HTML object found!")
+			console.warn("No [data-router] in HTML object found!");
 		}
 		if (!shell.classList.contains("shell")) {
 			shell.classList.add("shell");
 		}
-		
+
 		await this._routes[hashRoute].apply(this, [shell, params]);
-		
+
 		this._previousPageCleanupFunction = await runJSinElement(shell);
 	}
 	/**
-		* @param {string} path 
-		*/
+	 * @param {string} path
+	 */
 	set(path) {
 		window.location.hash = this._hash + path;
 	}
 }
 
-// to dos: 
+// to dos:
 // - local route CSS should take precedence over global CSS
 
 /**
-	* @param {string} route 
-	*/
+ * @param {string} route
+ */
 function cleanRoute(route) {
-	if (typeof route !== "string")
-		throw new Error("route is not a string.");
+	if (typeof route !== "string") throw new Error("route is not a string.");
 
-	return route.replace(/^#\/*/, "")
-		.replace(/\/+/g, "/");
+	return route.replace(/^#\/*/, "").replace(/\/+/g, "/");
 }
 
-
-
 /**
-	* Runs <script> elements inside an element by replacing them
-	* so the browser executes them again.
-	*
-	* @param {Element} elm
-	*/
+ * Runs <script> elements inside an element by replacing them
+ * so the browser executes them again.
+ *
+ * @param {Element} elm
+ */
 async function runJSinElement(elm) {
-    const scripts = elm.querySelectorAll("script");
+	const scripts = elm.querySelectorAll("script");
 	/** @type {Array<() => Promise<void>>} */
 	const cleanupFunctions = [];
 
 	for (let i = 0; i < scripts.length; i++) {
 		const oldScript = scripts[i];
-        const isFileScript = oldScript.src;
+		const isFileScript = oldScript.src;
 
-        if (isFileScript) {
-            cleanupFunctions.push(await handleExternalScript(oldScript));
-        } else {
-            executeInlineScript(oldScript);
-        }
+		if (isFileScript) {
+			cleanupFunctions.push(await handleExternalScript(oldScript));
+		} else {
+			executeInlineScript(oldScript);
+		}
 	}
 
 	return cleanupFunctions;
 }
 
 /**
-	* Handles external scripts from src.
-	* Returns a cleanup function. TODO1: CONNECT THIS.
-	*
-	* @param {HTMLScriptElement} script
-	* @returns {Promise<() => Promise<void>>}
-	*/
+ * Handles external scripts from src.
+ * Returns a cleanup function. TODO1: CONNECT THIS.
+ *
+ * @param {HTMLScriptElement} script
+ * @returns {Promise<() => Promise<void>>}
+ */
 async function handleExternalScript(script) {
-    const src = script.getAttribute("src");
+	const src = script.getAttribute("src");
 	const defaultFn = async () => {};
-    if (!src) 
-		return defaultFn;
+	if (!src) return defaultFn;
 
-    try {
-        const mod = await import(/* @vite-ignore */ src);
+	try {
+		const mod = await import(/* @vite-ignore */ src);
 		/** @type {OnJoinFunction | null} */
 		const onJoin = mod?.onJoin;
 
-        if (typeof onJoin === "function") {
-            return await onJoin();
-        }
-    } catch (err) {
-        console.error("Error importing", src, err);
-    }
+		if (typeof onJoin === "function") {
+			return await onJoin();
+		}
+	} catch (err) {
+		console.error("Error importing", src, err);
+	}
 
 	return defaultFn;
 }
 
 /**
-	* Handles inline scripts.
-	*
-	* @param {HTMLScriptElement} script
-	*/
+ * Handles inline scripts.
+ *
+ * @param {HTMLScriptElement} script
+ */
 function executeInlineScript(script) {
-    const newScript = document.createElement("script");
+	const newScript = document.createElement("script");
 
 	for (let i = 0; i < script.attributes.length; i++) {
 		const { name, value } = script.attributes[i];
-        newScript.setAttribute(name, value);
+		newScript.setAttribute(name, value);
 	}
 
 	if (!new Boolean(script.dataset.nowarn)) {
-		console.warn("From the hash router: " +
-			"Please do NOT put event listeners on inline scripts. " +
-			"It will cause a memory leak. " +
-			"Put them on JS files instead with onJoin()."
-		)
+		console.warn(
+			"From the hash router: " +
+				"Please do NOT put event listeners on inline scripts. " +
+				"It will cause a memory leak. " +
+				"Put them on JS files instead with onJoin().",
+		);
 	}
 
-    newScript.textContent = script.textContent;
-    script.replaceWith(newScript);
+	newScript.textContent = script.textContent;
+	script.replaceWith(newScript);
 }

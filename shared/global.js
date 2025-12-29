@@ -1,13 +1,17 @@
-
 // fouc
 
 // letting the CSS load first.
 
 import { CursorManager } from "/shared/components/cursor.js";
-import { positionScrollbar, initializeScrollbar } from "/shared/components/scrollbar.js";
+import {
+	positionScrollbar,
+	initializeScrollbar,
+} from "/shared/components/scrollbar.js";
 
 const man = new CursorManager();
-const isReducedMotionEnabled = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const isReducedMotionEnabled = window.matchMedia(
+	"(prefers-reduced-motion: reduce)",
+).matches;
 
 document.addEventListener("DOMContentLoaded", () => {
 	document.fonts.ready.then(() => {
@@ -21,8 +25,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		initializeScrollbar();
 		positionScrollbarOnBoxTransition();
-	})
-})
+	});
+});
 
 function positionScrollbarOnBoxTransition() {
 	const box = /** @type {HTMLElement} */ (document.querySelector(".big-box"));
@@ -33,7 +37,7 @@ function positionScrollbarOnBoxTransition() {
 		if (!["width", "height"].includes(e.propertyName)) return;
 
 		bar.style.visibility = "hidden";
-	})
+	});
 	box.addEventListener("transitionend", (e) => {
 		if (e.target !== box) return;
 		if (!["width", "height"].includes(e.propertyName)) return;
@@ -42,4 +46,3 @@ function positionScrollbarOnBoxTransition() {
 		bar.style.visibility = "visible";
 	});
 }
-

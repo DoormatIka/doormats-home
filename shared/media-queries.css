@@ -1,4 +1,3 @@
-
 @media (max-width: 50rem) {
 	.big-box {
 		height: 95%;
@@ -30,6 +29,6 @@
 	*::after {
 		animation: none !important;
 		transition: none !important;
-		scroll-behavior: auto !important; 
+		scroll-behavior: auto !important;
 	}
 }

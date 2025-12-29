@@ -45,16 +45,14 @@ function observeHeight(el, onChange) {
 	const ro = new ResizeObserver(emit);
 	const mo = new MutationObserver(emit);
 
-	el.querySelectorAll("img")
-		.forEach(img => {
-			if (!img.complete) {
-				img.addEventListener("load", emit, { once: true });
-			}
-		});
-	el.querySelectorAll("video")
-		.forEach(vid => {
-			vid.addEventListener("loadstart", emit, { once: true });
-		})
+	el.querySelectorAll("img").forEach((img) => {
+		if (!img.complete) {
+			img.addEventListener("load", emit, { once: true });
+		}
+	});
+	el.querySelectorAll("video").forEach((vid) => {
+		vid.addEventListener("loadstart", emit, { once: true });
+	});
 
 	ro.observe(el);
 	mo.observe(el, { childList: true, subtree: true, characterData: true });
@@ -73,9 +71,12 @@ export function positionScrollbar() {
 
 	const lineRect = line.getBoundingClientRect();
 	const thumbStyle = window.getComputedStyle(thumb);
-	const marginWidth = parseFloat(thumbStyle.marginLeft) + parseFloat(thumbStyle.marginRight);
-	const paddingWidth = parseFloat(thumbStyle.paddingLeft) + parseFloat(thumbStyle.paddingRight);
-	const widthCenter = (parseFloat(thumbStyle.width) / 2) + (marginWidth / 2) + (paddingWidth / 2) || 0;
+	const marginWidth =
+		parseFloat(thumbStyle.marginLeft) + parseFloat(thumbStyle.marginRight);
+	const paddingWidth =
+		parseFloat(thumbStyle.paddingLeft) + parseFloat(thumbStyle.paddingRight);
+	const widthCenter =
+		parseFloat(thumbStyle.width) / 2 + marginWidth / 2 + paddingWidth / 2 || 0;
 	const absoluteTop = lineRect.top;
 	const absoluteLeft = lineRect.left - (widthCenter + 1.5);
 	thumb.style.top = `${absoluteTop}px`;
@@ -85,7 +86,9 @@ export function positionScrollbar() {
 
 export function initializeScrollbar() {
 	const thumb = document.getElementById("scrollbar-thumb");
-	const shell = /** @type {HTMLElement} */ (document.getElementsByClassName("shell")[0]);
+	const shell = /** @type {HTMLElement} */ (
+		document.getElementsByClassName("shell")[0]
+	);
 	const line = document.getElementById("scrollbar");
 
 	positionScrollbar();
@@ -109,7 +112,7 @@ export function initializeScrollbar() {
 		thumb.setPointerCapture(e.pointerId);
 
 		e.stopPropagation();
-	})
+	});
 	thumb.addEventListener("pointermove", (e) => {
 		if (!thumb.hasPointerCapture(e.pointerId) || !glob.isScrollable) return;
 
@@ -118,16 +121,20 @@ export function initializeScrollbar() {
 		scrollThumbTo(shell, thumb, line, middleY);
 
 		e.stopPropagation();
-	})
+	});
 	thumb.addEventListener("pointerup", (e) => {
 		thumb.releasePointerCapture(e.pointerId);
 		e.stopPropagation();
-	})
-	thumb.addEventListener("wheel", (e) => {
-		e.preventDefault();
-		onWheel(shell, thumb, line, e.deltaY);
-		// i could not be bothered to make shell div have smooth scroll on this.
-	}, { passive: false })
+	});
+	thumb.addEventListener(
+		"wheel",
+		(e) => {
+			e.preventDefault();
+			onWheel(shell, thumb, line, e.deltaY);
+			// i could not be bothered to make shell div have smooth scroll on this.
+		},
+		{ passive: false },
+	);
 
 	line.addEventListener("pointerdown", (e) => {
 		if (thumb.hasPointerCapture(e.pointerId) || !glob.isScrollable) return;
@@ -137,31 +144,34 @@ export function initializeScrollbar() {
 		scrollThumbTo(shell, thumb, line, middleY);
 
 		thumb.setPointerCapture(e.pointerId);
-	})
-	line.addEventListener("wheel", (e) => {
-		e.preventDefault();
-		onWheel(shell, thumb, line, e.deltaY);
-	}, { passive: false });
+	});
+	line.addEventListener(
+		"wheel",
+		(e) => {
+			e.preventDefault();
+			onWheel(shell, thumb, line, e.deltaY);
+		},
+		{ passive: false },
+	);
 
 	shell.addEventListener("scroll", (e) => {
 		const shell = e.currentTarget;
-		if (!(shell instanceof HTMLElement)) 
-			return;
+		if (!(shell instanceof HTMLElement)) return;
 
-		const thumbTop = (shell.scrollTop 
-			/ (shell.scrollHeight - shell.clientHeight)) 
-			* (line.clientHeight - thumb.clientHeight);
+		const thumbTop =
+			(shell.scrollTop / (shell.scrollHeight - shell.clientHeight)) *
+			(line.clientHeight - thumb.clientHeight);
 		thumb.style.transform = `translateY(${thumbTop}px)`;
-	})
+	});
 }
 
 /**
-	* Makes the custom scrollbar scroll to y.
-	* @param {HTMLElement} shell 
-	* @param {HTMLElement} thumb 
-	* @param {HTMLElement} line 
-	* @param {number} y 
-	*/
+ * Makes the custom scrollbar scroll to y.
+ * @param {HTMLElement} shell
+ * @param {HTMLElement} thumb
+ * @param {HTMLElement} line
+ * @param {number} y
+ */
 function scrollThumbTo(shell, thumb, line, y) {
 	const newY = Math.max(0, Math.min(y, line.clientHeight - thumb.clientHeight));
 
@@ -171,24 +181,25 @@ function scrollThumbTo(shell, thumb, line, y) {
 }
 
 /**
-	* Is used to abstract wheel inputs.
-	* @param {HTMLElement} shell 
-	* @param {HTMLElement} thumb 
-	* @param {HTMLElement} line 
-	* @param {number} deltaY
-	*/
+ * Is used to abstract wheel inputs.
+ * @param {HTMLElement} shell
+ * @param {HTMLElement} thumb
+ * @param {HTMLElement} line
+ * @param {number} deltaY
+ */
 function onWheel(shell, thumb, line, deltaY) {
 	shell.scrollTop += deltaY;
 
-	const scrollRatio = shell.scrollTop / (shell.scrollHeight - shell.clientHeight);
+	const scrollRatio =
+		shell.scrollTop / (shell.scrollHeight - shell.clientHeight);
 	const newThumbY = scrollRatio * (line.clientHeight - thumb.clientHeight);
 	thumb.style.transform = `translateY(${newThumbY}px)`;
 }
 
 /**
-	* @param {number} clientHeight 
-	* @param {number} shellHeight 
-	*/
+ * @param {number} clientHeight
+ * @param {number} shellHeight
+ */
 export function transformScrollbar(clientHeight, shellHeight) {
 	const thumb = document.getElementById("scrollbar-thumb");
 	const line = document.querySelector("#scrollbar");
@@ -199,7 +210,8 @@ export function transformScrollbar(clientHeight, shellHeight) {
 	const resultingScrollHeight = lineHeight * ratio;
 	glob.isScrollable = ratio < 1;
 
-	if (!glob.isScrollable) { // if shell has no scroll
+	if (!glob.isScrollable) {
+		// if shell has no scroll
 		thumb.style.height = `7px`;
 		thumb.style.backgroundColor = `var(--color-text-light)`;
 	} else {

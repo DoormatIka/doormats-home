@@ -1,4 +1,3 @@
-
 @import url("/shared/functional.css");
 @import url("/shared/media-queries.css");
 
@@ -49,11 +48,33 @@ html {
 	background-color: var(--color-base);
 	height: 100%;
 }
+
+#umbrella-background {
+	position: fixed;
+	inset: 0;
+	z-index: -20;
+
+	opacity: 0;
+	transition: opacity 0.6s cubic-bezier(0.33, 1, 0.68, 1);
+}
+#umbrella-background video,
+#umbrella-background img {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+#umbrella-background.loaded {
+	opacity: 1;
+}
+
 h1 {
 	font-size: var(--font-size-header);
-  font-family: "Gloria Hallelujah", cursive;
-  font-weight: 400;
-  font-style: normal;
+	font-family: "Gloria Hallelujah", cursive;
+	font-weight: 400;
+	font-style: normal;
 	margin: 0px;
 	padding: 0px;
 	color: var(--color-text);
@@ -107,12 +128,14 @@ img {
 	background-color: transparent;
 }
 
-p, a, .coming-soon {
+p,
+a,
+.coming-soon {
 	font-size: var(--font-size-base);
-  font-family: "Coming Soon", cursive;
+	font-family: "Coming Soon", cursive;
 	src: var(--coming-font-path) format("truetype");
-  font-weight: 400;
-  font-style: normal;
+	font-weight: 400;
+	font-style: normal;
 	margin: 0px;
 	color: var(--color-text);
 	font-display: swap;
@@ -129,7 +152,7 @@ p, a, .coming-soon {
 	color: var(--color-text-light);
 }
 a {
-  font-style: italic;
+	font-style: italic;
 	text-decoration: none;
 	margin: 0px;
 	font-weight: bold;
@@ -197,10 +220,10 @@ body {
 .big-box {
 	width: 45rem;
 	height: 35rem;
-	transition: width 0.3s cubic-bezier(0.33, 1, 0.68, 1), 
+	transition:
+		width 0.3s cubic-bezier(0.33, 1, 0.68, 1),
 		height 0.3s cubic-bezier(0.33, 1, 0.68, 1);
 }
-
 
 .divider-vertical {
 	border-left: 1px solid var(--color-text);
@@ -244,7 +267,9 @@ br {
 .spoiler {
 	background-color: var(--color-text-light);
 	color: var(--color-text-light);
-	transition: background-color 0.3s ease-in, color 0.3s ease-in;
+	transition:
+		background-color 0.3s ease-in,
+		color 0.3s ease-in;
 }
 
 .spoiler:hover {
@@ -252,5 +277,9 @@ br {
 	color: var(--color-text);
 }
 
-.desktop-view { display: block; }
-.mobile-view  { display: none;  }
+.desktop-view {
+	display: block;
+}
+.mobile-view {
+	display: none;
+}

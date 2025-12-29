@@ -1,24 +1,23 @@
+/**
+ * @typedef {Object} Cursor
+ * @property {HTMLDivElement | null} div
+ * @property {number} cursorX
+ * @property {number} cursorY
+ * @property {number} targetX
+ * @property {number} targetY
+ * @property {number} ease
+ */
 
 /**
-	* @typedef {Object} Cursor
-	* @property {HTMLDivElement | null} div
-	* @property {number} cursorX
-	* @property {number} cursorY
-	* @property {number} targetX
-	* @property {number} targetY
-	* @property {number} ease
-	*/
-
-/**
-	* This is where animations of the cursor happen.
-	* Make a div (or multiple divs) with a class of ".cursor", style it, and put it anywhere you like.
-	* You can put [data-ease] inside that div to modify the strength of the easing (decimals only, e.g: 0.01, 0.005)
-	*/
+ * This is where animations of the cursor happen.
+ * Make a div (or multiple divs) with a class of ".cursor", style it, and put it anywhere you like.
+ * You can put [data-ease] inside that div to modify the strength of the easing (decimals only, e.g: 0.01, 0.005)
+ */
 export class CursorManager {
 	constructor() {
 		/**
-			* @type {Array<Cursor>}
-			*/
+		 * @type {Array<Cursor>}
+		 */
 		this._cursors = [];
 		this.animateCursor = this.animateCursor.bind(this);
 	}
@@ -32,14 +31,14 @@ export class CursorManager {
 			const height = document.body.clientHeight / 2;
 
 			if (typeof ease !== "number") {
-				console.error(`[data-ease] is NOT a number: ${ease}`)
+				console.error(`[data-ease] is NOT a number: ${ease}`);
 				continue;
 			}
-			this._cursors.push({ 
+			this._cursors.push({
 				div: cursor,
-				ease: ease ?? 1/50,
-				cursorX: width + (i * 15),
-				cursorY: height + (i * 15),
+				ease: ease ?? 1 / 50,
+				cursorX: width + i * 15,
+				cursorY: height + i * 15,
 				targetX: width,
 				targetY: height,
 			});
@@ -56,8 +55,8 @@ export class CursorManager {
 		requestAnimationFrame(this.animateCursor);
 	}
 	/**
-		* @param {TouchEvent} e 
-		*/
+	 * @param {TouchEvent} e
+	 */
 	_touch(e) {
 		for (const cursor of this._cursors) {
 			cursor.targetX = e.touches[0].clientX;
@@ -65,8 +64,8 @@ export class CursorManager {
 		}
 	}
 	/**
-		* @param {MouseEvent} e 
-		*/
+	 * @param {MouseEvent} e
+	 */
 	_mouse(e) {
 		for (let cursor of this._cursors) {
 			cursor.targetX = e.clientX;
@@ -92,8 +91,6 @@ export class CursorManager {
 		document.addEventListener("touchmove", (e) => this._touch(e));
 		document.addEventListener("touchend", () => {
 			timeoutID = setTimeout(() => this._mouseToCenter(), 1000);
-		})
+		});
 	}
 }
-
-
