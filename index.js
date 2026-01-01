@@ -15,8 +15,14 @@ import { positionScrollbar } from "/shared/components/scrollbar.js";
 //         to move the routing from client-side to the build step.
 // However, I'd like to focus on the design of the website first.
 
+/** @type {string[]} */
+let pagesManifest;
 /**
  * A very ad-hoc patch to detect if a file is in a route or not.
+ * This is not for security purposes.
+ * Please do not solely use this, have a reverse proxy to avoid path traversal attacks.
+ *
+ * Not a pure function.
  *
  * Details:
  * `cli/createManifest.js` gets called by Vite on dev time. A function there
@@ -27,13 +33,14 @@ import { positionScrollbar } from "/shared/components/scrollbar.js";
  * @returns {Promise<boolean>}
  */
 async function isFileInRoutes(filepath) {
-	const v = await fetch("/manifest.json");
-	const text = await v.text();
-	/** @type {string[]} */
-	const parsedPaths = JSON.parse(text);
+	if (!pagesManifest) {
+		const v = await fetch("/manifest.json");
+		const text = await v.text();
+		/** @type {string[]} */
+		pagesManifest = JSON.parse(text);
+	}
 	const splitPath = filepath.split("/").filter(Boolean);
-
-	for (const p of parsedPaths) {
+	for (const p of pagesManifest) {
 		const spl = p.split("/").filter(Boolean);
 		if (arraysMatch(spl, splitPath)) return true;
 	}
@@ -102,7 +109,7 @@ function pageRoute(page, file = "index.html", maxDepth = 2) {
 			const cutParams = params.slice(0, maxDepth);
 			const path = ["pages", page, ...cutParams, file].join("/");
 			const html = await loadHTMLFile(path);
-			shell.innerHTML = html;
+			shell.innerHTML = html; // unsafe! please sanitize this beforehand.
 		} catch (err) {
 			shell.innerHTML = formatErrors(err);
 		}

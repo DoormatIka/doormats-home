@@ -21,8 +21,3 @@ export async function onJoin() {
 		umbrellaBg.classList.remove("loaded");
 	};
 }
-/*
-	<video autoplay muted loop playsinline style="object-fit: cover;">
-		<source src="/shared/videos/Legacy of Lunatic Kingdom - Stage 3 Background in 360P.mp4" type="video/mp4">
-	</video>
-*/

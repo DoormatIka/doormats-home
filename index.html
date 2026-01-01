@@ -16,45 +16,15 @@
 		<script type="module" src="/index.js" defer></script>
 
 		<link rel="stylesheet" href="/shared/media-queries.css" />
+		<link rel="stylesheet" href="/shared/functional.css" />
 	</head>
 
 	<body>
 		<div id="umbrella-background"></div>
 		<div class="center">
-			<div
-				class="cursor"
-				data-ease="0.005"
-				style="
-					mix-blend-mode: hard-light;
-					width: calc(100dvw - 3rem);
-					height: calc(100dvw - 3rem);
-					opacity: 0.2;
-					background-color: var(--color-accent);
-					filter: blur(2px);
-				"
-			></div>
-			<div
-				class="cursor"
-				data-ease="0.02"
-				style="
-					mix-blend-mode: hard-light;
-					width: 600px;
-					height: 600px;
-					opacity: 0.35;
-					background-color: var(--color-accent-shade);
-					filter: blur(1px);
-				"
-			></div>
-			<div
-				class="cursor"
-				data-ease="0.1"
-				style="
-					mix-blend-mode: screen;
-					width: 200px;
-					height: 200px;
-					background-color: var(--color-base);
-				"
-			></div>
+			<div class="cursor" data-ease="0.005"></div>
+			<div class="cursor" data-ease="0.02"></div>
+			<div class="cursor" data-ease="0.1"></div>
 			<div
 				role="button"
 				tabindex="1"
@@ -77,7 +47,7 @@
 						<header>
 							<h1 class="title">yuyuqk's</h1>
 						</header>
-						<div class="flex-row flex-1" style="padding-bottom: 1rem">
+						<div class="flex-row flex-1 pb-1">
 							<div class="spacer"></div>
 							<div id="scrollbar" class="divider-vertical scrollbar"></div>
 							<div class="side-nav-content">
