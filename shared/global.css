@@ -223,19 +223,36 @@ body {
 }
 
 .divider-vertical {
-	border-left: 1px solid var(--color-text);
-	align-self: stretch;
-	opacity: 0.2;
+	/** needs an SVG, components are limited with pure HTML */
+	width: 0.5rem;
+	height: 100%;
+	opacity: 0.5;
 	padding-left: 8px;
 	padding-right: 8px;
+	align-self: stretch;
 }
 .divider-horizontal {
-	border-bottom: 1px solid var(--color-text);
+	/** needs an SVG, components are limited with pure HTML */
+	stroke-width: 1;
+	height: 0.5rem;
+	width: 100%;
 	align-self: stretch;
-	opacity: 0.2;
+	opacity: 0.5;
 	padding-top: 8px;
 	padding-bottom: 8px;
 }
+.divider-vertical svg,
+.divider-horizontal svg {
+	width: 100%;
+	height: 100%;
+	display: block;
+}
+.divider-vertical line,
+.divider-horizontal line {
+	stroke-width: 10;
+	stroke: var(--color-text);
+}
+
 .max-h {
 	height: 100%;
 }

@@ -70,15 +70,16 @@ export function positionScrollbar() {
 	const line = document.querySelector("#scrollbar");
 
 	const lineRect = line.getBoundingClientRect();
+	const lineStyle = window.getComputedStyle(line);
 	const thumbStyle = window.getComputedStyle(thumb);
-	const marginWidth =
+	const thumbMargin =
 		parseFloat(thumbStyle.marginLeft) + parseFloat(thumbStyle.marginRight);
-	const paddingWidth =
-		parseFloat(thumbStyle.paddingLeft) + parseFloat(thumbStyle.paddingRight);
-	const widthCenter =
-		parseFloat(thumbStyle.width) / 2 + marginWidth / 2 + paddingWidth / 2 || 0;
+	const lineWidth =
+		lineRect.width +
+		parseFloat(lineStyle.marginLeft) +
+		parseFloat(lineStyle.marginRight);
 	const absoluteTop = lineRect.top;
-	const absoluteLeft = lineRect.left - (widthCenter + 1.5);
+	const absoluteLeft = lineRect.left - (lineWidth / 2 - thumbMargin / 2) - 1.35;
 	thumb.style.top = `${absoluteTop}px`;
 	thumb.style.left = `${absoluteLeft}px`;
 	thumb.style.transform = `translateY(0px)`;
