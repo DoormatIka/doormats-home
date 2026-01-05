@@ -9,7 +9,7 @@
 		},
 		"target": "es2017", // >.> es2020 is insane.
 		"module": "es2020",
-		"lib": ["ES2017", "dom"],
+		"lib": ["ES2017", "DOM", "DOM.Iterable"],
 		"moduleResolution": "nodenext",
 		// Tells TypeScript to read JS files, as
 		// normally they are ignored as source files

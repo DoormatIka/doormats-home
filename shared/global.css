@@ -28,17 +28,17 @@
 @font-face {
 	font-family: "Gloria Hallelujah";
 	src: url("/shared/fonts/GloriaHallelujah-Regular.ttf") format("truetype");
-	font-display: swap;
+	font-display: block;
 }
 @font-face {
 	font-family: "Coming Soon";
 	src: url("/shared/fonts/ComingSoon-Regular.ttf") format("truetype");
-	font-display: swap;
+	font-display: block;
 }
 @font-face {
 	font-family: "Walter Turncoat";
 	src: url("/shared/fonts/WalterTurncoat-Regular.ttf") format("truetype");
-	font-display: swap;
+	font-display: block;
 }
 
 html {
@@ -96,7 +96,7 @@ h2 {
 	margin: 0px;
 	padding: 0px;
 	color: var(--color-secondary);
-	font-display: swap;
+	font-display: block;
 
 	text-shadow: 2px 1px var(--color-primary);
 	transition: text-shadow 0.5s ease-in;
@@ -116,7 +116,7 @@ h3 {
 	padding: 0px;
 	margin: 0px;
 	color: var(--color-text);
-	font-display: swap;
+	font-display: block;
 }
 
 img {
@@ -135,7 +135,7 @@ a,
 	font-style: normal;
 	margin: 0px;
 	color: var(--color-text);
-	font-display: swap;
+	font-display: block;
 }
 *::selection {
 	background-color: var(--color-primary-transparent);
@@ -233,7 +233,6 @@ body {
 }
 .divider-horizontal {
 	/** needs an SVG, components are limited with pure HTML */
-	stroke-width: 1;
 	height: 0.5rem;
 	width: 100%;
 	align-self: stretch;
@@ -298,6 +297,9 @@ br {
 }
 
 /* /////////////// used only once ///////////////// */
+.hide {
+	opacity: 0;
+}
 .red {
 	color: red;
 }

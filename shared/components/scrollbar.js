@@ -72,6 +72,7 @@ export function positionScrollbar() {
 	const lineRect = line.getBoundingClientRect();
 	const lineStyle = window.getComputedStyle(line);
 	const thumbStyle = window.getComputedStyle(thumb);
+
 	const thumbMargin =
 		parseFloat(thumbStyle.marginLeft) + parseFloat(thumbStyle.marginRight);
 	const lineWidth =
@@ -79,7 +80,7 @@ export function positionScrollbar() {
 		parseFloat(lineStyle.marginLeft) +
 		parseFloat(lineStyle.marginRight);
 	const absoluteTop = lineRect.top;
-	const absoluteLeft = lineRect.left - (lineWidth / 2 - thumbMargin / 2) - 1.35;
+	const absoluteLeft = lineRect.left - (lineWidth / 2 - thumbMargin / 2) - 1.25;
 	thumb.style.top = `${absoluteTop}px`;
 	thumb.style.left = `${absoluteLeft}px`;
 	thumb.style.transform = `translateY(0px)`;

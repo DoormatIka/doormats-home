@@ -2,24 +2,32 @@
 	position: fixed;
 	pointer-events: none;
 
+	--fade-length: 1s;
+	--fade-delay: 0.1s;
+
 	width: 500px;
 	height: 500px;
 	border-radius: 50%;
 	background-color: var(--color-accent);
 	transform: translate(-50%, -50%);
-	transition: transform 0.1s ease-out;
+	transition:
+		transform 0.1s ease-out,
+		opacity var(--fade-length) ease-out var(--fade-delay);
 	z-index: -1;
 
-	opacity: 60%;
+	opacity: 0.6;
 }
 
-.cursor.cursor:nth-of-type(1) {
+.cursor:nth-of-type(1) {
 	mix-blend-mode: hard-light;
 	width: calc(100dvw - 3rem);
 	height: calc(100dvw - 3rem);
 	opacity: 0.2;
 	background-color: var(--color-accent);
 	filter: blur(2px);
+
+	--fade-length: 0.6s;
+	--fade-delay: 0.3s;
 }
 .cursor:nth-of-type(2) {
 	mix-blend-mode: hard-light;
@@ -28,12 +36,21 @@
 	opacity: 0.35;
 	background-color: var(--color-accent-shade);
 	filter: blur(1px);
+
+	--fade-length: 0.3s;
+	--fade-delay: 0.1s;
 }
 .cursor:nth-of-type(3) {
 	mix-blend-mode: screen;
 	width: 200px;
 	height: 200px;
 	background-color: var(--color-base);
+
+	--fade-length: 0.1s;
+	--fade-delay: 0s;
+}
+.cursor.hide:nth-of-type(n) {
+	opacity: 0;
 }
 
 /* Needed for the scrollbar! */
