@@ -11,6 +11,16 @@
 		flex-direction: column;
 		width: min-content;
 	}
+	.sq-1 {
+		width: 100%;
+		height: 10rem;
+	}
+	.wrap-around-element {
+		float: left;
+		margin-right: 15px;
+		margin-top: 10px;
+		margin-bottom: 10px;
+	}
 	/*
 	.desktop-view { display: none; }
 	.mobile-view { display: block; }

@@ -289,6 +289,19 @@ br {
 	color: var(--color-text);
 }
 
+.wrap-around-element {
+	float: left;
+	margin-right: 15px;
+	margin-bottom: 8px;
+}
+.clear {
+	clear: both;
+}
+.sq-1 {
+	width: 10rem;
+	height: 10rem;
+}
+
 .desktop-view {
 	display: block;
 }
