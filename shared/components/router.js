@@ -2,6 +2,7 @@
  * @callback RouteFunction
  * @param {Element} el
  * @param {string[]} params
+ * @param {string} uri
  * @returns {Promise<any>}
  */
 /**
@@ -37,6 +38,11 @@ export class HashRouter {
 		this._routes = {};
 		/**
 		 *
+		 * @type {RouteFunction[]}
+		 */
+		this._afterHooks = [];
+		/**
+		 *
 		 * @type {Array<() => Promise<void>>}
 		 */
 		this._previousPageCleanupFunction = [];
@@ -47,6 +53,13 @@ export class HashRouter {
 	 */
 	add(route, fn) {
 		this._routes[route] = fn;
+		return this;
+	}
+	/**
+	 * @param {RouteFunction} fn - Runs this function when that mode is reached.
+	 */
+	addAfterHook(fn) {
+		this._afterHooks.push(fn);
 		return this;
 	}
 	activate() {
@@ -62,26 +75,40 @@ export class HashRouter {
 			}
 		});
 	}
+	/**
+	 * @param {string} uri
+	 * @returns {{ hashRoute: string, params: string[], cleanedUri: string }}
+	 */
+	_resolveRoute(uri) {
+		const cleaned = cleanRoute(uri);
+		const segment = cleaned.split(this._hash).pop();
+
+		if (!segment || segment.length === 0) {
+			return { hashRoute: "index", params: [], cleanedUri: cleaned };
+		}
+
+		if (segment.indexOf("/") === -1) {
+			const hashRoute = this._routes[segment] ? segment : "notFound";
+			return { hashRoute, params: [], cleanedUri: cleaned };
+		}
+
+		const parts = segment.split("/");
+		const hashRoute = parts.shift();
+		return {
+			hashRoute: this._routes[hashRoute] ? hashRoute : "notFound",
+			params: parts,
+			cleanedUri: cleaned,
+		};
+	}
 	async _onHashChange() {
 		let uri = window.location.hash;
-		let params = [];
 
 		await Promise.all(this._previousPageCleanupFunction.map((c) => c()));
 
 		if (uri.indexOf(this._hash) === -1)
 			return (window.location.hash = this._hash);
 
-		uri = cleanRoute(uri);
-		let hashRoute = uri.split(this._hash).pop();
-
-		if (hashRoute.length <= 0) hashRoute = "index";
-
-		if (hashRoute.indexOf("/") > -1) {
-			params = hashRoute.split("/");
-			hashRoute = params.shift();
-		}
-
-		if (!this._routes[hashRoute]) hashRoute = "notFound";
+		const { hashRoute, params, cleanedUri } = this._resolveRoute(uri);
 
 		const shell = document.querySelector("[data-router]");
 		if (!shell) {
@@ -91,9 +118,13 @@ export class HashRouter {
 			shell.classList.add("shell");
 		}
 
-		await this._routes[hashRoute].apply(this, [shell, params]);
+		await this._routes[hashRoute].apply(this, [shell, params, cleanedUri]);
 
 		this._previousPageCleanupFunction = await runJSinElement(shell);
+
+		for (const hook of this._afterHooks) {
+			await hook(shell, params, cleanedUri);
+		}
 	}
 	/**
 	 * @param {string} path

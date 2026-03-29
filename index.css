@@ -42,3 +42,27 @@ header {
 	width: 100%;
 	text-align: left;
 }
+
+.bottom-nav {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.breadcrumb {
+	list-style: none; /* Removes bullet points */
+	display: flex; /* Aligns list items horizontally */
+	padding: 0; /* Removes default padding */
+	margin: 0; /* Removes default margin */
+}
+
+.breadcrumb li + li:before {
+	content: "/"; /* Adds a separator between list items */
+	padding: 0 10px; /* Adds space around the separator */
+	color: #6c757d; /* Styles separator color */
+}
+
+.breadcrumb li[aria-current="page"] {
+	color: #6c757d; /* Styles the current page text */
+	pointer-events: none; /* Disables mouse events for the current page item */
+}

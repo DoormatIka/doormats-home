@@ -93,8 +93,6 @@ export function initializeScrollbar() {
 	);
 	const line = document.getElementById("scrollbar");
 
-	positionScrollbar();
-
 	observeHeight(shell, (clientHeight, scrollHeight) => {
 		positionScrollbar();
 		transformScrollbar(clientHeight, scrollHeight);
@@ -108,6 +106,8 @@ export function initializeScrollbar() {
 	// the mouse should click at any point inside the scroll thumb
 	// 		and NOT move the thumb's middle to the cursor.
 	thumb.addEventListener("pointerdown", (e) => {
+		if (!thumb.hasPointerCapture(e.pointerId) || !glob.isScrollable) return;
+
 		const lineTop = line.getBoundingClientRect().top;
 		let middleY = e.clientY - lineTop - thumb.clientHeight / 2;
 		scrollThumbTo(shell, thumb, line, middleY);

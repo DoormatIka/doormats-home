@@ -141,4 +141,91 @@ router.add("shrine", pageRoute("shrine"));
 router.add("todo", pageRoute("todo"));
 router.add("notFound", notFound());
 
+router.addAfterHook(async (_, __, uri) => {
+	const shell = document.querySelector("[data-breadcrumb]");
+	if (!shell) return;
+
+	// uri is something like "#/pictures/summer15/italy"
+	const segments = uri.replace("#/", "").split("/").filter(Boolean);
+
+	const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+
+	const items = [
+		`<li><a href="#/">Home</a></li>`,
+		...segments.map((segment, i) => {
+			const href = "#/" + segments.slice(0, i + 1).join("/");
+			const label = capitalize(segment);
+			const isLast = i === segments.length - 1;
+
+			if (isLast) {
+				return `<li aria-current="page"><span class="coming-soon">${label}</span></li>`;
+			}
+			return `<li><a href="${href}">${label}</a></li>`;
+		}),
+	];
+
+	shell.innerHTML = `
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                ${items.join("\n")}
+            </ol>
+        </nav>
+    `;
+});
+
+/**
+ * @param {any[]} arr
+ */
+function getRandomItem(arr) {
+	const randomIndex = Math.floor(Math.random() * arr.length);
+	const item = arr[randomIndex];
+	return item;
+}
+
+router.addAfterHook(async () => {
+	const shell = document.querySelector("[data-random]");
+	if (!shell) return;
+
+	const messages = [
+		`
+		<a
+			href="https://www.youtube.com/watch?v=xIF0Me8j0dg"
+			target="_blank"
+			rel="noopener noreferrer"
+		>Bubble pop, electric.</a>`,
+		`
+		<a
+			href="https://www.youtube.com/watch?v=xIF0Me8j0dg"
+			target="_blank"
+			rel="noopener noreferrer"
+		>Who the heck is Naoya?</a>`,
+		`
+		<a 
+			href="https://www.youtube.com/watch?v=ddQ7YR0qQSo"
+			target="_blank"
+			rel="noopener noreferrer"
+	 	>our brains are WEEEIII!!</a>`,
+		`
+		<a
+			href="https://www.youtube.com/watch?v=7h7bnYA1LXE",
+			target="_blank"
+			rel="noopener noreferrer"
+		>she's so funky!</a>`,
+		`
+		<a
+			href="https://www.youtube.com/watch?v=qMCWZ8Pay9w",
+			target="_blank"
+			rel="noopener noreferrer"
+		>she's so merengue...</a>`,
+		`
+		<a
+			href="https://mcsrranked.com/stats/yuyuqk",
+			target="_blank"
+			rel="noopener noreferrer"
+		>hop on mcsr ranked.</a>`,
+	];
+
+	shell.innerHTML = getRandomItem(messages);
+});
+
 router.activate();

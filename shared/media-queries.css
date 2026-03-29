@@ -1,8 +1,10 @@
 @media (max-width: 50rem) {
-	.big-box {
-		height: 95%;
+	.big-box-width {
 		width: 95%;
-		margin: 1rem 1rem;
+	}
+	.big-box {
+		height: 90%;
+		width: 95%;
 	}
 	.side-nav {
 		height: 100%;
@@ -29,6 +31,10 @@
 @media (max-height: 40rem) {
 	.big-box {
 		height: 95%;
+		width: 95%;
+		margin: 1rem 1rem;
+	}
+	.big-box-width {
 		width: 95%;
 		margin: 1rem 1rem;
 	}

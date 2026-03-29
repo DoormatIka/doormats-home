@@ -221,6 +221,12 @@ body {
 		width 0.3s cubic-bezier(0.33, 1, 0.68, 1),
 		height 0.3s cubic-bezier(0.33, 1, 0.68, 1);
 }
+.big-box-width {
+	width: 45rem;
+	transition:
+		width 0.3s cubic-bezier(0.33, 1, 0.68, 1),
+		height 0.3s cubic-bezier(0.33, 1, 0.68, 1);
+}
 
 .divider-vertical {
 	/** needs an SVG, components are limited with pure HTML */
