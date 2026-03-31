@@ -30,6 +30,7 @@
 
 		<script type="module" src="/shared/global.js" defer></script>
 		<script type="module" src="/index.js" defer></script>
+		<script type="module" src="/functions.js" defer></script>
 
 		<link rel="stylesheet" href="/shared/media-queries.css" />
 		<link rel="stylesheet" href="/shared/functional.css" />
@@ -47,6 +48,10 @@
 				id="scrollbar-thumb"
 				class="scrollbar-thumb"
 			></div>
+
+			<div class="big-box-width nav">
+				<button id="maximize-btn" class="p-horizontal-half">---</button>
+			</div>
 
 			<div class="main-container big-box">
 				<div class="max-item home-content desktop-view">
@@ -85,7 +90,7 @@
 				</div>
 			</div>
 
-			<div class="main-container big-box-width bottom-nav">
+			<div class="main-container big-box-width nav">
 				<div data-breadcrumb></div>
 				<div data-random></div>
 			</div>

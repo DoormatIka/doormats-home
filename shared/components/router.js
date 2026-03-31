@@ -113,6 +113,7 @@ export class HashRouter {
 		const shell = document.querySelector("[data-router]");
 		if (!shell) {
 			console.warn("No [data-router] in HTML object found!");
+			return;
 		}
 		if (!shell.classList.contains("shell")) {
 			shell.classList.add("shell");

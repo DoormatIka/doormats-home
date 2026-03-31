@@ -1,11 +1,12 @@
 @media (max-width: 50rem) {
-	.big-box-width {
-		width: 95%;
-	}
 	.big-box {
-		height: 90%;
-		width: 95%;
+		height: 100%;
+		width: 100%;
 	}
+	.big-box-width {
+		width: 100%;
+	}
+
 	.side-nav {
 		height: 100%;
 		padding: 0rem 0.5rem;
@@ -28,14 +29,25 @@
 	.mobile-view { display: block; }
 	*/
 }
+
+@media (min-width: 80rem) {
+	.big-box.max {
+		width: 75rem;
+		height: 70rem;
+	}
+	.big-box-width.max {
+		width: 75rem;
+	}
+}
+
 @media (max-height: 40rem) {
 	.big-box {
-		height: 95%;
-		width: 95%;
+		height: 100%;
+		width: 100%;
 		margin: 1rem 1rem;
 	}
 	.big-box-width {
-		width: 95%;
+		width: 100%;
 		margin: 1rem 1rem;
 	}
 }

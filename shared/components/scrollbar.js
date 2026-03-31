@@ -207,9 +207,11 @@ export function transformScrollbar(clientHeight, shellHeight) {
 	const line = document.querySelector("#scrollbar");
 
 	const lineStyle = window.getComputedStyle(line);
-	const ratio = clientHeight / shellHeight;
+	// decimal rounding is to avoid floating point errors.
+	const ratio = roundToDecimal(clientHeight / shellHeight, 2);
 	const lineHeight = parseFloat(lineStyle.height);
 	const resultingScrollHeight = lineHeight * ratio;
+
 	glob.isScrollable = ratio < 1;
 
 	if (!glob.isScrollable) {
@@ -220,4 +222,13 @@ export function transformScrollbar(clientHeight, shellHeight) {
 		thumb.style.height = `${resultingScrollHeight}px`;
 		thumb.style.backgroundColor = `var(--color-base)`;
 	}
+}
+
+/**
+ * @param {number} num
+ * @param {number} decimalPlaces
+ */
+function roundToDecimal(num, decimalPlaces) {
+	const factor = Math.pow(10, decimalPlaces); // or 10 ** decimalPlaces in modern JS
+	return Math.round(num * factor) / factor;
 }
