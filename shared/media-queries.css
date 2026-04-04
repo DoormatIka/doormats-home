@@ -44,11 +44,9 @@
 	.big-box {
 		height: 100%;
 		width: 100%;
-		margin: 1rem 1rem;
 	}
 	.big-box-width {
 		width: 100%;
-		margin: 1rem 1rem;
 	}
 }
 @media (prefers-reduced-motion: reduce) {

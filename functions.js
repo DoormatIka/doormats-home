@@ -7,9 +7,9 @@ function onMaximize() {
 	for (const div of toResize) {
 		const t = div.classList.toggle("max");
 		if (t) {
-			btn.innerHTML = "MMM";
+			btn.innerHTML = "THPJ";
 		} else {
-			btn.innerHTML = "---";
+			btn.innerHTML = "----";
 		}
 	}
 }
