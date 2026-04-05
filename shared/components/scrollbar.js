@@ -121,6 +121,7 @@ export function initializeScrollbar() {
 		const lineTop = line.getBoundingClientRect().top;
 		let middleY = e.clientY - lineTop - thumb.clientHeight / 2;
 		scrollThumbTo(shell, thumb, line, middleY);
+		thumb.setPointerCapture(e.pointerId);
 
 		e.stopPropagation();
 	});

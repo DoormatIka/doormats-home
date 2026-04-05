@@ -22,6 +22,8 @@
 	--color-accent-shade: rgb(154 85 21);
 	--color-accent-light: rgb(214 142 91);
 
+	--color-warn: orange;
+
 	--highlight-color: rgba(186, 205, 176, 0.2);
 }
 
@@ -250,6 +252,8 @@ body {
 	width: 100%;
 }
 
+/******* DIVIDER ********/
+
 .divider-vertical {
 	/** needs an SVG, components are limited with pure HTML */
 	width: 0.5rem;
@@ -279,6 +283,9 @@ body {
 	stroke-width: 10;
 	stroke: var(--color-text);
 }
+
+/******* MISC ********/
+
 button {
 	border: 1px solid var(--color-text);
 	background-color: var(--color-primary);
@@ -361,6 +368,9 @@ br {
 }
 .cadetblue {
 	color: cadetblue;
+}
+.warn {
+	color: var(--color-warn);
 }
 .pb-1 {
 	padding-bottom: 1rem;

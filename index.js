@@ -147,7 +147,9 @@ function pageRoute(page, options = { file: "index.html", maxDepth: 2 }) {
 		} catch (err) {
 			const documentObject = await getNotFoundHTML(formatErrors(err));
 			shell.innerHTML = "";
-			shell.appendChild(documentObject.body);
+			for (const node of documentObject.body.childNodes) {
+				shell.appendChild(node);
+			}
 		}
 		positionScrollbar();
 	};
@@ -159,7 +161,9 @@ function pageRoute(page, options = { file: "index.html", maxDepth: 2 }) {
 function notFound() {
 	return async (shell) => {
 		const doc = await getNotFoundHTML(formatErrors("DoesNotExist"));
-		shell.appendChild(doc.firstChild);
+		for (const node of doc.body.childNodes) {
+			shell.appendChild(node);
+		}
 	};
 }
 
