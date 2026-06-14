@@ -3,8 +3,7 @@
 
 import { HashRouter } from "/shared/components/router.js";
 import { positionScrollbar } from "/shared/components/scrollbar.js";
-import { buildBreadcrumb } from "/shared/components/hooks/breadcrumbs.js";
-import { getRandomMessage } from "./shared/components/hooks/random.js";
+import { parseHTML } from "./shared/misc.js";
 
 /**
  * @typedef {"NetworkError" | "DoesNotExist"} PageError
@@ -143,15 +142,35 @@ function pageRoute(page, options = { file: "index.html", maxDepth: 2 }) {
 			const cutParams = params.slice(0, maxDepth);
 			const path = ["pages", page, ...cutParams, file].join("/");
 			const html = await loadHTMLFile(path);
-			shell.innerHTML = html; // unsafe! please sanitize this beforehand.
+			shell.replaceChildren(parseHTML(html));
 		} catch (err) {
 			const documentObject = await getNotFoundHTML(formatErrors(err));
-			shell.innerHTML = "";
+			shell.replaceChildren(parseHTML("<div></div>"));
 			for (const node of documentObject.body.childNodes) {
 				shell.appendChild(node);
 			}
 		}
 		positionScrollbar();
+	};
+}
+
+/**
+ * @param {string} file
+ * @returns {Promise<import("/shared/components/router.js").RouteFunction>}
+ */
+async function grabHookFromFolder(file) {
+	const hook = await import(file);
+	const name = hook.name;
+	const fn = hook.fn;
+
+	return async (el, params, uri) => {
+		const shell = document.querySelector(`[data-${name}]`);
+		if (!shell) return;
+
+		const nodes = parseHTML(fn(el, params, uri)).children;
+		for (const node of nodes) {
+			shell.replaceChildren(node);
+		}
 	};
 }
 
@@ -175,18 +194,17 @@ router.add("shrine", pageRoute("shrine"));
 router.add("todo", pageRoute("todo"));
 router.add("notFound", notFound());
 
-router.addAfterHook(async (_, __, uri) => {
-	const shell = document.querySelector("[data-breadcrumb]");
-	if (!shell) return;
-
-	shell.innerHTML = buildBreadcrumb(uri);
-});
-
-router.addAfterHook(async () => {
-	const shell = document.querySelector("[data-random]");
-	if (!shell) return;
-
-	shell.innerHTML = getRandomMessage();
-});
+/**
+ * @param {string} folder
+ * @param {string[]} files
+ */
+function addAllHooks(folder, files) {
+	for (const file of files) {
+		grabHookFromFolder(folder + file)
+			.then((c) => router.addAfterHook(c))
+			.catch(console.error);
+	}
+}
+addAllHooks("/shared/components/hooks/", ["breadcrumbs.js", "random.js"]);
 
 router.activate();

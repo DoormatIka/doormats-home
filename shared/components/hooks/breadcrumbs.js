@@ -31,12 +31,15 @@ function segmentToItem(segment, index, segments) {
 	return `<li><a href="${href}">${label}</a></li>`;
 }
 
+export const name = "breadcrumb";
 /**
  * Builds a breadcrumb nav element from a URI.
+ * @param {Element} _shell - The shell
+ * @param {string[]} _params - Parameters from the router.
  * @param {string} uri - e.g. "#/pictures/summer15/italy"
  * @returns {string} - a breadcrumb nav as an HTML string.
  */
-export function buildBreadcrumb(uri) {
+export function fn(_shell, _params, uri) {
 	const segments = uriToSegments(uri);
 	const divs = segments.map(segmentToItem);
 	const items = [`<li><a href="#/">Home</a></li>`, ...divs];

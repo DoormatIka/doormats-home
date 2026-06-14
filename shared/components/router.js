@@ -1,10 +1,11 @@
 /**
  * @callback RouteFunction
- * @param {Element} el
+ * @param {Element} el - The shell element.
  * @param {string[]} params
  * @param {string} uri
  * @returns {Promise<any>}
  */
+
 /**
  * @callback OnJoinFunction
  * @returns {Promise<() => Promise<void>>}

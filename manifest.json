@@ -1,14 +1,13 @@
 [
-	"pages/about/anime/index.html",
-	"pages/about/hobbies/index.html",
-	"pages/about/neocities/index.html",
-	"pages/about/index.html",
-	"pages/notFound/index.html",
-	"pages/room/room.html",
-	"pages/todo/index.html",
-	"pages/shrine/index.html",
-	"pages/shrine/favorites/youmu/index.html",
-	"pages/shrine/favorites/tenshi/index.html",
-	"pages/shrine/favorites/kogasa/index.html"
+    "pages/about/anime/index.html",
+    "pages/about/hobbies/index.html",
+    "pages/about/index.html",
+    "pages/notFound/index.html",
+    "pages/room/room.html",
+    "pages/shrine/favorites/kogasa/index.html",
+    "pages/shrine/favorites/tenshi/index.html",
+    "pages/shrine/favorites/youmu/index.html",
+    "pages/shrine/favorites/index.html",
+    "pages/shrine/index.html",
+    "pages/todo/index.html"
 ]
-

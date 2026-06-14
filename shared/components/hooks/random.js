@@ -42,11 +42,6 @@ const messages = [
 	},
 	{
 		obj: "a",
-		src: "https://www.youtube.com/watch?v=qMCWZ8Pay9w",
-		msg: "she's so merengue...",
-	},
-	{
-		obj: "a",
 		src: "https://mcsrranked.com/stats/yuyuqk",
 		msg: "hop on mcsr ranked.",
 	},
@@ -78,7 +73,15 @@ function getRandomItem(arr) {
 	return item;
 }
 
-export function getRandomMessage() {
+export const name = "random";
+/**
+ * Creates a random message.
+ * @param {Element} _shell - The shell
+ * @param {string[]} _params - Parameters from the router.
+ * @param {string} _uri - e.g. "#/pictures/summer15/italy"
+ * @returns {string} - a breadcrumb nav as an HTML string.
+ */
+export function fn(_shell, _params, _uri) {
 	const { obj, ...others } = getRandomItem(messages);
 	switch (obj) {
 		case "a": {
