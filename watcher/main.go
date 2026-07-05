@@ -68,7 +68,9 @@ func tickerUpdate() {
 			latest_commit = commit.SHA
 			writeErr := os.WriteFile(commit_file, []byte(commit.SHA), 0644)
 
-			gitToAssignedFolders(owner, repo, latest_commit)
+			if err := gitToAssignedFolders(owner, repo, commit.SHA); err != nil {
+				log.Fatalf("gitToAssignedFolders failed: %v", err)
+			}
 
 			if writeErr != nil {
 				log.Fatalf("Failed to write to file: %s", writeErr)
@@ -87,60 +89,67 @@ func setLocalCommit()  {
 	latest_commit = string(sha_bytes)
 }
 
-func gitToAssignedFolders(owner string, repo string, commit string)  {
-	// zip section: create zip file
+func gitToAssignedFolders(owner string, repo string, commit string) error {
 	tmpFile, err := os.CreateTemp("", "github-*.zip")
 	if err != nil {
-		log.Fatalf("Failed to create temp file: %v", err)
+		return fmt.Errorf("creating temp file: %w", err)
 	}
 	defer tmpFile.Close()
 	defer os.Remove(tmpFile.Name())
-
 	fmt.Printf("Temporary file created at: %s\n", tmpFile.Name())
 
 
-	// zip section: downloading from github
 	gitURL := fmt.Sprintf("https://github.com/%s/%s/archive/%s.zip", owner, repo, commit)
 	req, err := http.NewRequest(http.MethodGet, gitURL, nil)
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("building request: %w", err)
 	}
 	req.Header.Set("Content-Type", "application/octet-stream")
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36")
 
-	res, getErr := client.Do(req)
-	if getErr != nil {
-		log.Fatal(getErr)
+
+	res, err := client.Do(req)
+	if err != nil {
+		return fmt.Errorf("downloading zip: %w", err)
 	}
 	defer res.Body.Close()
 
-	_, copyErr := io.Copy(tmpFile, res.Body)
-	if copyErr != nil {
-		return
+	if res.StatusCode != http.StatusOK {
+		return fmt.Errorf("unexpected status downloading zip: %s", res.Status)
+	}
+	if _, err := io.Copy(tmpFile, res.Body); err != nil {
+		return fmt.Errorf("writing zip to temp file: %w", err)
 	}
 
-	// extracting section: create folder
+
 	tmpFolder, err := os.MkdirTemp("", "github-folder-*")
 	if err != nil {
-		log.Fatal(err)
+		return fmt.Errorf("creating temp folder: %w", err)
 	}
 	fmt.Printf("Temporary folder created at: %s\n", tmpFolder)
 	defer os.RemoveAll(tmpFolder)
 
-	// extracting section: zip to folder
-	unzip(tmpFile.Name(), tmpFolder)
+
+	if err := unzip(tmpFile.Name(), tmpFolder); err != nil {
+		return fmt.Errorf("unzipping: %w", err)
+	}
 
 	internalFolderName := fmt.Sprintf("%s-%s", repo, latest_commit)
 	internalFolder, err := url.JoinPath(tmpFolder, internalFolderName)
+	if err != nil {
+		return fmt.Errorf("building internal folder path: %w", err)
+	}
 
-	if err := moveFolderIntoAssigned(internalFolder + "/web", to_web, []string{""}); err != nil {
-		log.Fatalf("move failed: %v", err)
+
+	if err := moveFolderIntoAssigned(internalFolder+"/web", to_web, nil); err != nil {
+		return fmt.Errorf("moving web folder: %w", err)
 	}
-	if err := moveFolderIntoAssigned(internalFolder + "/server", to_server, []string{""}); err != nil {
-		log.Fatalf("move failed: %v", err)
+	if err := moveFolderIntoAssigned(internalFolder+"/server", to_server, nil); err != nil {
+		return fmt.Errorf("moving server folder: %w", err)
 	}
+
+	return nil
 }
-
 func clearAssignedPath(assignedPath string) error {
 	if err := os.RemoveAll(assignedPath); err != nil {
 		return fmt.Errorf("clearing assigned path: %w", err)
