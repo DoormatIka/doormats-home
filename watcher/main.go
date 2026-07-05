@@ -33,7 +33,7 @@ type Commit struct {
 }
 
 func main() {
-	getLocalCommit()
+	setLocalCommit()
 	tickerUpdate()
 }
 
@@ -48,6 +48,8 @@ func tickerUpdate() {
 
 		if commit.SHA != latest_commit {
 			fmt.Printf("Changes detected! \"%s\"\n", commit.Commit.Message)
+
+			latest_commit = commit.SHA
 			writeErr := os.WriteFile(commit_file, []byte(commit.SHA), 0644)
 
 			if writeErr != nil {
@@ -59,7 +61,7 @@ func tickerUpdate() {
 
 }
 
-func getLocalCommit()  {
+func setLocalCommit()  {
 	sha_bytes, readErr := os.ReadFile(commit_file)
 	if readErr != nil {
 		log.Printf("Failed to read file: %s, defaulting to no latest commit.", readErr)
