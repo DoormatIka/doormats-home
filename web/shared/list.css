@@ -1,0 +1,44 @@
+.list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.list > .list-item {
+	position: relative;
+	padding-left: 1.5rem;
+}
+
+/* vertical guide */
+.list > .list-item::before {
+	content: "";
+	position: absolute;
+	left: 0.4rem;
+	top: 0em;
+	bottom: 0;
+	width: 1px;
+	background: var(--color-accent-shade);
+	opacity: 1;
+}
+
+/* horizontal rounded hook */
+.list > .lined-list-item::after,
+.list > .list-item:last-child::after {
+	content: "";
+	position: absolute;
+	left: 0.4rem;
+	top: 0.4em;
+
+	width: 0.5rem;
+	height: 0.5rem;
+
+	border-left: 1px solid var(--color-accent-shade);
+	border-bottom: 1px solid var(--color-accent-shade);
+	border-radius: 0 0 0 6px;
+}
+
+/* shorten the vertical line so it meets the hook */
+.list > .list-item:last-child::before {
+	bottom: auto;
+	height: 0.8em;
+}
