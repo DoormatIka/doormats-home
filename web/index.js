@@ -142,13 +142,11 @@ function pageRoute(page, options = { file: "index.html", maxDepth: 2 }) {
 			const cutParams = params.slice(0, maxDepth);
 			const path = ["pages", page, ...cutParams, file].join("/");
 			const html = await loadHTMLFile(path);
-			shell.replaceChildren(parseHTML(html));
+			const doc = parseHTML(html);
+			shell.replaceChildren(...doc.childNodes);
 		} catch (err) {
 			const documentObject = await getNotFoundHTML(formatErrors(err));
-			shell.replaceChildren(parseHTML("<div></div>"));
-			for (const node of documentObject.body.childNodes) {
-				shell.appendChild(node);
-			}
+			shell.replaceChildren(...documentObject.body.childNodes);
 		}
 		positionScrollbar();
 	};
