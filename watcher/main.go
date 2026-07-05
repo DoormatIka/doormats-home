@@ -16,17 +16,6 @@ import (
 	"time"
 )
 
-// extract to temp folders!
-// var link = "github.com/DoormatIka/doormats-home"
-var og_web = "/web"
-var to_web = "/home/mualice/Downloads/web/"
-var web_exclusion = []string{""}
-var og_server = "/server"
-var to_server = "/home/mualice/Downloads/server"
-
-var owner = "DoormatIka"
-var repo = "doormats-home"
-var commit_file = "latest-commit";
 var latest_commit = ""
 
 var client = http.Client{
@@ -44,19 +33,52 @@ type Commit struct {
 	} `json:"commit"`
 }
 
-func main() {
-	setLocalCommit()
-	tickerUpdate()
+type Config struct {
+	Owner string `json:"owner"`
+	Repo string `json:"repo"`
+	CommitFile string `json:"commit_file"`
+	Web struct {
+		From string `json:"from"`
+		To string `json:"to"`
+		Excluding []string `json:"excluding"`
+	} `json:"web"`
+	Server struct {
+		From string `json:"from"`
+		To string `json:"to"`
+		Excluding []string `json:"excluding"`
+	} `json:"server"`
 }
 
-func tickerUpdate() {
+func main() {
+	config := readJSONConfig("config.json")
+	setLocalCommit(config)
+	tickerUpdate(config)
+}
+
+func readJSONConfig(filepath string) Config {
+	fileBytes, err := os.ReadFile(filepath)
+	if err != nil {
+		log.Fatalf("Failed to read file: %s", err)
+	}
+
+	var config Config
+
+	err = json.Unmarshal(fileBytes, &config)
+	if err != nil {
+		log.Fatalf("Failed to unmarshal JSON: %s", err)
+	}
+
+	return config
+}
+
+func tickerUpdate(config Config) {
 	ticker := time.NewTicker(60 * time.Second)
 	defer ticker.Stop()
 	fmt.Println("Starting checker.")
 
 	for range ticker.C {
-		fmt.Printf("Checking %s at %s.\n", repo, time.Now().Format(time.DateTime))
-		commit, gitErr := grabLatestGitCommit()
+		fmt.Printf("Checking %s at %s.\n", config.Repo, time.Now().Format(time.DateTime))
+		commit, gitErr := grabLatestGitCommit(config)
 		if gitErr != nil {
 			log.Printf("[WARN] Cannot access latest git commit!")
 			continue
@@ -66,9 +88,9 @@ func tickerUpdate() {
 			fmt.Printf("Changes detected! \"%s\"\n", commit.Commit.Message)
 
 			latest_commit = commit.SHA
-			writeErr := os.WriteFile(commit_file, []byte(commit.SHA), 0644)
+			writeErr := os.WriteFile(config.CommitFile, []byte(commit.SHA), 0644)
 
-			if err := gitToAssignedFolders(owner, repo, commit.SHA); err != nil {
+			if err := gitToAssignedFolders(commit.SHA, config); err != nil {
 				log.Fatalf("gitToAssignedFolders failed: %v", err)
 			}
 
@@ -81,15 +103,15 @@ func tickerUpdate() {
 
 }
 
-func setLocalCommit()  {
-	sha_bytes, readErr := os.ReadFile(commit_file)
+func setLocalCommit(config Config)  {
+	sha_bytes, readErr := os.ReadFile(config.CommitFile)
 	if readErr != nil {
 		log.Printf("Failed to read file: %s, defaulting to no latest commit.", readErr)
 	}
 	latest_commit = string(sha_bytes)
 }
 
-func gitToAssignedFolders(owner string, repo string, commit string) error {
+func gitToAssignedFolders(commit string, config Config) error {
 	tmpFile, err := os.CreateTemp("", "github-*.zip")
 	if err != nil {
 		return fmt.Errorf("creating temp file: %w", err)
@@ -99,7 +121,7 @@ func gitToAssignedFolders(owner string, repo string, commit string) error {
 	fmt.Printf("Temporary file created at: %s\n", tmpFile.Name())
 
 
-	gitURL := fmt.Sprintf("https://github.com/%s/%s/archive/%s.zip", owner, repo, commit)
+	gitURL := fmt.Sprintf("https://github.com/%s/%s/archive/%s.zip", config.Owner, config.Repo, commit)
 	req, err := http.NewRequest(http.MethodGet, gitURL, nil)
 	if err != nil {
 		return fmt.Errorf("building request: %w", err)
@@ -134,17 +156,17 @@ func gitToAssignedFolders(owner string, repo string, commit string) error {
 		return fmt.Errorf("unzipping: %w", err)
 	}
 
-	internalFolderName := fmt.Sprintf("%s-%s", repo, latest_commit)
+	internalFolderName := fmt.Sprintf("%s-%s", config.Repo, latest_commit)
 	internalFolder, err := url.JoinPath(tmpFolder, internalFolderName)
 	if err != nil {
 		return fmt.Errorf("building internal folder path: %w", err)
 	}
 
 
-	if err := moveFolderIntoAssigned(internalFolder+"/web", to_web, nil); err != nil {
+	if err := moveFolderIntoAssigned(internalFolder + config.Web.From, config.Web.To, config.Web.Excluding); err != nil {
 		return fmt.Errorf("moving web folder: %w", err)
 	}
-	if err := moveFolderIntoAssigned(internalFolder+"/server", to_server, nil); err != nil {
+	if err := moveFolderIntoAssigned(internalFolder + config.Server.From, config.Server.To, config.Server.Excluding); err != nil {
 		return fmt.Errorf("moving server folder: %w", err)
 	}
 
@@ -160,38 +182,62 @@ func clearAssignedPath(assignedPath string) error {
 	return nil
 }
 
-func moveFolderIntoAssigned(originalPath string, assignedPath string, excludedFiles []string) error {
+func moveFolderIntoAssigned(originalPath string, assignedPath string, excludedPaths []string) error {
 	if err := clearAssignedPath(assignedPath); err != nil {
 		return err
 	}
 
-	excluded := make(map[string]bool, len(excludedFiles))
-	for _, f := range excludedFiles {
-		excluded[f] = true
+	excluded := make(map[string]bool, len(excludedPaths))
+	for _, p := range excludedPaths {
+		excluded[filepath.Clean(p)] = true
 	}
 
-	entries, err := os.ReadDir(originalPath)
+	if err := moveTree(originalPath, assignedPath, originalPath, excluded); err != nil {
+		return err
+	}
+
+	fmt.Println("Folder moved successfully (excluding specified files)!")
+	return nil
+}
+
+// moveTree recursively moves the contents of src into dst, skipping any
+// entry whose path relative to root matches something in excluded.
+func moveTree(src, dst, root string, excluded map[string]bool) error {
+	entries, err := os.ReadDir(src)
 	if err != nil {
-		return fmt.Errorf("reading original path: %w", err)
+		return fmt.Errorf("reading %s: %w", src, err)
+	}
+
+	if err := os.MkdirAll(dst, 0o755); err != nil {
+		return fmt.Errorf("creating %s: %w", dst, err)
 	}
 
 	for _, entry := range entries {
-		name := entry.Name()
-		if excluded[name] {
+		srcPath := filepath.Join(src, entry.Name())
+		dstPath := filepath.Join(dst, entry.Name())
+
+		relPath, err := filepath.Rel(root, srcPath)
+		if err != nil {
+			return fmt.Errorf("computing relative path for %s: %w", srcPath, err)
+		}
+		relPath = filepath.Clean(relPath)
+
+		if excluded[relPath] {
+			continue // leave this file/folder behind entirely
+		}
+
+		if entry.IsDir() {
+			if err := moveTree(srcPath, dstPath, root, excluded); err != nil {
+				return err
+			}
 			continue
 		}
 
-		src := filepath.Join(originalPath, name)
-		dst := filepath.Join(assignedPath, name)
-
-		fmt.Printf("Moving %s.\n", name)
-
-		if err := moveEntry(src, dst); err != nil {
-			return fmt.Errorf("moving %s: %w", src, err)
+		if err := moveEntry(srcPath, dstPath); err != nil {
+			return fmt.Errorf("moving %s: %w", srcPath, err)
 		}
 	}
 
-	fmt.Println("Folder moved successfully.")
 	return nil
 }
 
@@ -280,8 +326,8 @@ func copyDir(src, dst string) error {
 	return nil
 }
 
-func grabLatestGitCommit() (*Commit, error) {
-	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/commits", owner, repo)
+func grabLatestGitCommit(config Config) (*Commit, error) {
+	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/commits", config.Owner, config.Repo)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		log.Fatal(err)

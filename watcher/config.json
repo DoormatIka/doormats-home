@@ -1,0 +1,25 @@
+{
+  "owner": "DoormatIka",
+  "repo": "doormats-home",
+  "commit_file": "latest-commit",
+  "web": {
+    "from": "/web",
+    "to": "/home/mualice/Downloads/web/",
+    "excluding": [
+      "vite.config.js",
+      "cli/",
+      "package-lock.json",
+      "package.json",
+      "manifest.json",
+      "tsconfig.json",
+      ".prettierc.json",
+      ".gitignore",
+      ".gitattributes"
+    ]
+  },
+  "server": {
+    "from": "/server",
+    "to": "/home/mualice/Downloads/server/",
+    "excluding": []
+  }
+}
