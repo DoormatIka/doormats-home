@@ -1,15 +1,14 @@
 package main
 
 import (
-	"archive/zip"
 	"encoding/json"
+	"os/exec"
 	"syscall"
 	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -112,38 +111,6 @@ func setLocalCommit(config Config)  {
 }
 
 func gitToAssignedFolders(commit string, config Config) error {
-	tmpFile, err := os.CreateTemp("", "github-*.zip")
-	if err != nil {
-		return fmt.Errorf("creating temp file: %w", err)
-	}
-	defer tmpFile.Close()
-	defer os.Remove(tmpFile.Name())
-	fmt.Printf("Temporary file created at: %s\n", tmpFile.Name())
-
-
-	gitURL := fmt.Sprintf("https://github.com/%s/%s/archive/%s.zip", config.Owner, config.Repo, commit)
-	req, err := http.NewRequest(http.MethodGet, gitURL, nil)
-	if err != nil {
-		return fmt.Errorf("building request: %w", err)
-	}
-	req.Header.Set("Content-Type", "application/octet-stream")
-	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36")
-
-
-	res, err := client.Do(req)
-	if err != nil {
-		return fmt.Errorf("downloading zip: %w", err)
-	}
-	defer res.Body.Close()
-
-	if res.StatusCode != http.StatusOK {
-		return fmt.Errorf("unexpected status downloading zip: %s", res.Status)
-	}
-	if _, err := io.Copy(tmpFile, res.Body); err != nil {
-		return fmt.Errorf("writing zip to temp file: %w", err)
-	}
-
-
 	tmpFolder, err := os.MkdirTemp("", "github-folder-*")
 	if err != nil {
 		return fmt.Errorf("creating temp folder: %w", err)
@@ -151,22 +118,30 @@ func gitToAssignedFolders(commit string, config Config) error {
 	fmt.Printf("Temporary folder created at: %s\n", tmpFolder)
 	defer os.RemoveAll(tmpFolder)
 
+	repoURL := fmt.Sprintf("https://github.com/%s/%s.git", config.Owner, config.Repo)
 
-	if err := unzip(tmpFile.Name(), tmpFolder); err != nil {
-		return fmt.Errorf("unzipping: %w", err)
+	steps := [][]string{
+		{"init"},
+		{"remote", "add", "origin", repoURL},
+		{"fetch", "--depth", "1", "origin", commit},
+		{"checkout", "FETCH_HEAD"},
+		{"lfs", "pull"},
 	}
 
-	internalFolderName := fmt.Sprintf("%s-%s", config.Repo, latest_commit)
-	internalFolder, err := url.JoinPath(tmpFolder, internalFolderName)
-	if err != nil {
-		return fmt.Errorf("building internal folder path: %w", err)
+	for _, args := range steps {
+		cmd := exec.Command("git", args...)
+		cmd.Dir = tmpFolder
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		if err := cmd.Run(); err != nil {
+			return fmt.Errorf("git %s: %w", strings.Join(args, " "), err)
+		}
 	}
 
-
-	if err := moveFolderIntoAssigned(internalFolder + config.Web.From, config.Web.To, config.Web.Excluding); err != nil {
+	if err := moveFolderIntoAssigned(filepath.Join(tmpFolder, config.Web.From), config.Web.To, config.Web.Excluding); err != nil {
 		return fmt.Errorf("moving web folder: %w", err)
 	}
-	if err := moveFolderIntoAssigned(internalFolder + config.Server.From, config.Server.To, config.Server.Excluding); err != nil {
+	if err := moveFolderIntoAssigned(filepath.Join(tmpFolder, config.Server.From), config.Server.To, config.Server.Excluding); err != nil {
 		return fmt.Errorf("moving server folder: %w", err)
 	}
 
@@ -369,62 +344,6 @@ func grabLatestGitCommit(config Config) (*Commit, error) {
 	return &commits[0], nil
 }
 
-func unzip(src string, dest string) error {
-	r, err := zip.OpenReader(src)
-	if err != nil {
-		return err
-	}
-	defer r.Close()
-
-	if err := os.MkdirAll(dest, 0755); err != nil {
-		return err
-	}
-
-	for _, f := range r.File {
-		// securing against path traversal.
-		rcPath := filepath.Clean(f.Name)
-		extractPath := filepath.Join(dest, rcPath)
-		if !strings.HasPrefix(extractPath, filepath.Clean(dest)+string(os.PathSeparator)) && extractPath != filepath.Clean(dest) {
-			return fmt.Errorf("illegal file path in zip: %s", f.Name)
-		}
-
-		// handling directories
-		if f.FileInfo().IsDir() {
-			if err := os.MkdirAll(extractPath, f.Mode()); err != nil {
-				return err
-			}
-			continue
-		}
-
-		// files.
-		if err := os.MkdirAll(filepath.Dir(extractPath), 0755); err != nil {
-			return err
-		}
-
-		// open the file inside the zip
-		rc, err := f.Open()
-		if err != nil {
-			return err
-		}
-
-		// create the destination file
-		out, err := os.OpenFile(extractPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
-		if err != nil {
-			rc.Close()
-			return err
-		}
-
-		// copy data from zip to the file
-		_, err = io.Copy(out, rc)
-		rc.Close()
-		out.Close()
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
 
 func checkGithub() bool {
 	err := os.WriteFile("latest-commit", []byte(latest_commit), 0644)
