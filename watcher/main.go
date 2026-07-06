@@ -87,8 +87,8 @@ func tickerUpdate(config Config) {
 		if commit.SHA != latest_commit {
 			fmt.Printf("Changes detected! \"%s\"\n", commit.Commit.Message)
 
-			setLocalCommit(config)
 			writeErr := os.WriteFile(config.CommitFile, []byte(commit.SHA), 0644)
+			setLocalCommit(config)
 
 			if err := gitToAssignedFolders(commit.SHA, config); err != nil {
 				log.Fatalf("gitToAssignedFolders failed: %v", err)
