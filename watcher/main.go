@@ -173,12 +173,21 @@ func gitToAssignedFolders(commit string, config Config) error {
 	return nil
 }
 func clearAssignedPath(assignedPath string) error {
-	if err := os.RemoveAll(assignedPath); err != nil {
-		return fmt.Errorf("clearing assigned path: %w", err)
-	}
 	if err := os.MkdirAll(assignedPath, 0o755); err != nil {
-		return fmt.Errorf("recreating assigned path: %w", err)
+		return fmt.Errorf("ensuring assigned path exists: %w", err)
 	}
+
+	entries, err := os.ReadDir(assignedPath)
+	if err != nil {
+		return fmt.Errorf("reading assigned path: %w", err)
+	}
+
+	for _, entry := range entries {
+		if err := os.RemoveAll(filepath.Join(assignedPath, entry.Name())); err != nil {
+			return fmt.Errorf("clearing %s: %w", entry.Name(), err)
+		}
+	}
+
 	return nil
 }
 

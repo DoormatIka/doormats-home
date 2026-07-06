@@ -6,5 +6,3 @@ export function parseHTML(htmlString) {
 	template.innerHTML = htmlString;
 	return template.content;
 }
-
-// CHANGED !!!!
