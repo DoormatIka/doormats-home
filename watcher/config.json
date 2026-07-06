@@ -10,9 +10,8 @@
       "cli/",
       "package-lock.json",
       "package.json",
-      "manifest.json",
       "tsconfig.json",
-      ".prettierc.json",
+      ".prettierrc.json",
       ".gitignore",
       ".gitattributes"
     ]
