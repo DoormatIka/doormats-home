@@ -1,3 +1,5 @@
+import { html } from "/shared/components/safe-html.js";
+
 /**
  * @typedef {object} Link
  * @property {"a"} obj
@@ -52,14 +54,16 @@ const messages = [
  * @param {string} msg
  */
 function createLinkObject(src, msg) {
-	return `<a href="${src}" target="_blank" rel="noopener noreferrer">${msg}</a>`;
+	return html`<a href="${src}" target="_blank" rel="noopener noreferrer"
+		>${msg}</a
+	>`;
 }
 
 /**
  * @param {string} msg
  */
 function createParagraphObject(msg) {
-	return `<p>${msg}</p>`;
+	return html`<p>${msg}</p>`;
 }
 
 /**

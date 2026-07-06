@@ -1,3 +1,5 @@
+import { html } from "/shared/components/safe-html.js";
+
 /**
  * Capitalizes the first letter of a string.
  * @param {string} s - any string to capitalize
@@ -26,14 +28,16 @@ function segmentToItem(segment, index, segments) {
 	const isLast = index === segments.length - 1;
 
 	if (isLast) {
-		return `<li aria-current="page"><span class="coming-soon">${label}</span></li>`;
+		return html`<li aria-current="page">
+			<span class="coming-soon">${label}</span>
+		</li>`;
 	}
-	return `<li><a href="${href}">${label}</a></li>`;
+	return html`<li><a href="${href}">${label}</a></li>`;
 }
 
 export const name = "breadcrumb";
 /**
- * Builds a breadcrumb nav element from a URI.
+ * Hook function: Builds a breadcrumb nav element from a URI.
  * @param {Element} _shell - The shell
  * @param {string[]} _params - Parameters from the router.
  * @param {string} uri - e.g. "#/pictures/summer15/italy"
