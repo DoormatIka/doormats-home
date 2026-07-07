@@ -14,11 +14,13 @@
       ".prettierrc.json",
       ".gitignore",
       ".gitattributes"
-    ]
+    ],
+    "commands": []
   },
   "server": {
     "from": "/server",
     "to": "/home/mualice/Downloads/server/",
-    "excluding": []
+    "excluding": [],
+    "commands": [["go", "run ."]]
   }
 }

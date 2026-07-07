@@ -2,16 +2,16 @@ package main
 
 import (
 	"encoding/json"
-	"os/exec"
-	"syscall"
 	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
+	"syscall"
 	"time"
 )
 
@@ -40,18 +40,24 @@ type Config struct {
 		From string `json:"from"`
 		To string `json:"to"`
 		Excluding []string `json:"excluding"`
+		Commands [][]string `json:"commands"`
 	} `json:"web"`
 	Server struct {
 		From string `json:"from"`
 		To string `json:"to"`
 		Excluding []string `json:"excluding"`
+		Commands [][]string `json:"commands"`
 	} `json:"server"`
 }
 
+
 func main() {
 	config := readJSONConfig("config.json")
+
 	setLocalCommit(config)
-	tickerUpdate(config)
+	gitToAssignedFolders(latest_commit, config)
+	// setLocalCommit(config)
+	// tickerUpdate(runner, ctx, config)
 }
 
 func readJSONConfig(filepath string) Config {
@@ -93,6 +99,7 @@ func tickerUpdate(config Config) {
 				log.Fatalf("gitToAssignedFolders failed: %v", err)
 			}
 
+
 			if writeErr != nil {
 				log.Fatalf("Failed to write to file: %s", writeErr)
 			}
@@ -110,6 +117,7 @@ func setLocalCommit(config Config)  {
 	latest_commit = string(sha_bytes)
 }
 
+
 func gitToAssignedFolders(commit string, config Config) error {
 	tmpFolder, err := os.MkdirTemp("", "github-folder-*")
 	if err != nil {
@@ -119,10 +127,16 @@ func gitToAssignedFolders(commit string, config Config) error {
 	defer os.RemoveAll(tmpFolder)
 
 	repoURL := fmt.Sprintf("https://github.com/%s/%s.git", config.Owner, config.Repo)
+	cloneGitToFolder(repoURL, commit, tmpFolder)
+	moveWebServerFolders(config, tmpFolder)
 
+	return nil
+}
+
+func cloneGitToFolder(repo string, commit string, tmpFolder string) error {
 	steps := [][]string{
 		{"init"},
-		{"remote", "add", "origin", repoURL},
+		{"remote", "add", "origin", repo},
 		{"fetch", "--depth", "1", "origin", commit},
 		{"checkout", "FETCH_HEAD"},
 		{"lfs", "pull"},
@@ -137,16 +151,21 @@ func gitToAssignedFolders(commit string, config Config) error {
 			return fmt.Errorf("git %s: %w", strings.Join(args, " "), err)
 		}
 	}
+	return nil
+}
 
+func moveWebServerFolders(config Config, tmpFolder string) (error) {
 	if err := moveFolderIntoAssigned(filepath.Join(tmpFolder, config.Web.From), config.Web.To, config.Web.Excluding); err != nil {
 		return fmt.Errorf("moving web folder: %w", err)
 	}
 	if err := moveFolderIntoAssigned(filepath.Join(tmpFolder, config.Server.From), config.Server.To, config.Server.Excluding); err != nil {
 		return fmt.Errorf("moving server folder: %w", err)
 	}
-
 	return nil
 }
+
+
+
 func clearAssignedPath(assignedPath string) error {
 	if err := os.MkdirAll(assignedPath, 0o755); err != nil {
 		return fmt.Errorf("ensuring assigned path exists: %w", err)
