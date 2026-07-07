@@ -15,9 +15,9 @@ export async function fn(_shell, _params, uri) {
 		? "http://127.0.0.1:8980"
 		: "https://home.yuyuqk.com/api";
 	try {
-		const res = await fetch(ip + "/ping");
-		const json = await res.json();
-		return html`<p>${res.status} ${res.statusText}, ${json.garbage_data}</p>`;
+		await fetch(ip + "/ping");
+		// const json = await res.json();
+		return html`<p>This message came from my server!</p>`;
 	} catch (error) {
 		return html`<p>${error}</p>`;
 	}
