@@ -48,10 +48,10 @@ export function fn(_shell, _params, uri) {
 	const divs = segments.map(segmentToItem);
 	const items = [`<li><a href="#/">Home</a></li>`, ...divs];
 	return `
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                ${items.join("\n")}
-            </ol>
-        </nav>
-    `;
+		<nav aria-label="breadcrumb">
+			<ol class="breadcrumb">
+				${items.join("\n")}
+			</ol>
+		</nav>
+	`;
 }

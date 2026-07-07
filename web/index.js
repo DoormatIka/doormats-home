@@ -165,7 +165,7 @@ async function grabHookFromFolder(file) {
 		const shell = document.querySelector(`[data-${name}]`);
 		if (!shell) return;
 
-		const nodes = parseHTML(fn(el, params, uri)).children;
+		const nodes = parseHTML(await fn(el, params, uri)).children;
 		for (const node of nodes) {
 			shell.replaceChildren(node);
 		}
@@ -203,6 +203,10 @@ function addAllHooks(folder, files) {
 			.catch(console.error);
 	}
 }
-addAllHooks("/shared/components/hooks/", ["breadcrumbs.js", "random.js"]);
+addAllHooks("/shared/components/hooks/", [
+	"breadcrumbs.js",
+	"random.js",
+	"ping.js",
+]);
 
 router.activate();
