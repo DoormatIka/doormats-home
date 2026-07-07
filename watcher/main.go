@@ -55,9 +55,7 @@ func main() {
 	config := readJSONConfig("config.json")
 
 	setLocalCommit(config)
-	gitToAssignedFolders(latest_commit, config)
-	// setLocalCommit(config)
-	// tickerUpdate(runner, ctx, config)
+	tickerUpdate(config)
 }
 
 func readJSONConfig(filepath string) Config {
