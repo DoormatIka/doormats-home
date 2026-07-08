@@ -2,25 +2,27 @@
   "owner": "DoormatIka",
   "repo": "doormats-home",
   "commit_file": "latest-commit",
-  "web": {
-    "from": "/web",
-    "to": "/home/mualice/Downloads/web/",
-    "excluding": [
-      "vite.config.js",
-      "cli/",
-      "package-lock.json",
-      "package.json",
-      "tsconfig.json",
-      ".prettierrc.json",
-      ".gitignore",
-      ".gitattributes"
-    ],
-    "commands": [["caddy", "reload --config /path/to/Caddyfile"]]
-  },
-  "server": {
-    "from": "/server",
-    "to": "/home/mualice/Downloads/server/",
-    "excluding": [],
-    "commands": [["go", "run", "."]]
-  }
+  "projects": [
+    {
+      "from": "/web",
+      "to": "/home/mualice/Downloads/web/",
+      "excluding": [
+        "vite.config.js",
+        "cli/",
+        "package-lock.json",
+        "package.json",
+        "tsconfig.json",
+        ".prettierrc.json",
+        ".gitignore",
+        ".gitattributes"
+      ],
+      "commands": [["caddy", "reload --config /path/to/Caddyfile"]]
+    },
+    {
+      "from": "/server",
+      "to": "/home/mualice/Downloads/server/",
+      "excluding": [],
+      "commands": [["go", "run", "."]]
+    }
+  ]
 }

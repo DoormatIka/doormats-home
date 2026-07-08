@@ -34,22 +34,18 @@ type Commit struct {
 	} `json:"commit"`
 }
 
+type ConfigProject struct {
+	From string `json:"from"`
+	To string `json:"to"`
+	Excluding []string `json:"excluding"`
+	Commands [][]string `json:"commands"`
+}
+
 type Config struct {
 	Owner string `json:"owner"`
 	Repo string `json:"repo"`
 	CommitFile string `json:"commit_file"`
-	Web struct {
-		From string `json:"from"`
-		To string `json:"to"`
-		Excluding []string `json:"excluding"`
-		Commands [][]string `json:"commands"`
-	} `json:"web"`
-	Server struct {
-		From string `json:"from"`
-		To string `json:"to"`
-		Excluding []string `json:"excluding"`
-		Commands [][]string `json:"commands"`
-	} `json:"server"`
+	Projects []ConfigProject `json:"projects"`
 }
 
 
@@ -142,12 +138,20 @@ func setLocalCommit(config Config)  {
 }
 
 func runCommands(cmdManager *CommandManager, config Config)  {
-	for _, command := range config.Server.Commands {
-		cmdManager.RunCommand(config.Server.To, command[0], command[1:]...)
+	for _, project := range config.Projects {
+		for _, command := range project.Commands {
+			cmdManager.RunCommand(project.To, command[0], command[1:]...)
+		}
 	}
-	for _, command := range config.Web.Commands {
-		cmdManager.RunCommand(config.Web.To, command[0], command[1:]...)
+}
+
+func moveWebServerFolders(config Config, tmpFolder string) (error) {
+	for _, project := range config.Projects {
+		if err := moveFolderIntoAssigned(filepath.Join(tmpFolder, project.From), project.To, project.Excluding); err != nil {
+			return fmt.Errorf("moving %s folder to %s folder: %w", project.From, project.To, err)
+		}
 	}
+	return nil
 }
 
 
@@ -187,15 +191,6 @@ func cloneGitToFolder(repo string, commit string, tmpFolder string) error {
 	return nil
 }
 
-func moveWebServerFolders(config Config, tmpFolder string) (error) {
-	if err := moveFolderIntoAssigned(filepath.Join(tmpFolder, config.Web.From), config.Web.To, config.Web.Excluding); err != nil {
-		return fmt.Errorf("moving web folder: %w", err)
-	}
-	if err := moveFolderIntoAssigned(filepath.Join(tmpFolder, config.Server.From), config.Server.To, config.Server.Excluding); err != nil {
-		return fmt.Errorf("moving server folder: %w", err)
-	}
-	return nil
-}
 
 
 
