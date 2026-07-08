@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -9,13 +10,14 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"os/signal"
 	"path/filepath"
 	"strings"
 	"syscall"
 	"time"
 )
 
-var latest_commit = ""
+var known_commit = ""
 
 var client = http.Client{
 	Timeout: time.Second * 5,
@@ -52,11 +54,65 @@ type Config struct {
 
 
 func main() {
-	config := readJSONConfig("config.json")
+	fmt.Println("Starting checker.")
 
+	config := readJSONConfig("config.json")
 	setLocalCommit(config)
 	tickerUpdate(config)
 }
+
+func tickerUpdate(config Config) {
+	notifyctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+
+	cmdManager := NewCommandManager(notifyctx)
+
+	ticker := time.NewTicker(10 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-notifyctx.Done():
+			log.Println("shutting down, stopping all commands...")
+			cmdManager.StopAll()
+			return
+		case <-ticker.C:
+			onTick(cmdManager, config)
+		}
+	}
+}
+
+func onTick(cmdManager *CommandManager, config Config) {
+	fmt.Printf("Checking %s at %s.\n", config.Repo, time.Now().Format(time.DateTime))
+	commit, gitErr := grabLatestGitCommit(config)
+	if gitErr != nil {
+		log.Printf("[WARN] Cannot access latest git commit!")
+		return
+	}
+
+	if commit.SHA != known_commit {
+		onChangedCommit(cmdManager, config, commit)
+	}
+}
+
+func onChangedCommit(cmdManager *CommandManager, config Config, commit *Commit)  {
+	fmt.Printf("Changes detected! \"%s\"\n", commit.Commit.Message)
+
+	writeErr := os.WriteFile(config.CommitFile, []byte(commit.SHA), 0644)
+	setLocalCommit(config)
+
+	if err := gitToAssignedFolders(commit.SHA, config); err != nil {
+		log.Fatalf("gitToAssignedFolders failed: %v", err)
+	}
+
+	cmdManager.StopAll()
+	runCommands(cmdManager, config)
+
+	if writeErr != nil {
+		log.Fatalf("Failed to write to file: %s", writeErr)
+	}
+}
+
 
 func readJSONConfig(filepath string) Config {
 	fileBytes, err := os.ReadFile(filepath)
@@ -74,45 +130,22 @@ func readJSONConfig(filepath string) Config {
 	return config
 }
 
-func tickerUpdate(config Config) {
-	ticker := time.NewTicker(60 * time.Second)
-	defer ticker.Stop()
-	fmt.Println("Starting checker.")
-
-	for range ticker.C {
-		fmt.Printf("Checking %s at %s.\n", config.Repo, time.Now().Format(time.DateTime))
-		commit, gitErr := grabLatestGitCommit(config)
-		if gitErr != nil {
-			log.Printf("[WARN] Cannot access latest git commit!")
-			continue
-		}
-
-		if commit.SHA != latest_commit {
-			fmt.Printf("Changes detected! \"%s\"\n", commit.Commit.Message)
-
-			writeErr := os.WriteFile(config.CommitFile, []byte(commit.SHA), 0644)
-			setLocalCommit(config)
-
-			if err := gitToAssignedFolders(commit.SHA, config); err != nil {
-				log.Fatalf("gitToAssignedFolders failed: %v", err)
-			}
-
-
-			if writeErr != nil {
-				log.Fatalf("Failed to write to file: %s", writeErr)
-			}
-		}
-
-	}
-
-}
 
 func setLocalCommit(config Config)  {
 	sha_bytes, readErr := os.ReadFile(config.CommitFile)
 	if readErr != nil {
 		log.Printf("Failed to read file: %s, defaulting to no latest commit.", readErr)
 	}
-	latest_commit = string(sha_bytes)
+	known_commit = string(sha_bytes)
+}
+
+func runCommands(cmdManager *CommandManager, config Config)  {
+	for _, command := range config.Server.Commands {
+		cmdManager.RunCommand(config.Server.To, command[0], command[1:]...)
+	}
+	for _, command := range config.Web.Commands {
+		cmdManager.RunCommand(config.Web.To, command[0], command[1:]...)
+	}
 }
 
 
@@ -363,7 +396,7 @@ func grabLatestGitCommit(config Config) (*Commit, error) {
 
 
 func checkGithub() bool {
-	err := os.WriteFile("latest-commit", []byte(latest_commit), 0644)
+	err := os.WriteFile("latest-commit", []byte(known_commit), 0644)
 	if err != nil {
 		log.Fatal(err)
 	}

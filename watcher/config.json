@@ -15,12 +15,12 @@
       ".gitignore",
       ".gitattributes"
     ],
-    "commands": []
+    "commands": [["caddy", "reload --config /path/to/Caddyfile"]]
   },
   "server": {
     "from": "/server",
     "to": "/home/mualice/Downloads/server/",
     "excluding": [],
-    "commands": [["go", "run ."]]
+    "commands": [["go", "run", "."]]
   }
 }
