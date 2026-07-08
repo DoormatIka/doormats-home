@@ -70,6 +70,8 @@ func tickerUpdate(config Config) {
 	ticker := time.NewTicker(10 * time.Second)
 	defer ticker.Stop()
 
+	runCommands(cmdManager, config)
+
 	for {
 		select {
 		case <-notifyctx.Done():
