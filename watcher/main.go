@@ -17,6 +17,10 @@ import (
 	"time"
 )
 
+import (
+	"github.com/joho/godotenv"
+)
+
 var known_commit = ""
 
 var client = http.Client{
@@ -49,16 +53,29 @@ type Config struct {
 	Projects []ConfigProject `json:"projects"`
 }
 
+type Envs struct {
+	Token string `env:"TOKEN"`
+}
 
 func main() {
 	fmt.Println("Starting checker.")
 
 	config := readJSONConfig("config.json")
+	envs := readEnv()
+
 	setLocalCommit(config)
-	tickerUpdate(config)
+	tickerUpdate(config, envs)
 }
 
-func tickerUpdate(config Config) {
+func readEnv() Envs {
+	godotenv.Load()
+	envs := Envs {
+		Token: os.Getenv("TOKEN"),
+	}
+	return envs
+}
+
+func tickerUpdate(config Config, envs Envs) {
 	notifyctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
@@ -76,14 +93,14 @@ func tickerUpdate(config Config) {
 			cmdManager.StopAll()
 			return
 		case <-ticker.C:
-			onTick(cmdManager, config)
+			onTick(cmdManager, config, envs)
 		}
 	}
 }
 
-func onTick(cmdManager *CommandManager, config Config) {
+func onTick(cmdManager *CommandManager, config Config, envs Envs) {
 	fmt.Printf("Checking %s at %s.\n", config.Repo, time.Now().Format(time.DateTime))
-	commit, gitErr := grabLatestGitCommit(config)
+	commit, gitErr := grabLatestGitCommit(config, envs)
 	if gitErr != nil {
 		log.Printf("[WARN] Cannot access latest git commit!")
 		return
@@ -358,7 +375,7 @@ func copyDir(src, dst string) error {
 	return nil
 }
 
-func grabLatestGitCommit(config Config) (*Commit, error) {
+func grabLatestGitCommit(config Config, envs Envs) (*Commit, error) {
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/commits", config.Owner, config.Repo)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -368,6 +385,9 @@ func grabLatestGitCommit(config Config) (*Commit, error) {
 	req.Header.Set("Accept", "application/vnd.github+json")
 	req.Header.Set("X-GitHub-Api-Version", "2026-03-10")
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36")
+	if len(envs.Token) > 0 {
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", envs.Token))
+	}
 
 
 	res, getErr := client.Do(req)
