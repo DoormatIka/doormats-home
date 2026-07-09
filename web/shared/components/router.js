@@ -125,7 +125,7 @@ export class HashRouter {
 		this._previousPageCleanupFunction = await runJSinElement(shell);
 
 		for (const hook of this._afterHooks) {
-			await hook(shell, params, cleanedUri);
+			hook(shell, params, cleanedUri).catch(console.error);
 		}
 	}
 	/**
