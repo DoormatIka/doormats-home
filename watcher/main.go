@@ -45,6 +45,7 @@ type Config struct {
 	Owner string `json:"owner"`
 	Repo string `json:"repo"`
 	CommitFile string `json:"commit_file"`
+	IntervalSecond time.Duration `json:"interval"`
 	Projects []ConfigProject `json:"projects"`
 }
 
@@ -63,7 +64,7 @@ func tickerUpdate(config Config) {
 
 	cmdManager := NewCommandManager(notifyctx)
 
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(config.IntervalSecond * time.Second)
 	defer ticker.Stop()
 
 	runCommands(cmdManager, config)

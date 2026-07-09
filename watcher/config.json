@@ -2,6 +2,7 @@
   "owner": "DoormatIka",
   "repo": "doormats-home",
   "commit_file": "latest-commit",
+  "interval": 60,
   "projects": [
     {
       "from": "/web",
@@ -16,7 +17,7 @@
         ".gitignore",
         ".gitattributes"
       ],
-      "commands": [["caddy", "reload --config /path/to/Caddyfile"]]
+      "commands": [["caddy", "reload", "--config", "/path/to/Caddyfile"]]
     },
     {
       "from": "/server",
