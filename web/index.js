@@ -65,7 +65,7 @@ function arraysMatch(arr1, arr2) {
 }
 
 /**
- * Loads file into text.
+ * Fetches file from path/url then returns text.
  * @param {string} path
  * @returns {Promise<string>}
  */
@@ -77,14 +77,7 @@ export function loadHTMLFile(path) {
 					if (!resp.ok) {
 						rej("NetworkError");
 					}
-					isFileInRoutes(path)
-						.then((isFile) => {
-							if (!isFile) {
-								rej("DoesNotExist");
-							}
-							resp.text().then((v) => res(v));
-						})
-						.catch(rej);
+					resp.text().then((v) => res(v));
 				})
 				.catch(rej);
 		},
@@ -141,6 +134,9 @@ function pageRoute(page, options = { file: "index.html", maxDepth: 2 }) {
 		try {
 			const cutParams = params.slice(0, maxDepth);
 			const path = ["pages", page, ...cutParams, file].join("/");
+			if (!(await isFileInRoutes(path))) {
+				throw Error("DoesNotExist");
+			}
 			const html = await loadHTMLFile(path);
 			const doc = parseHTML(html);
 			shell.replaceChildren(...doc.childNodes);
@@ -178,9 +174,7 @@ async function grabHookFromFolder(file) {
 function notFound() {
 	return async (shell) => {
 		const doc = await getNotFoundHTML(formatErrors("DoesNotExist"));
-		for (const node of doc.body.childNodes) {
-			shell.appendChild(node);
-		}
+		shell.replaceChildren(...doc.body.childNodes);
 	};
 }
 
