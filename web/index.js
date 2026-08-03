@@ -191,16 +191,16 @@ router.add("notFound", notFound());
  * @param {string[]} files
  */
 function addAllHooks(folder, files) {
-	for (const file of files) {
-		grabHookFromFolder(folder + file)
-			.then((c) => router.addAfterHook(c))
-			.catch(console.error);
-	}
+	return Promise.all(
+		files.map((file) =>
+			grabHookFromFolder(folder + file)
+				.then((c) => router.addAfterHook(c))
+				.catch(console.error),
+		),
+	);
 }
 addAllHooks("/shared/components/hooks/", [
 	"breadcrumbs.js",
 	"random.js",
 	"ping.js",
-]);
-
-router.activate();
+]).then(() => router.activate());
