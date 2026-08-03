@@ -94,7 +94,8 @@ export class HashRouter {
 		}
 
 		const parts = segment.split("/");
-		const hashRoute = parts.shift();
+		const hashRoute = parts.shift() ?? "notFound";
+
 		return {
 			hashRoute: this._routes[hashRoute] ? hashRoute : "notFound",
 			params: parts,
@@ -124,9 +125,12 @@ export class HashRouter {
 
 		this._previousPageCleanupFunction = await runJSinElement(shell);
 
-		for (const hook of this._afterHooks) {
-			hook(shell, params, cleanedUri).catch(console.error);
-		}
+		const settledTasks = this._afterHooks.map((promise) =>
+			Promise.resolve(promise(shell, params, cleanedUri))
+				.then((val) => ({ status: "fulfilled", value: val }))
+				.catch((reason) => ({ status: "rejected", reason: reason })),
+		);
+		await Promise.all(settledTasks);
 	}
 	/**
 	 * @param {string} path
