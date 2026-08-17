@@ -65,7 +65,7 @@ export class HashRouter {
 	}
 	activate() {
 		window.addEventListener("hashchange", () => this._onHashChange(), false);
-		document.addEventListener("DOMContentLoaded", () => {
+		const init = () => {
 			// handles switching from normal route to hash route
 			const isSpa = document.querySelector("[data-router]") !== null;
 			if (isSpa) {
@@ -74,7 +74,12 @@ export class HashRouter {
 				}
 				this._onHashChange();
 			}
-		});
+		};
+		if (document.readyState === "loading") {
+			document.addEventListener("DOMContentLoaded", init);
+		} else {
+			init();
+		}
 	}
 	/**
 	 * @param {string} uri
