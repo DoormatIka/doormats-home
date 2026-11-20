@@ -1,6 +1,8 @@
 package main
 
 import (
+	"database/sql"
+	"log"
 	"net/http"
 	"server/handlers"
 	"server/repository"
@@ -10,6 +12,8 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/time/rate"
+
+	_ "modernc.org/sqlite"
 )
 
 func RateLimiter() gin.HandlerFunc {
@@ -27,7 +31,7 @@ func RateLimiter() gin.HandlerFunc {
 
 
 func main() {
-	gin.SetMode(gin.ReleaseMode)
+	gin.SetMode(gin.DebugMode)
 	router := gin.Default()
 	router.SetTrustedProxies([]string{"127.0.0.1", "::1"})
 
@@ -45,11 +49,24 @@ func main() {
 		MaxAge: 4 * time.Hour,
 	}))
 
-	repo := &repository.PingRepository{}
-	service := &services.PingService{Repo: repo}
-	handler := &handlers.PingHandler{Service: service}
+	db, err := sql.Open("sqlite", "./db/v1.sqlite3")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
 
-	router.GET("/ping", handler.GetGarbageData)
+	ping_repo := &repository.PingRepository{}
+	ping_service := &services.PingService{Repo: ping_repo}
+	ping_handler := &handlers.PingHandler{Service: ping_service}
 
+	blog_repo := repository.NewBlogRepository(db)
+	blog_service := services.NewBlogService(blog_repo)
+	blog_handler := handlers.NewBlogHandler(blog_service)
+
+	router.GET("/ping", ping_handler.GetGarbageData)
+	router.GET("/blog/get/:id", blog_handler.GetBlog)
+	router.POST("/blog/add", blog_handler.AddBlogPost)
+
+	log.Println("Server is up at 8980.")
 	router.Run(":8980")
 }

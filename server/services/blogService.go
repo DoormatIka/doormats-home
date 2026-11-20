@@ -6,9 +6,18 @@ import (
 )
 
 type BlogService struct {
-	Repo *repository.BlogRepository
+	repo *repository.BlogRepository
 }
 
-func (s *BlogService) AddBlog() {
-	
+func NewBlogService(repo *repository.BlogRepository) *BlogService {
+	return &BlogService{repo}
+}
+
+func (s *BlogService) GetBlog(id string) (*models.BlogRecord, error) {
+	// validation code here.
+	return s.repo.Get(id)
+}
+
+func (s *BlogService) AddBlog(params *models.BlogParams) error {
+	return s.repo.Add(params);
 }
