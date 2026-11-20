@@ -8,6 +8,7 @@ import (
 
 type BlogRepository struct {
 	db *sql.DB
+	mdfolder string
 }
 
 func NewBlogRepository(db *sql.DB) *BlogRepository {
@@ -17,8 +18,8 @@ func NewBlogRepository(db *sql.DB) *BlogRepository {
 func (r *BlogRepository) Add(params *models.BlogParams) (error) {
 	log.Println(params)
 	_, err := r.db.Exec(
-		"INSERT INTO blogs (title, link, text) VALUES (?, ?, ?)",
-		params.Title, params.Link, params.Text,
+		"INSERT INTO blogs (title, link, text, description) VALUES (?, ?, ?, ?)",
+		params.Title, params.Link, params.Text, params.Description,
 	);
 	if err != nil {
 		return err;
@@ -64,16 +65,16 @@ func (r *BlogRepository) Update(id uint, params *models.BlogParams) (bool, error
 }
 
 func (r *BlogRepository) List(page uint) ([]models.BlogRecord, error) {
-	rows, err := r.db.Query("SELECT * FROM blogs ORDER BY id LIMIT ? OFFSET ?", 10, page * 10);
+	rows, err := r.db.Query("SELECT id, link, title, description FROM blogs ORDER BY id LIMIT ? OFFSET ?", 10, page * 10);
 	if err != nil {
 		return nil, err;
 	}
 	defer rows.Close();
 
-	var blogs []models.BlogRecord
+	blogs := []models.BlogRecord{}
 	for rows.Next() {
 		var b models.BlogRecord
-		if err := rows.Scan(&b.Id, &b.Link, &b.Text, &b.Title); err != nil {
+		if err := rows.Scan(&b.Id, &b.Link, &b.Title, &b.Description); err != nil {
 			return nil, err;
 		}
 		blogs = append(blogs, b)

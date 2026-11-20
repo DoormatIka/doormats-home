@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"log"
+	"strconv"
 	"net/http"
 	"server/models"
 	"server/services"
@@ -25,7 +26,7 @@ func (h *BlogHandler) GetBlog(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusAccepted, blog)
+	c.JSON(http.StatusOK, blog)
 }
 
 func (h *BlogHandler) AddBlogPost(c *gin.Context) {
@@ -40,3 +41,19 @@ func (h *BlogHandler) AddBlogPost(c *gin.Context) {
 	}
     c.JSON(http.StatusOK, gin.H{})
 }
+
+func (h *BlogHandler) GetListBlog(c *gin.Context) {
+	page := c.Param("page");
+	pagei, err := strconv.ParseUint(page, 10, 32);
+	if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "invalid page"})
+        return
+	}
+	blogs, err := h.blog_service.ListBlog(uint(pagei));
+	if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+	}
+    c.JSON(http.StatusOK, blogs)
+}
+

@@ -11,7 +11,7 @@ func createDB(db *sql.DB) {
 	  'title' TEXT not null default '',
 	  'text' TEXT not null default '',
 	  'description' TEXT not null default '',
-	  'link' TEXT null,
+	  'link' TEXT not null unique,
 	  unique ('id')
 	)`);
 

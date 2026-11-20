@@ -65,6 +65,7 @@ func main() {
 
 	router.GET("/ping", ping_handler.GetGarbageData)
 	router.GET("/blog/get/:id", blog_handler.GetBlog)
+	router.GET("/blog/list/:page", blog_handler.GetListBlog)
 	router.POST("/blog/add", blog_handler.AddBlogPost)
 
 	log.Println("Server is up at 8980.")

@@ -19,5 +19,10 @@ func (s *BlogService) GetBlog(id string) (*models.BlogRecord, error) {
 }
 
 func (s *BlogService) AddBlog(params *models.BlogParams) error {
-	return s.repo.Add(params);
+	return s.repo.Add(params)
 }
+
+func (s *BlogService) ListBlog(page uint) ([]models.BlogRecord, error) {
+	return s.repo.List(page)
+}
+
