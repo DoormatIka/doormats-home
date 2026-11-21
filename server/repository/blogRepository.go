@@ -49,10 +49,10 @@ func (r *BlogRepository) Get(id string) (*models.BlogRecord, error) {
 }
 
 
-func (r *BlogRepository) Update(id uint, params *models.BlogParams) (bool, error) {
+func (r *BlogRepository) Update(params *models.BlogRecord) (bool, error) {
 	res, err := r.db.Exec(
-		"UPDATE blogs SET title = COALESCE(?, title), link = COALESCE(?, link), text = COALESCE(?, text) WHERE id = ?",
-		params.Title, params.Link, params.Text, id,
+		"UPDATE blogs SET title = COALESCE(?, title), link = COALESCE(?, link), text = COALESCE(?, text), description = COALESCE(?, description) WHERE id = ?",
+		params.Title, params.Link, params.Text, params.Description, params.Id,
 	)
 	if err != nil {
 		return false, err;

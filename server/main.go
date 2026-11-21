@@ -33,9 +33,12 @@ func RateLimiter() gin.HandlerFunc {
 func main() {
 	gin.SetMode(gin.DebugMode)
 	router := gin.Default()
+	adminRouter := gin.Default()
 	router.SetTrustedProxies([]string{"127.0.0.1", "::1"})
+	adminRouter.SetTrustedProxies([]string{"127.0.0.1", "::1"})
 
 	router.Use(RateLimiter())
+	adminRouter.Use(RateLimiter())
 	router.Use(cors.New(cors.Config{
 		AllowOrigins: []string{
 			"http://127.0.0.1:8080",
@@ -64,10 +67,14 @@ func main() {
 	blog_handler := handlers.NewBlogHandler(blog_service)
 
 	router.GET("/ping", ping_handler.GetGarbageData)
+
 	router.GET("/blog/get/:id", blog_handler.GetBlog)
 	router.GET("/blog/list/:page", blog_handler.GetListBlog)
-	router.POST("/blog/add", blog_handler.AddBlogPost)
+	adminRouter.POST("/blog/add", blog_handler.AddBlogPost)
+	adminRouter.POST("/blog/update", blog_handler.UpdateBlogPost)
 
-	log.Println("Server is up at 8980.")
+	log.Println("Main server is up at :8980, admin server is up at :9980")
+
+	go adminRouter.Run(":9980")
 	router.Run(":8980")
 }

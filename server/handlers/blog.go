@@ -57,3 +57,17 @@ func (h *BlogHandler) GetListBlog(c *gin.Context) {
     c.JSON(http.StatusOK, blogs)
 }
 
+func (h *BlogHandler) UpdateBlogPost(c *gin.Context) {
+	var input models.BlogRecord
+	if err := c.ShouldBindJSON(&input); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+	}
+	if _, err := h.blog_service.UpdateBlog(&input); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{})
+}
+
+

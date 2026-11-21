@@ -26,3 +26,6 @@ func (s *BlogService) ListBlog(page uint) ([]models.BlogRecord, error) {
 	return s.repo.List(page)
 }
 
+func (s *BlogService) UpdateBlog(params *models.BlogRecord) (bool, error) {
+	return s.repo.Update(params)
+}
