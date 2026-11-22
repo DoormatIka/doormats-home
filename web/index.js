@@ -117,7 +117,9 @@ async function getNotFoundHTML(errMessage) {
 	const html = await loadHTMLFile("/pages/notFound/index.html");
 	const doc = parser.parseFromString(html, "text/html");
 	const dataErr = doc.querySelector("[data-error]");
-	dataErr.textContent = errMessage;
+	if (dataErr) {
+		dataErr.textContent = errMessage;
+	}
 
 	return doc;
 }
@@ -141,7 +143,9 @@ function pageRoute(page, options = { file: "index.html", maxDepth: 2 }) {
 			const doc = parseHTML(html);
 			shell.replaceChildren(...doc.childNodes);
 		} catch (err) {
-			const documentObject = await getNotFoundHTML(formatErrors(err));
+			const documentObject = await getNotFoundHTML(
+				formatErrors(/** @type {PageError} */ (err)),
+			);
 			shell.replaceChildren(...documentObject.body.childNodes);
 		}
 		positionScrollbar();

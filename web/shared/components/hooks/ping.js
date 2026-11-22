@@ -7,10 +7,10 @@ export const name = "ping";
  * Hook function: Builds a breadcrumb nav element from a URI.
  * @param {Element} _shell - The shell
  * @param {string[]} _params - Parameters from the router.
- * @param {string} uri - e.g. "#/pictures/summer15/italy"
+ * @param {string} _uri - e.g. "#/pictures/summer15/italy"
  * @returns {Promise<string>} - a breadcrumb nav as an HTML string.
  */
-export async function fn(_shell, _params, uri) {
+export async function fn(_shell, _params, _uri) {
 	const ip = isLocalHost()
 		? "http://127.0.0.1:8980"
 		: "https://home.yuyuqk.com/api";

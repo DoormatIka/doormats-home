@@ -11,6 +11,7 @@
 		"module": "es2020",
 		"lib": ["ES2017", "DOM", "DOM.Iterable"],
 		"moduleResolution": "nodenext",
+		"types": ["node"],
 		// Tells TypeScript to read JS files, as
 		// normally they are ignored as source files
 		"allowJs": true,

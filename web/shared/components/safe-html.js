@@ -38,7 +38,7 @@ export function escapeHtml(str) {
 /**
  * Tagged template: interpolated values are auto-escaped, static parts are not.
  * @param {TemplateStringsArray} strings
- * @param {unknown[]} values
+ * @param {any[]} values
  * @returns string
  */
 export function html(strings, ...values) {
@@ -47,7 +47,7 @@ export function html(strings, ...values) {
 		const safe =
 			value instanceof SafeString
 				? value.toString()
-				: escapeHtml(value.toString() ?? "");
+				: escapeHtml(value.toString());
 		return result + safe + str;
 	});
 }

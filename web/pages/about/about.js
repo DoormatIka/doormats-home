@@ -7,13 +7,3 @@ export async function onJoin() {
 		clearTimeout(timeID);
 	};
 }
-
-/**
- * @param {string} msg
- * @param {number} time - in milliseconds
- */
-function timer(msg, time) {
-	return new Promise((res, _) => {
-		setTimeout(() => res(msg), time);
-	});
-}

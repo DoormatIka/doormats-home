@@ -4,6 +4,9 @@ function onMaximize() {
 		...document.querySelectorAll(".nav"),
 	];
 	const btn = document.querySelector("#maximize-btn");
+	if (btn === null) {
+		return;
+	}
 	for (const div of toResize) {
 		const t = div.classList.toggle("max");
 		if (t) {

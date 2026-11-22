@@ -26,7 +26,8 @@ export class CursorManager {
 		const divCursors = document.querySelectorAll(".cursor");
 		for (let i = 0; i < divCursors.length; i++) {
 			const cursor = divCursors[i];
-			const ease = parseFloat(cursor.getAttribute("data-ease"));
+			const attr = cursor.getAttribute("data-ease") ?? "0.1";
+			const ease = parseFloat(attr);
 			const width = document.body.clientWidth / 2;
 			const height = document.body.clientHeight / 2;
 
@@ -46,11 +47,15 @@ export class CursorManager {
 	}
 	animateCursor() {
 		for (let cursor of this._cursors) {
+			const style = cursor.div?.style;
+			if (!style) {
+				continue;
+			}
 			cursor.cursorX += (cursor.targetX - cursor.cursorX) * cursor.ease;
 			cursor.cursorY += (cursor.targetY - cursor.cursorY) * cursor.ease;
 
-			cursor.div.style.left = cursor.cursorX + "px";
-			cursor.div.style.top = cursor.cursorY + "px";
+			style.left = cursor.cursorX + "px";
+			style.top = cursor.cursorY + "px";
 		}
 		requestAnimationFrame(this.animateCursor);
 	}
@@ -83,7 +88,7 @@ export class CursorManager {
 	enableMouseMovement() {
 		document.addEventListener("mousemove", (e) => this._mouse(e));
 
-		let timeoutID;
+		let /** @type {NodeJS.Timeout | undefined} */ timeoutID;
 		document.addEventListener("touchstart", (e) => {
 			clearTimeout(timeoutID);
 			this._touch(e);

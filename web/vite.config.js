@@ -7,7 +7,7 @@ import { writeManifestToFile } from "./cli/createManifest.js";
 function manifestFunction() {
 	return {
 		name: "manifest",
-		handleHotUpdate(ctx) {
+		handleHotUpdate(_ctx) {
 			writeManifestToFile();
 		},
 	};

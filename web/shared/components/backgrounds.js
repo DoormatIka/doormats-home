@@ -31,15 +31,13 @@ async function createBackgroundStage(src) {
 
 	const img = new Image();
 
-	await new Promise((resolve) => {
-		if (img.complete) {
-			resolve();
-		} else {
-			img.addEventListener("load", resolve, { once: true });
-			img.addEventListener("error", resolve, { once: true }); // don't hang on broken img
-		}
-		img.src = src;
-	});
+	await new Promise(
+		/** @param {(value?: any) => void} resolve */ (resolve) => {
+			img.addEventListener("load", () => resolve(), { once: true });
+			img.addEventListener("error", () => resolve(), { once: true });
+			img.src = src;
+		},
+	);
 
 	requestAnimationFrame(() => umbrellaBg.classList.add("loaded"));
 	hideCursors(cursors);

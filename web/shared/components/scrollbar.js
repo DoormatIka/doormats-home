@@ -69,6 +69,10 @@ export function positionScrollbar() {
 	const thumb = document.getElementById("scrollbar-thumb");
 	const line = document.querySelector("#scrollbar");
 
+	if (!line || !thumb) {
+		return;
+	}
+
 	const lineRect = line.getBoundingClientRect();
 	const lineStyle = window.getComputedStyle(line);
 	const thumbStyle = window.getComputedStyle(thumb);
@@ -92,6 +96,10 @@ export function initializeScrollbar() {
 		document.getElementsByClassName("shell")[0]
 	);
 	const line = document.getElementById("scrollbar");
+
+	if (!line || !thumb) {
+		return;
+	}
 
 	observeHeight(shell, (clientHeight, scrollHeight) => {
 		positionScrollbar();
@@ -206,6 +214,10 @@ function onWheel(shell, thumb, line, deltaY) {
 export function transformScrollbar(clientHeight, shellHeight) {
 	const thumb = document.getElementById("scrollbar-thumb");
 	const line = document.querySelector("#scrollbar");
+
+	if (!line || !thumb) {
+		return;
+	}
 
 	const lineStyle = window.getComputedStyle(line);
 	// decimal rounding is to avoid floating point errors.

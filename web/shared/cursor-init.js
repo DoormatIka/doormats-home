@@ -29,8 +29,14 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function positionScrollbarOnBoxTransition() {
-	const box = /** @type {HTMLElement} */ (document.querySelector(".big-box"));
+	const box = /** @type {HTMLElement | null} */ (
+		document.querySelector(".big-box")
+	);
 	const bar = document.getElementById("scrollbar-thumb");
+
+	if (!box || !bar) {
+		return;
+	}
 
 	box.addEventListener("transitionrun", (e) => {
 		if (e.target !== box) return;
