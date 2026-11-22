@@ -5,7 +5,9 @@ go 1.26.3
 require (
 	github.com/gin-contrib/cors v1.7.7
 	github.com/gin-gonic/gin v1.12.0
+	github.com/gomarkdown/markdown v0.0.0-20261117205700-e8c6d33a8b6c
 	golang.org/x/time v0.15.0
+	modernc.org/sqlite v1.62.0
 )
 
 require (
@@ -45,5 +47,4 @@ require (
 	modernc.org/libc v1.80.1 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.12.1 // indirect
-	modernc.org/sqlite v1.62.0 // indirect
 )

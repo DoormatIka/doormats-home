@@ -50,6 +50,7 @@ func (r *BlogRepository) Get(id string) (*models.BlogRecord, error) {
 
 
 func (r *BlogRepository) Update(params *models.BlogRecord) (bool, error) {
+	log.Printf("%q", params.Text)
 	res, err := r.db.Exec(
 		"UPDATE blogs SET title = COALESCE(?, title), link = COALESCE(?, link), text = COALESCE(?, text), description = COALESCE(?, description) WHERE id = ?",
 		params.Title, params.Link, params.Text, params.Description, params.Id,
