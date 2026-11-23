@@ -17,10 +17,14 @@ export async function fn(_shell, _params, _uri) {
 	try {
 		const res = await fetch(ip + "/ping");
 		if (res.status != 200) {
-			return html`<p>Couldn't reach the server!</p>`;
+			return html`<p class="small-text light-color">
+				Couldn't reach the server!
+			</p>`;
 		}
 		// const json = await res.json();
-		return html`<p>This message came from my server!</p>`;
+		return html`<p class="small-text light-color">
+			This message came from my server!
+		</p>`;
 	} catch (error) {
 		return html`<p>${error}</p>`;
 	}

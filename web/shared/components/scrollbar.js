@@ -13,6 +13,10 @@
 	Technical notes: I use style.top to set the position of the scroll bar,
 		and style.transform as an offset from that position.
 		Scrolling changes style.transform.
+
+	Orientation: the bar is vertical on desktop and horizontal on phones.
+		The shell always scrolls vertically, only the bar's axis changes.
+		The axis-dependent math lives in the small helpers below.
 */
 
 /*
@@ -28,6 +32,63 @@
 const glob = {
 	isScrollable: false,
 };
+
+// keep this in sync with the max-width breakpoint in media-queries.css.
+const mobileQuery = window.matchMedia("(max-width: 50rem)");
+const isHorizontal = () => mobileQuery.matches;
+
+/**
+ * Length of an element along the scrollbar's axis.
+ * @param {Element} el
+ */
+function axisLength(el) {
+	return isHorizontal() ? el.clientWidth : el.clientHeight;
+}
+
+/**
+ * How far the thumb can travel along the line.
+ * @param {Element} line
+ * @param {Element} thumb
+ */
+function travel(line, thumb) {
+	return axisLength(line) - axisLength(thumb);
+}
+
+/**
+ * Offsets the thumb along the scrollbar's axis.
+ * @param {HTMLElement} thumb
+ * @param {number} px
+ */
+function setThumbOffset(thumb, px) {
+	thumb.style.transform = isHorizontal()
+		? `translateX(${px}px)`
+		: `translateY(${px}px)`;
+}
+
+/**
+ * Where the pointer is along the line, measured to the thumb's middle.
+ * @param {PointerEvent} e
+ * @param {Element} line
+ * @param {Element} thumb
+ */
+function pointerOffset(e, line, thumb) {
+	const rect = line.getBoundingClientRect();
+	return isHorizontal()
+		? e.clientX - rect.left - thumb.clientWidth / 2
+		: e.clientY - rect.top - thumb.clientHeight / 2;
+}
+
+/**
+ * Moves the thumb to match the shell's current scroll position.
+ * @param {HTMLElement} shell
+ * @param {HTMLElement} thumb
+ * @param {Element} line
+ */
+function syncThumb(shell, thumb, line) {
+	const max = shell.scrollHeight - shell.clientHeight;
+	const ratio = max > 0 ? shell.scrollTop / max : 0;
+	setThumbOffset(thumb, ratio * travel(line, thumb));
+}
 
 /**
  * Observe height changes of an element.
@@ -67,27 +128,44 @@ function observeHeight(el, onChange) {
 
 export function positionScrollbar() {
 	const thumb = document.getElementById("scrollbar-thumb");
-	const line = document.querySelector("#scrollbar");
+	const line = document.getElementById("scrollbar");
+	const shell = document.getElementsByClassName("shell")[0];
 
 	if (!line || !thumb) {
 		return;
 	}
 
 	const lineRect = line.getBoundingClientRect();
-	const lineStyle = window.getComputedStyle(line);
-	const thumbStyle = window.getComputedStyle(thumb);
 
-	const thumbMargin =
-		parseFloat(thumbStyle.marginLeft) + parseFloat(thumbStyle.marginRight);
-	const lineWidth =
-		lineRect.width +
-		parseFloat(lineStyle.marginLeft) +
-		parseFloat(lineStyle.marginRight);
-	const absoluteTop = lineRect.top;
-	const absoluteLeft = lineRect.left - (lineWidth / 2 - thumbMargin / 2) - 1.25;
-	thumb.style.top = `${absoluteTop}px`;
-	thumb.style.left = `${absoluteLeft}px`;
-	thumb.style.transform = `translateY(0px)`;
+	if (isHorizontal()) {
+		// center the thumb on the horizontal line
+		thumb.style.margin = "0"; // to remove extra offsets from the thumb
+		thumb.style.left = `${lineRect.left}px`;
+		thumb.style.top = `${lineRect.top + lineRect.height / 2 - thumb.offsetHeight / 2}px`;
+	} else {
+		thumb.style.margin = "";
+
+		const lineStyle = window.getComputedStyle(line);
+		const thumbStyle = window.getComputedStyle(thumb);
+
+		const thumbMargin =
+			parseFloat(thumbStyle.marginLeft) + parseFloat(thumbStyle.marginRight);
+		const lineWidth =
+			lineRect.width +
+			parseFloat(lineStyle.marginLeft) +
+			parseFloat(lineStyle.marginRight);
+		const absoluteTop = lineRect.top;
+		const absoluteLeft =
+			lineRect.left - (lineWidth / 2 - thumbMargin / 2) - 1.25;
+		thumb.style.top = `${absoluteTop}px`;
+		thumb.style.left = `${absoluteLeft}px`;
+	}
+
+	if (shell instanceof HTMLElement) {
+		syncThumb(shell, thumb, line);
+	} else {
+		setThumbOffset(thumb, 0);
+	}
 }
 
 export function initializeScrollbar() {
@@ -101,14 +179,17 @@ export function initializeScrollbar() {
 		return;
 	}
 
+	// size the thumb first then position
 	observeHeight(shell, (clientHeight, scrollHeight) => {
-		positionScrollbar();
 		transformScrollbar(clientHeight, scrollHeight);
-	});
-	window.addEventListener("resize", () => {
 		positionScrollbar();
-		transformScrollbar(shell.clientHeight, shell.scrollHeight);
 	});
+	const refresh = () => {
+		transformScrollbar(shell.clientHeight, shell.scrollHeight);
+		positionScrollbar();
+	};
+	window.addEventListener("resize", refresh);
+	mobileQuery.addEventListener("change", refresh);
 
 	// these scroll functions are not accurate to real scrollbars.
 	// the mouse should click at any point inside the scroll thumb
@@ -116,9 +197,7 @@ export function initializeScrollbar() {
 	thumb.addEventListener("pointerdown", (e) => {
 		if (!thumb.hasPointerCapture(e.pointerId) || !glob.isScrollable) return;
 
-		const lineTop = line.getBoundingClientRect().top;
-		let middleY = e.clientY - lineTop - thumb.clientHeight / 2;
-		scrollThumbTo(shell, thumb, line, middleY);
+		scrollThumbTo(shell, thumb, line, pointerOffset(e, line, thumb));
 		thumb.setPointerCapture(e.pointerId);
 
 		e.stopPropagation();
@@ -126,9 +205,7 @@ export function initializeScrollbar() {
 	thumb.addEventListener("pointermove", (e) => {
 		if (!thumb.hasPointerCapture(e.pointerId) || !glob.isScrollable) return;
 
-		const lineTop = line.getBoundingClientRect().top;
-		let middleY = e.clientY - lineTop - thumb.clientHeight / 2;
-		scrollThumbTo(shell, thumb, line, middleY);
+		scrollThumbTo(shell, thumb, line, pointerOffset(e, line, thumb));
 		thumb.setPointerCapture(e.pointerId);
 
 		e.stopPropagation();
@@ -150,9 +227,7 @@ export function initializeScrollbar() {
 	line.addEventListener("pointerdown", (e) => {
 		if (thumb.hasPointerCapture(e.pointerId) || !glob.isScrollable) return;
 
-		const lineTop = line.getBoundingClientRect().top;
-		let middleY = e.clientY - lineTop - thumb.clientHeight / 2;
-		scrollThumbTo(shell, thumb, line, middleY);
+		scrollThumbTo(shell, thumb, line, pointerOffset(e, line, thumb));
 
 		thumb.setPointerCapture(e.pointerId);
 	});
@@ -165,29 +240,24 @@ export function initializeScrollbar() {
 		{ passive: false },
 	);
 
-	shell.addEventListener("scroll", (e) => {
-		const shell = e.currentTarget;
-		if (!(shell instanceof HTMLElement)) return;
-
-		const thumbTop =
-			(shell.scrollTop / (shell.scrollHeight - shell.clientHeight)) *
-			(line.clientHeight - thumb.clientHeight);
-		thumb.style.transform = `translateY(${thumbTop}px)`;
-	});
+	shell.addEventListener("scroll", () => syncThumb(shell, thumb, line));
 }
 
 /**
- * Makes the custom scrollbar scroll to y.
+ * Makes the custom scrollbar scroll to a position along the line.
  * @param {HTMLElement} shell
  * @param {HTMLElement} thumb
  * @param {HTMLElement} line
- * @param {number} y
+ * @param {number} pos
  */
-function scrollThumbTo(shell, thumb, line, y) {
-	const newY = Math.max(0, Math.min(y, line.clientHeight - thumb.clientHeight));
+function scrollThumbTo(shell, thumb, line, pos) {
+	const range = travel(line, thumb);
+	if (range <= 0) return;
 
-	thumb.style.transform = `translateY(${newY}px)`;
-	const scrollRatio = newY / (line.clientHeight - thumb.clientHeight);
+	const newPos = Math.max(0, Math.min(pos, range));
+
+	setThumbOffset(thumb, newPos);
+	const scrollRatio = newPos / range;
 	shell.scrollTop = scrollRatio * (shell.scrollHeight - shell.clientHeight);
 }
 
@@ -200,11 +270,7 @@ function scrollThumbTo(shell, thumb, line, y) {
  */
 function onWheel(shell, thumb, line, deltaY) {
 	shell.scrollTop += deltaY;
-
-	const scrollRatio =
-		shell.scrollTop / (shell.scrollHeight - shell.clientHeight);
-	const newThumbY = scrollRatio * (line.clientHeight - thumb.clientHeight);
-	thumb.style.transform = `translateY(${newThumbY}px)`;
+	syncThumb(shell, thumb, line);
 }
 
 /**
@@ -219,20 +285,29 @@ export function transformScrollbar(clientHeight, shellHeight) {
 		return;
 	}
 
+	const horizontal = isHorizontal();
+	const lengthProp = horizontal ? "width" : "height";
+	const thicknessProp = horizontal ? "height" : "width";
+
 	const lineStyle = window.getComputedStyle(line);
 	// decimal rounding is to avoid floating point errors.
 	const ratio = roundToDecimal(clientHeight / shellHeight, 2);
-	const lineHeight = parseFloat(lineStyle.height);
-	const resultingScrollHeight = lineHeight * ratio;
+	const lineLength = parseFloat(
+		horizontal ? lineStyle.width : lineStyle.height,
+	);
+	const resultingScrollLength = lineLength * ratio;
 
 	glob.isScrollable = ratio < 1;
 
+	// length is set here, thickness comes from the CSS (cleared so a stale value from the other axis can't stick).
+	thumb.style[thicknessProp] = "";
+
 	if (!glob.isScrollable) {
 		// if shell has no scroll
-		thumb.style.height = `7px`;
+		thumb.style[lengthProp] = `7px`;
 		thumb.style.backgroundColor = `var(--color-text-light)`;
 	} else {
-		thumb.style.height = `${resultingScrollHeight}px`;
+		thumb.style[lengthProp] = `${resultingScrollLength}px`;
 		thumb.style.backgroundColor = `var(--color-base)`;
 	}
 }
