@@ -72,3 +72,23 @@ header {
 	color: #6c757d; /* Styles the current page text */
 	pointer-events: none; /* Disables mouse events for the current page item */
 }
+
+#maximize-btn .icon-max,
+#maximize-btn .icon-min {
+	transition: opacity 0.2s ease;
+}
+#maximize-btn .icon-min,
+#maximize-btn[aria-pressed="true"] .icon-max {
+	opacity: 0;
+}
+#maximize-btn[aria-pressed="true"] .icon-min {
+	opacity: 1;
+}
+#maximize-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+#maximize-btn svg {
+	display: block; /* no baseline gap */
+}

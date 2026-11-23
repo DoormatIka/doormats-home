@@ -50,7 +50,27 @@
 			></div>
 
 			<div class="big-box-width nav">
-				<button id="maximize-btn" class="p-horizontal-half">---</button>
+				<button
+					id="maximize-btn"
+					aria-label="maximize window"
+					aria-pressed="false"
+				>
+					<svg
+						viewBox="0 0 16 16"
+						width="16"
+						height="16"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.5"
+						stroke-linecap="square"
+						aria-hidden="true"
+					>
+						<!-- maximize: corners point outward -->
+						<path class="icon-max" d="M2 6V2h4M10 2h4v4M2 10v4h4M14 10v4h-4" />
+						<!-- minimize: corners point inward -->
+						<path class="icon-min" d="M6 2v4H2M10 2v4h4M2 10h4v4M14 10h-4v4" />
+					</svg>
+				</button>
 			</div>
 
 			<div class="main-container big-box">

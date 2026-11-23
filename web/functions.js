@@ -1,20 +1,15 @@
 function onMaximize() {
-	const toResize = [
-		...document.querySelectorAll(".big-box"),
-		...document.querySelectorAll(".nav"),
-	];
 	const btn = document.querySelector("#maximize-btn");
-	if (btn === null) {
-		return;
+	if (btn === null) return;
+
+	// decide the new state once, then apply it everywhere
+	const isMax = !document.querySelector(".big-box")?.classList.contains("max");
+	for (const el of document.querySelectorAll(".big-box, .nav")) {
+		el.classList.toggle("max", isMax);
 	}
-	for (const div of toResize) {
-		const t = div.classList.toggle("max");
-		if (t) {
-			btn.innerHTML = "THPJ";
-		} else {
-			btn.innerHTML = "----";
-		}
-	}
+
+	btn.setAttribute("aria-pressed", String(isMax));
+	btn.setAttribute("aria-label", isMax ? "Restore window" : "Maximize window");
 }
 
 const btn = /** @type {HTMLButtonElement?} */ (

@@ -162,12 +162,15 @@ async function grabHookFromFolder(file) {
 	const fn = hook.fn;
 
 	return async (el, params, uri) => {
-		const shell = document.querySelector(`[data-${name}]`);
-		if (!shell) return;
+		const shells = document.querySelectorAll(`[data-${name}]`);
+		console.log(shells);
+		if (shells.length < 0) return;
 
-		const nodes = parseHTML(await fn(el, params, uri)).children;
-		for (const node of nodes) {
-			shell.replaceChildren(node);
+		for (const shell of shells) {
+			const nodes = parseHTML(await fn(el, params, uri)).children;
+			for (const node of nodes) {
+				shell.replaceChildren(node);
+			}
 		}
 	};
 }

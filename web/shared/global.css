@@ -395,6 +395,13 @@ br {
 	height: 12rem;
 }
 #maximize-btn {
-	height: 100%;
-	width: 5rem;
+	height: 1.5rem;
+	width: 4rem;
+}
+
+.shell p + p {
+	margin-top: 0.9em;
+}
+.shell p {
+	line-height: 1.2;
 }
