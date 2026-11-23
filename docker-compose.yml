@@ -1,0 +1,30 @@
+name: doormats-home # same project name inside and outside the watcher, so volumes/networks match
+
+services:
+  watcher:
+    build: ./watcher
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./docker-compose.yml:/deploy/docker-compose.yml:ro
+      - ./.env:/deploy/.env:ro
+      - watcher_state:/app/state
+      - web:/deploy/web
+      - server:/deploy/server
+
+  web:
+    image: caddy:2
+    restart: unless-stopped
+    ports: ["8080:80", "8443:443"]
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - web:/srv/site:ro
+      - caddy_data:/data
+
+  server:
+    build: ./server # resolves to /deploy/server inside the watcher
+    restart: unless-stopped
+
+volumes:
+  { watcher_state: {}, web: {}, server: {}, caddy_data: {}, server_db: {} }

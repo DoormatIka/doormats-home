@@ -1,12 +1,12 @@
 {
   "owner": "DoormatIka",
   "repo": "doormats-home",
-  "commit_file": "latest-commit",
+  "commit_file": "/app/state/latest-commit",
   "interval": 60,
   "projects": [
     {
       "from": "/web",
-      "to": "/home/mualice/Downloads/web/",
+      "to": "/deploy/web",
       "excluding": [
         "vite.config.js",
         "cli/",
@@ -17,13 +17,38 @@
         ".gitignore",
         ".gitattributes"
       ],
-      "commands": [["caddy", "reload", "--config", "/path/to/Caddyfile"]]
+      "commands": [
+        [
+          "docker",
+          "compose",
+          "-f",
+          "/deploy/docker-compose.yml",
+          "exec",
+          "-T",
+          "web",
+          "caddy",
+          "reload",
+          "--config",
+          "/etc/caddy/Caddyfile"
+        ]
+      ]
     },
     {
       "from": "/server",
-      "to": "/home/mualice/Downloads/server/",
+      "to": "/deploy/server",
       "excluding": [],
-      "commands": [["go", "run", "."]]
+      "commands": [
+        [
+          "docker",
+          "compose",
+          "-f",
+          "/deploy/docker-compose.yml",
+          "up",
+          "-d",
+          "--build",
+          "server"
+        ]
+      ]
     }
   ]
 }

@@ -1,0 +1,4 @@
+localhost {
+	root /srv/site
+	file_server
+}
