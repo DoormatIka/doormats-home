@@ -62,16 +62,7 @@ func main() {
 	ping_service := &services.PingService{Repo: ping_repo}
 	ping_handler := &handlers.PingHandler{Service: ping_service}
 
-	blog_repo := repository.NewBlogRepository(db)
-	blog_service := services.NewBlogService(blog_repo)
-	blog_handler := handlers.NewBlogHandler(blog_service)
-
 	router.GET("/ping", ping_handler.GetGarbageData)
-
-	router.GET("/blog/get/:id", blog_handler.GetBlog)
-	router.GET("/blog/list/:page", blog_handler.GetListBlog)
-	adminRouter.POST("/blog/add", blog_handler.AddBlogPost)
-	adminRouter.POST("/blog/update", blog_handler.UpdateBlogPost)
 
 	log.Println("Main server is up at :8980, admin server is up at :9980")
 
