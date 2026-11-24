@@ -12,7 +12,7 @@ export const name = "ping";
  */
 export async function fn(_shell, _params, _uri) {
 	const ip = isLocalHost()
-		? "http://127.0.0.1:8980"
+		? "http://127.0.0.1:9980/api"
 		: "https://home.mualice.dpdns.com/api";
 	console.log(ip);
 	try {

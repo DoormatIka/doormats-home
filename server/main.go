@@ -64,6 +64,7 @@ func main() {
 
 	router.GET("/api/ping", ping_handler.GetGarbageData)
 
+	// test.
 	log.Println("Main server is up at :9980, admin server is up at :8980")
 
 	go adminRouter.Run(":8980")

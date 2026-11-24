@@ -102,7 +102,7 @@ func onTick(cmdManager *CommandManager, config Config, envs Envs) {
 	fmt.Printf("Checking %s at %s.\n", config.Repo, time.Now().Format(time.DateTime))
 	commit, gitErr := grabLatestGitCommit(config, envs)
 	if gitErr != nil {
-		log.Printf("[WARN] Cannot access latest git commit!")
+		log.Printf("[WARN] Cannot access latest git commit: %v", gitErr)
 		return
 	}
 
@@ -111,22 +111,22 @@ func onTick(cmdManager *CommandManager, config Config, envs Envs) {
 	}
 }
 
-func onChangedCommit(cmdManager *CommandManager, config Config, commit *Commit)  {
+func onChangedCommit(cmdManager *CommandManager, config Config, commit *Commit) {
 	fmt.Printf("Changes detected! \"%s\"\n", commit.Commit.Message)
 
-	writeErr := os.WriteFile(config.CommitFile, []byte(commit.SHA), 0644)
-	setLocalCommit(config)
-
 	if err := gitToAssignedFolders(commit.SHA, config); err != nil {
-		log.Fatalf("gitToAssignedFolders failed: %v", err)
+		// SHA is not saved, so the next tick retries this commit.
+		log.Printf("[ERROR] deploy failed, will retry next tick: %v", err)
+		return
 	}
+
+	if err := os.WriteFile(config.CommitFile, []byte(commit.SHA), 0644); err != nil {
+		log.Printf("[WARN] failed to save commit file: %v", err)
+	}
+	setLocalCommit(config)
 
 	cmdManager.StopAll()
 	runCommands(cmdManager, config)
-
-	if writeErr != nil {
-		log.Fatalf("Failed to write to file: %s", writeErr)
-	}
 }
 
 
@@ -182,8 +182,12 @@ func gitToAssignedFolders(commit string, config Config) error {
 	defer os.RemoveAll(tmpFolder)
 
 	repoURL := fmt.Sprintf("https://github.com/%s/%s.git", config.Owner, config.Repo)
-	cloneGitToFolder(repoURL, commit, tmpFolder)
-	moveWebServerFolders(config, tmpFolder)
+	if err := cloneGitToFolder(repoURL, commit, tmpFolder); err != nil {
+		return fmt.Errorf("cloning repo: %w", err)
+	}
+	if err := moveWebServerFolders(config, tmpFolder); err != nil {
+		return fmt.Errorf("deploying folders: %w", err)
+	}
 
 	return nil
 }
@@ -379,7 +383,7 @@ func grabLatestGitCommit(config Config, envs Envs) (*Commit, error) {
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/commits", config.Owner, config.Repo)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	req.Header.Set("Accept", "application/vnd.github+json")
@@ -403,10 +407,18 @@ func grabLatestGitCommit(config Config, envs Envs) (*Commit, error) {
 		return nil, readErr
 	}
 
+	if res.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("github api returned %s: %s", res.Status, strings.TrimSpace(string(body)))
+	}
+
 	
 	var commits []Commit
 	if err := json.Unmarshal(body, &commits); err != nil {
 		return nil, err
+	}
+
+	if len(commits) == 0 {
+		return nil, errors.New("github api returned no commits")
 	}
 
 	return &commits[0], nil
