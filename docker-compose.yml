@@ -16,7 +16,7 @@ services:
   web:
     image: caddy:2
     restart: unless-stopped
-    ports: ["8080:80", "8443:443"]
+    ports: ["9080:80", "9443:443"]
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - web:/srv/site:ro
@@ -24,6 +24,7 @@ services:
 
   server:
     build: ./server # resolves to /deploy/server inside the watcher
+    ports: ["9980:9980"]
     restart: unless-stopped
 
 volumes:

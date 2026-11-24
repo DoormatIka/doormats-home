@@ -14,6 +14,7 @@ export async function fn(_shell, _params, _uri) {
 	const ip = isLocalHost()
 		? "http://127.0.0.1:8980"
 		: "https://home.yuyuqk.com/api";
+	console.log(ip);
 	try {
 		const res = await fetch(ip + "/ping");
 		if (res.status != 200) {

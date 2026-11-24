@@ -1,4 +1,10 @@
-localhost {
-	root /srv/site
+http:// {
+	root * /srv/site
 	file_server
+}
+
+https:// {
+	root * /srv/site
+	file_server
+	tls internal
 }
