@@ -66,6 +66,6 @@ func main() {
 
 	log.Println("Main server is up at :8980, admin server is up at :9980")
 
-	go adminRouter.Run(":9980")
-	router.Run(":8980")
+	go adminRouter.Run(":8980")
+	router.Run(":9980")
 }
