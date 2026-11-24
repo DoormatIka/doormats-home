@@ -43,7 +43,7 @@ func main() {
 		AllowOrigins: []string{
 			"http://127.0.0.1:8080",
 			"http://localhost:8080",
-			"https://api.mualice.dpdns.org",
+			"https://home.mualice.dpdns.org",
 		},
 		AllowMethods: []string{"GET", "POST"},
 		AllowHeaders: []string{"Origin", "Content-Type", "Authorization"},

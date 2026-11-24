@@ -13,7 +13,7 @@ export const name = "ping";
 export async function fn(_shell, _params, _uri) {
 	const ip = isLocalHost()
 		? "http://127.0.0.1:8980"
-		: "https://home.yuyuqk.com/api";
+		: "https://home.mualice.dpdns.com/api";
 	console.log(ip);
 	try {
 		const res = await fetch(ip + "/ping");
