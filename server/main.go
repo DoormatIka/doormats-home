@@ -62,7 +62,7 @@ func main() {
 	ping_service := &services.PingService{Repo: ping_repo}
 	ping_handler := &handlers.PingHandler{Service: ping_service}
 
-	router.GET("/ping", ping_handler.GetGarbageData)
+	router.GET("/api/ping", ping_handler.GetGarbageData)
 
 	log.Println("Main server is up at :9980, admin server is up at :8980")
 
