@@ -41,8 +41,8 @@ func main() {
 	adminRouter.Use(RateLimiter())
 	router.Use(cors.New(cors.Config{
 		AllowOrigins: []string{
-			"http://127.0.0.1:8080",
-			"http://localhost:8080",
+			"http://127.0.0.1:9080",
+			"http://localhost:9080",
 			"https://home.mualice.dpdns.org",
 		},
 		AllowMethods: []string{"GET", "POST"},

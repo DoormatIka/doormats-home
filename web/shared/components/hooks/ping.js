@@ -1,4 +1,3 @@
-import { isLocalHost } from "/shared/misc.js";
 import { html } from "/shared/components/safe-html.js";
 
 export const name = "ping";
@@ -11,18 +10,13 @@ export const name = "ping";
  * @returns {Promise<string>} - a breadcrumb nav as an HTML string.
  */
 export async function fn(_shell, _params, _uri) {
-	const ip = isLocalHost()
-		? "http://127.0.0.1:9980/api"
-		: "https://home.mualice.dpdns.com/api";
-	console.log(ip);
 	try {
-		const res = await fetch(ip + "/ping");
+		const res = await fetch("/api/ping");
 		if (res.status != 200) {
 			return html`<p class="small-text light-color">
 				Couldn't reach the server!
 			</p>`;
 		}
-		// const json = await res.json();
 		return html`<p class="small-text light-color">
 			This message came from my server!
 		</p>`;
