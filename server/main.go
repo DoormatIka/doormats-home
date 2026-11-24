@@ -43,7 +43,7 @@ func main() {
 		AllowOrigins: []string{
 			"http://127.0.0.1:8080",
 			"http://localhost:8080",
-			"https://home.mualice.dpdns.org",
+			"https://api.mualice.dpdns.org",
 		},
 		AllowMethods: []string{"GET", "POST"},
 		AllowHeaders: []string{"Origin", "Content-Type", "Authorization"},
@@ -64,7 +64,7 @@ func main() {
 
 	router.GET("/ping", ping_handler.GetGarbageData)
 
-	log.Println("Main server is up at :8980, admin server is up at :9980")
+	log.Println("Main server is up at :9980, admin server is up at :8980")
 
 	go adminRouter.Run(":8980")
 	router.Run(":9980")
