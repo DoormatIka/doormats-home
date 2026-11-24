@@ -39,15 +39,15 @@ export const name = "breadcrumb";
 /**
  * Hook function: Builds a breadcrumb nav element from a URI.
  * @param {Element} _shell - The shell
+ * @param {HTMLElement} div - The [data-breadcrumb] element being filled.
  * @param {string[]} _params - Parameters from the router.
  * @param {string} uri - e.g. "#/pictures/summer15/italy"
- * @returns {string} - a breadcrumb nav as an HTML string.
  */
-export function fn(_shell, _params, uri) {
+export function fn(_shell, div, _params, uri) {
 	const segments = uriToSegments(uri);
 	const divs = segments.map(segmentToItem);
 	const items = [`<li><a href="#/">Home</a></li>`, ...divs];
-	return `
+	div.innerHTML = `
 		<nav aria-label="breadcrumb">
 			<ol class="breadcrumb">
 				${items.join("\n")}

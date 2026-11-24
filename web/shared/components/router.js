@@ -7,6 +7,15 @@
  */
 
 /**
+ * @callback HookFunction
+ * @param {Element} el - The shell element.
+ * @param {HTMLElement} div - The div element with the data label.
+ * @param {string[]} params
+ * @param {string} uri
+ * @returns {Promise<void>}
+ */
+
+/**
  * @callback OnJoinFunction
  * @returns {Promise<() => Promise<void>>}
  */
@@ -39,9 +48,9 @@ export class HashRouter {
 		this._routes = {};
 		/**
 		 *
-		 * @type {RouteFunction[]}
+		 * @type {{ [key: string]: HookFunction }}
 		 */
-		this._afterHooks = [];
+		this._afterHooks = {};
 		/**
 		 *
 		 * @type {Array<() => Promise<void>>}
@@ -57,10 +66,11 @@ export class HashRouter {
 		return this;
 	}
 	/**
-	 * @param {RouteFunction} fn - Runs this function when that mode is reached.
+	 * @param {string} label - matches elements with data-<label>, "breadcrumb" is [data-breadcrumb]
+	 * @param {HookFunction} fn - Runs this function when that mode is reached.
 	 */
-	addAfterHook(fn) {
-		this._afterHooks.push(fn);
+	addHook(label, fn) {
+		this._afterHooks[label] = fn;
 		return this;
 	}
 	activate() {
@@ -130,12 +140,19 @@ export class HashRouter {
 
 		this._previousPageCleanupFunction = await runJSinElement(shell);
 
-		const settledTasks = this._afterHooks.map((promise) =>
-			Promise.resolve(promise(shell, params, cleanedUri))
-				.then((val) => ({ status: "fulfilled", value: val }))
-				.catch((reason) => ({ status: "rejected", reason: reason })),
-		);
-		await Promise.all(settledTasks);
+		const tasks = Object.entries(this._afterHooks).flatMap(([label, fn]) => {
+			const targets = /** @type {NodeListOf<HTMLElement>} */ (
+				document.querySelectorAll(`[data-${label}]`)
+			);
+			return [...targets].map(async (div) => {
+				try {
+					await fn(shell, div, params, cleanedUri);
+				} catch (err) {
+					console.error(`hook "${label}" failed:`, err);
+				}
+			});
+		});
+		await Promise.all(tasks);
 	}
 	/**
 	 * @param {string} path

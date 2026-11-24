@@ -153,29 +153,6 @@ function pageRoute(page, options = { file: "index.html", maxDepth: 2 }) {
 }
 
 /**
- * @param {string} file
- * @returns {Promise<import("/shared/components/router.js").RouteFunction>}
- */
-async function grabHookFromFolder(file) {
-	const hook = await import(file);
-	const name = hook.name;
-	const fn = hook.fn;
-
-	return async (el, params, uri) => {
-		const shells = document.querySelectorAll(`[data-${name}]`);
-		console.log(shells);
-		if (shells.length < 0) return;
-
-		for (const shell of shells) {
-			const nodes = parseHTML(await fn(el, params, uri)).children;
-			for (const node of nodes) {
-				shell.replaceChildren(node);
-			}
-		}
-	};
-}
-
-/**
  * @returns {import("/shared/components/router.js").RouteFunction}
  */
 function notFound() {
@@ -193,21 +170,25 @@ router.add("shrine", pageRoute("shrine"));
 router.add("todo", pageRoute("todo"));
 router.add("notFound", notFound());
 
+/** @param {string} file */
+async function addHookFromFile(file) {
+	const { name, fn } = await import(file);
+	router.addHook(name, fn);
+}
+
 /**
  * @param {string} folder
  * @param {string[]} files
  */
 function addAllHooks(folder, files) {
 	return Promise.all(
-		files.map((file) =>
-			grabHookFromFolder(folder + file)
-				.then((c) => router.addAfterHook(c))
-				.catch(console.error),
-		),
+		files.map((file) => addHookFromFile(folder + file).catch(console.error)),
 	);
 }
+
 addAllHooks("/shared/components/hooks/", [
 	"breadcrumbs.js",
 	"random.js",
 	"ping.js",
+	"md.js",
 ]).then(() => router.activate());

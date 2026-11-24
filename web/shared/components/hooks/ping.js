@@ -5,22 +5,23 @@ export const name = "ping";
 /**
  * Hook function: Builds a breadcrumb nav element from a URI.
  * @param {Element} _shell - The shell
+ * @param {HTMLElement} div - The [data-breadcrumb] element being filled.
  * @param {string[]} _params - Parameters from the router.
  * @param {string} _uri - e.g. "#/pictures/summer15/italy"
- * @returns {Promise<string>} - a breadcrumb nav as an HTML string.
  */
-export async function fn(_shell, _params, _uri) {
+export async function fn(_shell, div, _params, _uri) {
 	try {
 		const res = await fetch("/api/ping");
 		if (res.status != 200) {
-			return html`<p class="small-text light-color">
+			div.innerHTML = html`<p class="small-text light-color">
 				Couldn't reach the server!
 			</p>`;
+			return;
 		}
-		return html`<p class="small-text light-color">
+		div.innerHTML = html`<p class="small-text light-color">
 			This message came from my server!
 		</p>`;
 	} catch (error) {
-		return html`<p>${error}</p>`;
+		div.innerHTML = html`<p>${error}</p>`;
 	}
 }
