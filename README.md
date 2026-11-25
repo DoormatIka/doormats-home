@@ -13,11 +13,15 @@ experiencing making a website with no frameworks.
 dev running:
 
 ```
-docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+docker compose -f docker-compose.dev.yml down --remove-orphans
+docker compose -f docker-compose.dev.yml build server
+docker compose -f docker-compose.dev.yml up -d
+docker compose -f docker-compose.dev.yml exec server yt-dlp --version
 ```
 
 prod running:
 
 ```
-docker compose up -d
+docker compose -f docker-compose.yml up -d
+docker compose -f docker-compose.yml down
 ```
