@@ -1,4 +1,19 @@
+name: doormats-home # same project name inside and outside the watcher, so volumes/networks match
+
 services:
   web:
+    image: caddy:2
+    restart: unless-stopped
+    ports: ["9080:80", "9443:443"]
     volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - ./web:/srv/site:ro
+      - caddy_data:/data
+
+  server:
+    build: ./server # resolves to /deploy/server inside the watcher
+    ports: ["9980:9980"]
+    restart: unless-stopped
+
+volumes:
+  { watcher_state: {}, web: {}, server: {}, caddy_data: {}, server_db: {} }
