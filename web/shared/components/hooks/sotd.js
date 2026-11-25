@@ -41,27 +41,34 @@ export const name = "sotd";
 export async function fn(_shell, div, _params, _uri) {
 	try {
 		const res = await fetch("/api/random-playlist", { method: "POST" });
-		/** @type {YtdlpPlaylistEntry} */
-		const obj = await res.json();
-		const title = obj.title;
-		const uploader = obj.uploader;
-		const uploader_url = obj.uploader_url;
-		const video_url = obj.url;
-		const thumbnail = obj.thumbnails[obj.thumbnails.length - 1];
+
 		if (res.status != 200) {
 			div.innerHTML = html`<p>
 				Error ${res.status}! Couldn't get the data from the server!
 			</p>`;
 			return;
 		}
-		div.innerHTML = html`<div class="sotd-main-container">
-			<h3>song of the day <h3 />
+
+		/** @type {YtdlpPlaylistEntry} */
+		const obj = await res.json();
+		const title = obj.title;
+		const uploader = obj.uploader || obj.channel;
+		const uploader_url = obj.uploader_url || obj.channel_url;
+		const video_url = obj.url;
+		const thumbnail = obj.thumbnails[obj.thumbnails.length - 1];
+		console.log(div);
+		div.innerHTML = html` <div class="sotd-main-container">
+			<h3>song of the day</h3>
 			<div class="sotd-playlist-container">
 				<img src="${thumbnail.url}" class="thumbnail cover" />
 				<div>
-					<a href="${video_url}" target="_blank" rel="noopener noreferrer">${title}</a>
+					<a href="${video_url}" target="_blank" rel="noopener noreferrer"
+						>${title}</a
+					>
 					<br />
-					<a href="${uploader_url}" target="_blank" rel="noopener noreferrer">@${uploader}</a>
+					<a href="${uploader_url}" target="_blank" rel="noopener noreferrer"
+						>@${uploader}</a
+					>
 				</div>
 			</div>
 		</div>`;
