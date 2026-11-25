@@ -4,7 +4,7 @@ type YtdlpThumbnailModel struct {
 	Id string `json:"id"`
 	Resolution string `json:"resolution"`
 
-	YtdlpPlaylistModel
+	YtdlpThumbnailEntryModel
 }
 
 type YtdlpPlaylistEntriesModel struct {
@@ -12,15 +12,15 @@ type YtdlpPlaylistEntriesModel struct {
 	Type string `json:"_type"`
 	Url string `json:"url"`
 	Title string `json:"title"`
-	Thumbnails string `json:"thumbnails"`
+	Thumbnails []YtdlpThumbnailEntryModel `json:"thumbnails"`
 	Duration uint `json:"duration"`
 	ViewCount uint `json:"view_count"`
-	Timestamp *string `json:"timestamp"` // i have no idea, this is always null with the command i'm using.
+	Timestamp *int64 `json:"timestamp"` // i have no idea, this is always null with the command i'm using.
 	LiveStatus *string `json:"live_status"` // same here
 	Availability *string `json:"availability"` // same here
 	ChannelUrl string `json:"channel_url"`
 	UploaderUrl string `json:"uploader_url"`
-	Creators []string `json:"creators"`
+	Creators []any `json:"creators"` // need to model soon enough.
 	Channel string `json:"channel"`
 	ChannelId string `json:"channel_id"`
 	Uploader string `json:"uploader"`
@@ -28,7 +28,7 @@ type YtdlpPlaylistEntriesModel struct {
 	IeKey string `json:"ie_key"`
 }
 
-type YtdlpThumbnailMiniModel struct {
+type YtdlpThumbnailEntryModel struct {
 	Url string `json:"url"`
 	Height uint `json:"height"`
 	Width uint `json:"width"`
@@ -36,9 +36,9 @@ type YtdlpThumbnailMiniModel struct {
 
 type YtdlpPlaylistModel struct {
 	Id string `json:"id"`
-	Title string `json:"string"`
+	Title string `json:"title"`
 	Availability string `json:"availability"`
-	ChannelFollowerCount string `json:"channel_follower_count"`
+	ChannelFollowerCount uint `json:"channel_follower_count"`
 	Description string `json:"description"`
 	Thumbnails []YtdlpThumbnailModel `json:"thumbnails"`
 
@@ -53,7 +53,7 @@ type YtdlpPlaylistModel struct {
 	UploaderUrl string `json:"uploader_url"`
 
 	Type string `json:"_type"`
-	Entries []YtdlpThumbnailMiniModel `json:"entries"`
+	Entries []YtdlpPlaylistEntriesModel `json:"entries"`
 }
 
 /** the schema i got from yt-dlp:

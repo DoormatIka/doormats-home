@@ -33,12 +33,15 @@ func RateLimiter() gin.HandlerFunc {
 func main() {
 	gin.SetMode(gin.DebugMode)
 	router := gin.Default()
-	adminRouter := gin.Default()
+	admin_router := gin.Default()
+
+	main_api := router.Group("/api");
+
 	router.SetTrustedProxies([]string{"127.0.0.1", "::1"})
-	adminRouter.SetTrustedProxies([]string{"127.0.0.1", "::1"})
+	admin_router.SetTrustedProxies([]string{"127.0.0.1", "::1"})
 
 	router.Use(RateLimiter())
-	adminRouter.Use(RateLimiter())
+	admin_router.Use(RateLimiter())
 	router.Use(cors.New(cors.Config{
 		AllowOrigins: []string{
 			"http://127.0.0.1:9080",
@@ -62,11 +65,16 @@ func main() {
 	ping_service := &services.PingService{Repo: ping_repo}
 	ping_handler := &handlers.PingHandler{Service: ping_service}
 
-	router.GET("/api/ping", ping_handler.GetGarbageData)
+	ytdlp_repo := repository.NewYtdlpRepository()
+	ytdlp_service := services.NewYtdlpService(&ytdlp_repo)
+	ytdlp_handler := handlers.NewYtdlpHandler(ytdlp_service)
+
+	main_api.GET("/ping", ping_handler.GetGarbageData)
+	main_api.POST("/random-playlist", ytdlp_handler.GetRandomPlaylistData)
 
 	// test.
 	log.Println("Main server is up at :9980, admin server is up at :8980")
 
-	go adminRouter.Run(":8980")
+	go admin_router.Run(":8980")
 	router.Run(":9980")
 }
