@@ -1,0 +1,29 @@
+.thumbnail {
+	height: 7rem;
+	width: 7rem;
+}
+
+.sotd-main-container {
+	padding: 0.5rem;
+	border: 1px solid var(--color-text);
+	background-color: var(--color-base-half-transparent);
+	box-sizing: border-box;
+	max-width: 30rem;
+	box-shadow: -1px 1px var(--color-text);
+
+	transition:
+		transform 200ms ease-out,
+		box-shadow 200ms ease-out;
+}
+
+.sotd-playlist-container {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	flex-direction: row;
+	gap: 1rem;
+}
+
+.sotd-main-container:hover {
+	box-shadow: 5px -2px blueviolet;
+}

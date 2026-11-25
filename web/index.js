@@ -191,4 +191,5 @@ addAllHooks("/shared/components/hooks/", [
 	"random.js",
 	"ping.js",
 	"md.js",
+	"sotd.js",
 ]).then(() => router.activate());

@@ -247,6 +247,9 @@ body {
 .big-box-width.max {
 	width: 100%;
 }
+.cover {
+	object-fit: cover;
+}
 
 /******* DIVIDER ********/
 

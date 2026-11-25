@@ -18,9 +18,7 @@ export async function fn(_shell, div, _params, _uri) {
 			</p>`;
 			return;
 		}
-		div.innerHTML = html`<p class="small-text light-color">
-			This message came from my server!
-		</p>`;
+		div.innerHTML = html`<p class="small-text light-color">Server online.</p>`;
 	} catch (error) {
 		div.innerHTML = html`<p>${error}</p>`;
 	}
