@@ -31,7 +31,7 @@ func RateLimiter() gin.HandlerFunc {
 
 
 func main() {
-	gin.SetMode(gin.DebugMode)
+	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 	admin_router := gin.Default()
 
