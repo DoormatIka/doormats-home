@@ -1,5 +1,6 @@
-import { html } from "/shared/components/safe-html.js";
 import { dedent } from "/shared/misc.js";
+
+import { md } from "/shared/libs/md.js";
 
 export const name = "md";
 
@@ -8,7 +9,7 @@ export const name = "md";
  * @param {string} s - md text
  */
 function renderMarkdown(s) {
-	return `<p>${s}</p>`;
+	return md.render(s);
 }
 
 /**
@@ -25,11 +26,7 @@ export async function fn(_shell, div, _params, _uri) {
 		out.className = div.className; // keep any classes you put on the tag
 		out.innerHTML = renderMarkdown(dedented);
 		div.replaceWith(out);
-
-		console.log(`|||||`, dedented, `||||`);
-
-		return html``;
 	} catch (error) {
-		return html``;
+		div.innerHTML = error.toString();
 	}
 }
