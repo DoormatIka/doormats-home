@@ -1,0 +1,27 @@
+blockquote {
+	--bq-color: color-mix(in srgb, var(--color-secondary), transparent 85%);
+	position: relative;
+	margin: 1rem 0;
+	padding: 0.25rem 1rem 0.25rem 1.5rem;
+	background: linear-gradient(to right, var(--bq-color), transparent 100%);
+}
+
+blockquote::before {
+	content: "";
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: 0.2rem;
+	border-radius: 0.3rem; /* half the width = fully rounded ends */
+	background: var(--color-secondary);
+}
+
+blockquote > p {
+	margin: 0.5rem 0;
+}
+
+blockquote blockquote::before {
+	width: 0.1rem;
+	border-radius: 0.2rem;
+}
