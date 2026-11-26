@@ -56,7 +56,6 @@ export async function fn(_shell, div, _params, _uri) {
 		const uploader_url = obj.uploader_url || obj.channel_url;
 		const video_url = obj.url;
 		const thumbnail = obj.thumbnails[obj.thumbnails.length - 1];
-		console.log(div);
 		div.innerHTML = html` <div class="sotd-main-container">
 			<h3>song of the day</h3>
 			<div class="sotd-playlist-container">
