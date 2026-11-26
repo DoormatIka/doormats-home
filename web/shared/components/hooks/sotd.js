@@ -51,12 +51,16 @@ export async function fn(_shell, div, _params, _uri) {
 
 		/** @type {YtdlpPlaylistEntry} */
 		const obj = await res.json();
+
+		if (obj === null) {
+			throw Error("Song has not been picked yet...");
+		}
+
 		const title = obj.title;
 		const uploader = obj.uploader || obj.channel;
 		const uploader_url = obj.uploader_url || obj.channel_url;
 		const video_url = obj.url;
 		const thumbnail = obj.thumbnails[obj.thumbnails.length - 1];
-		console.log(div);
 		div.innerHTML = html` <div class="sotd-main-container">
 			<h3>song of the day</h3>
 			<div class="sotd-playlist-container">
@@ -73,6 +77,8 @@ export async function fn(_shell, div, _params, _uri) {
 			</div>
 		</div>`;
 	} catch (error) {
-		div.innerHTML = html`<p>${error}</p>`;
+		div.innerHTML = html` <div class="sotd-main-container">
+			<p class="red">${error}</p>
+		</div>`;
 	}
 }
