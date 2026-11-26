@@ -6,15 +6,6 @@
 
 <p>What else am I supposed to do in a website.. hm.</p>
 
-<script type="text/markdown" data-md>
-	This markdown has been translated live. The original text was embedded into
-	the HTML.
-
-	Like **bold** letters, _italics_, [links to nowhere](<>), it's pretty nice!
-
-	Check the source for this.
-</script>
-
 <h2>hii</h2>
 
 <ul class="list">
@@ -34,11 +25,6 @@
 					<li>
 						<h3>major</h3>
 					</li>
-
-					<li class="list-item lined-list-item">
-						<p>markdown to HTML converted on the fly</p>
-					</li>
-
 					<li class="list-item lined-list-item">
 						<p>dark mode and other themes</p>
 					</li>
@@ -121,3 +107,52 @@
 		</ul>
 	</li>
 </ul>
+
+<br />
+<br />
+<br />
+
+<h3>markdown test here~</h3>
+<script type="text/markdown" data-md>
+	This markdown has been translated live. The original text was embedded into
+	the HTML.
+
+	Like **bold** letters, _italics_, [links to nowhere](<>), it's pretty nice!
+
+	Here's the fonts I'm using by the way.
+
+	```css
+	/** it's very square.. */
+	@font-face {
+		font-family: "NordwandMono";
+		src: url("/shared/fonts/Nordwand-Mono/NordwandMono-Italic.woff2")
+			format("woff2");
+		font-style: italic;
+		font-weight: 400;
+		font-display: swap;
+	}
+	@font-face {
+		font-family: "NordwandMono";
+		src: url("/shared/fonts/Nordwand-Mono/NordwandMono-Medium.woff2")
+			format("woff2");
+		font-weight: 500;
+		font-style: normal;
+		font-display: swap;
+	}
+	```
+
+	> quote blocks work?
+	>
+	> > what about nested quote blocks?
+	> >
+	> > > more nested quote blocks?
+	>
+	> meow
+
+	- ### testing lists with custom styles
+	  - ### major
+	    - markdown to HTML converted on the fly
+	    - dark mode and other themes
+	    - <span class="red">difficult:</span> custom window manager similar to OS for floating windows.
+	      - i can put currently running processes here like music and games I've made.
+</script>
