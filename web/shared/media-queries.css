@@ -90,6 +90,10 @@
 		touch-action: none;
 	}
 
+	.sotd-main-container {
+		width: 100%;
+	}
+
 	/*
 	.scrollbar-thumb {
 		display: none;
