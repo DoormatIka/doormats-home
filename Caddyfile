@@ -4,6 +4,6 @@
 	reverse_proxy /api/* server:9980
 
 	@revalidate path /shared/components/* /pages/* *.css *.js
-	header @revalidate Cache-Control "no-cache"
+	header @revalidate Cache-Control "max-age=500"
 }
 
