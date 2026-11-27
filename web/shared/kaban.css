@@ -14,7 +14,7 @@ width has a definite size, height doesn't in an overflow-y enabled context.
 	padding: 1rem 0rem;
 }
 
-.kaban div {
+.kaban > div {
 	overflow-y: auto;
 	border: 1px black solid;
 	background-color: var(--color-base);
