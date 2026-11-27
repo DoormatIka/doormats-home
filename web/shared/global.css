@@ -156,7 +156,8 @@ button,
 	font-display: block;
 }
 *::selection {
-	background-color: var(--color-primary-transparent);
+	color: var(--color-secondary-content);
+	background-color: var(--color-secondary);
 }
 
 .small-text {
