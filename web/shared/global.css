@@ -428,3 +428,8 @@ br {
 .shell p {
 	line-height: 1.2;
 }
+
+.no-flex-shrink {
+	flex: 0 0 auto;
+	white-space: nowrap;
+}
