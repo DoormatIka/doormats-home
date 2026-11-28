@@ -55,22 +55,34 @@ header {
 	justify-content: space-between;
 }
 
+/* //////////////// BREADCRUMB ////////////////// */
+
 .breadcrumb {
-	list-style: none; /* Removes bullet points */
-	display: flex; /* Aligns list items horizontally */
-	padding: 0; /* Removes default padding */
-	margin: 0; /* Removes default margin */
+	list-style: none;
+	display: flex;
+	flex-wrap: nowrap;
+	padding: 0;
+	margin: 0;
+	min-width: 0;
+
+	overflow-x: auto;
+	overflow-y: hidden;
 }
 
 .breadcrumb li + li:before {
 	content: "/"; /* Adds a separator between list items */
-	padding: 0 10px; /* Adds space around the separator */
-	color: #6c757d; /* Styles separator color */
+	padding: 0 10px;
+	color: #6c757d;
 }
 
 .breadcrumb li[aria-current="page"] {
-	color: #6c757d; /* Styles the current page text */
-	pointer-events: none; /* Disables mouse events for the current page item */
+	color: #6c757d;
+	pointer-events: none;
+}
+
+.breadcrumb li {
+	flex: 0 0 auto; /* don't shrink or grow */
+	white-space: nowrap; /* keep each crumb on one line */
 }
 
 #maximize-btn .icon-max,
