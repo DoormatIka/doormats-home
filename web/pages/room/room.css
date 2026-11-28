@@ -7,11 +7,25 @@
 	justify-content: center;
 	gap: 0.5rem;
 }
-.room.flex-row {
+.room > .picture {
+	flex: "0 0 200px";
+}
+
+.room.flex {
 	display: flex;
+	flex-direction: row;
 	gap: 0.5rem;
 }
-.room.flex-row > .body {
+
+@media (max-width: 50rem) {
+	.room.flex {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+}
+
+.room.flex > .body {
 	padding: 1rem 0rem;
 	align-self: center;
 }
