@@ -19,12 +19,21 @@ import { parseHTML } from "./shared/misc.js";
 // Run this on the reverse proxy with the Caddyfile provided!
 
 export class PageError extends Error {
+	/**
+	 * @param {number} status
+	 * @param {string} statusText
+	 * @param {string | undefined} url
+	 */
 	constructor(status, statusText, url) {
 		super(`HTTP ${status} ${statusText} — ${url}`);
 		this.name = "PageError";
 		this.status = status;
 		this.statusText = statusText;
 		this.url = url;
+	}
+
+	toString() {
+		return `${this.statusText} on ${this.url}`;
 	}
 
 	get isNotFound() {
@@ -37,43 +46,18 @@ export class PageError extends Error {
  * @param {string} path
  * @returns {Promise<string>}
  */
-export function loadHTMLFile(path) {
-	return new Promise(
-		/** @param {function(PageError): void} rej */ (res, rej) => {
-			fetch(path)
-				.then((resp) => {
-					if (!resp.ok) {
-						rej(new Error());
-					}
-					resp.text().then((v) => res(v));
-				})
-				.catch(rej);
-		},
-	);
+export async function loadHTMLFile(path) {
+	const resp = await fetch(path);
+	if (!resp.ok) {
+		throw new PageError(resp.status, resp.statusText, resp.url || path);
+	}
+	return resp.text();
 }
 
 ////////// APP CODE HERE ///////////
 
 function makeLoadingDiv() {
 	return `<span class="coming-soon">Loading…</span>`;
-}
-/**
- * @param {PageError} err
- */
-function formatErrors(err) {
-	console.log(err);
-	let formattedError = "";
-	switch (err) {
-		case "NetworkError":
-			formattedError = "Can't contact the server!";
-			break;
-		case "DoesNotExist":
-			formattedError = "This page does not exist!";
-			break;
-		default:
-			break;
-	}
-	return formattedError;
 }
 
 /**
@@ -113,10 +97,8 @@ function pageRoute(page, options = { file: "index.html", maxDepth: 2 }) {
 			const html = await loadHTMLFile(path);
 			const doc = parseHTML(html);
 			shell.replaceChildren(...doc.childNodes);
-		} catch (err) {
-			const documentObject = await getNotFoundHTML(
-				formatErrors(/** @type {PageError} */ (err)),
-			);
+		} catch (/** @type {any} */ err) {
+			const documentObject = await getNotFoundHTML(err.toString());
 			shell.replaceChildren(...documentObject.body.childNodes);
 		}
 		positionScrollbar();
@@ -128,7 +110,7 @@ function pageRoute(page, options = { file: "index.html", maxDepth: 2 }) {
  */
 function notFound() {
 	return async (shell) => {
-		const doc = await getNotFoundHTML(formatErrors("DoesNotExist"));
+		const doc = await getNotFoundHTML("This page does not exist!");
 		shell.replaceChildren(...doc.body.childNodes);
 	};
 }
