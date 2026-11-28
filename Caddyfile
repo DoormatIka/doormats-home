@@ -2,6 +2,8 @@
 	root * /srv/site
 	file_server
 	reverse_proxy /api/* server:9980
-	header /shared/* Cache-Control "no-cache"
+
+	@revalidate path /shared/components/* /pages/* *.css *.js
+	header @revalidate Cache-Control "max-age=500"
 }
 
