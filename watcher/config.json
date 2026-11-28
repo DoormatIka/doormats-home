@@ -2,7 +2,7 @@
   "owner": "DoormatIka",
   "repo": "doormats-home",
   "commit_file": "/app/state/latest-commit",
-  "interval": 60,
+  "interval": 180,
   "projects": [
     {
       "from": "/web",
