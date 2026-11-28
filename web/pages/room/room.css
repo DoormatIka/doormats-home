@@ -1,0 +1,17 @@
+.room.container {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 98%;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+}
+.room.flex-row {
+	display: flex;
+	gap: 0.5rem;
+}
+.room.flex-row > .body {
+	padding: 1rem 0rem;
+	align-self: center;
+}

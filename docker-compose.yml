@@ -1,4 +1,4 @@
-name: doormats-home # same project name inside and outside the watcher, so volumes/networks match
+name: doormats-home
 
 services:
   watcher:
